@@ -118,4 +118,104 @@ class ProductionController extends Controller
         }
     }
 
+    //GET PRODUCTION INFO
+    public function getProductionInfo($productionCode){
+        $singleProductionMaster =  ProductionMaster::join('ProductionDetails', 'ProductionDetails.ProductionCode', 'ProductionMaster.ProductionCode')
+            ->join('ItemsCategory','ItemsCategory.CategoryCode','ProductionMaster.CategoryCode')
+            ->join('Items',function ($q) {
+                $q->on('Items.ItemCode','ProductionDetails.ItemCode');
+                    //->where('Items.CategoryCode',)
+            })
+            ->join('Location',function ($q) {
+                $q->on('Location.LocationCode','ProductionDetails.LocationCode');
+                //->where('Items.CategoryCode',)
+            })
+            //->join('Items','Items.CategoryCode','ItemsCategory.CategoryCode')
+            ->where('ProductionMaster.ProductionCode',$productionCode)
+            ->select(
+                'ProductionMaster.ProductionCode',
+                 //DB::raw("FORMAT(ProductionMaster.ProductionDate,'dd-MM-yyyy') as ProductionDate"),
+                'ProductionMaster.ProductionDate',
+                'ProductionMaster.Reference',
+                'ItemsCategory.CategoryName',
+                'ProductionMaster.Returned',
+                'ProductionMaster.PrepareDate',
+
+                'ProductionDetails.ItemCode',
+                'ProductionDetails.LocationCode',
+                'ProductionDetails.Quantity',
+                'ProductionDetails.Value',
+
+                'ItemsCategory.CategoryCode',
+                'ItemsCategory.CategoryName',
+                'ItemsCategory.Active',
+                'Items.ItemName',
+                'Location.LocationName',
+
+            )
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'ProductionInfo' => $singleProductionMaster
+        ], 200);
+    }
+
+
+    //Update Product
+    public function update(Request $request){
+
+        if($request->production_code){
+            $validator = Validator::make($request->all(), [
+                'production_date' => 'required',
+                'reference' => 'required',
+                'categoryType' => 'required',
+                'details' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['message' => $validator->errors()], 400);
+            }
+            else{
+                try {
+
+                    $dataProduction = ProductionMaster::where('ProductionCode',$request->production_code)->first();
+                    $dataProduction->Returned = 'Y';
+                    $dataProduction->EditDate = Carbon::now()->format('Y-m-d H:i:s');;
+                    $dataProduction->EditBy = Auth::user()->Id;
+                    $dataProduction->save();
+
+                    foreach ($request->details as $key=>$singleData){
+
+
+                        //Data Insert ProductionDetails
+                        $productionDetails =  ProductionDetails::where('ProductionCode',$request->production_code)
+                                             ->where('ItemCode',$singleData['item']['ItemCode'])->delete();
+
+                        $productionDetails= new ProductionDetails();
+                        $productionDetails->ProductionCode = $dataProduction->ProductionCode;
+                        $productionDetails->ItemCode = $singleData['item']['ItemCode'];
+                        $productionDetails->LocationCode = $singleData['location']['LocationCode'];
+                        $productionDetails->Quantity = $singleData['quantity'];
+                        $productionDetails->Value = $singleData['itemValue'];
+                        $productionDetails->save();
+                    }
+                    DB::commit();
+                    return [
+                        'status' => 'success',
+                        'message' => 'Production Updated Successfully'
+                    ];
+
+                } catch (\Exception $exception) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => $exception->getMessage()
+                    ], 500);
+                }
+            }
+        }
+
+
+    }
+
+
 }

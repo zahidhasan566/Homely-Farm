@@ -10,7 +10,7 @@
         </div>
         <advanced-datatable :options="tableOptions">
             <template slot="action" slot-scope="row">
-                <a href="javascript:" @click="addUserModal(row.item)"> <i class="ti-pencil-alt">Edit</i></a>
+                <a href="javascript:" @click="addModal(row.item)"> <i class="ti-pencil-alt">Edit</i></a>
                 <!--        <a href="javascript:" @click="changePassword(row.item.UserId)"> <i class="ti-lock"></i></a>-->
             </template>
         </advanced-datatable>
@@ -57,23 +57,7 @@ export default {
                 bus.$emit('add-edit-production', row);
             })
         },
-        changePassword(row) {
-            this.loading = true;
-            setTimeout(() => {
-                bus.$emit('edit-password', row);
-            })
-        },
-        deleteDept(id) {
-            this.deleteAlert(() => {
-                this.axiosDelete('users', id, (response) => {
-                    this.successNoti(response.message);
-                    this.$store.commit('departmentDelete', id);
-                    bus.$emit('refresh-datatable');
-                }, (error) => {
-                    this.errorNoti(error);
-                })
-            });
-        },
+
         exportData() {
             bus.$emit('export-data','user-list-'+moment().format('YYYY-MM-DD'))
         }

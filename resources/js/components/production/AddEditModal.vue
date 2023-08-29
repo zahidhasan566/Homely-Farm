@@ -41,7 +41,7 @@
                                                             v-slot="{ errors }">
                                             <div class="form-group">
                                                 <label for="user-type">Category <span class="error">*</span></label>
-                                                <multiselect v-model="categoryType" :options="category"
+                                                <multiselect v-model="categoryType" :options="category" v-if="actionType==='add'"
                                                              :multiple="false"
                                                              @input="getItemByCategory"
                                                              :close-on-select="true"
@@ -50,9 +50,25 @@
                                                              label="CategoryName" track-by="CategoryCode">
 
                                                 </multiselect>
+                                                <multiselect v-model="categoryType" :options="category" v-else
+                                                             :multiple="false"
+                                                             :disabled="true"
+                                                             :close-on-select="true"
+                                                             :clear-on-select="false" :preserve-search="false"
+                                                             placeholder="Select Category"
+                                                             label="CategoryName" track-by="CategoryCode">
+
+                                                </multiselect>
                                                 <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
                                         </ValidationProvider>
+
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div style="padding: 32px 0">
+                                            <input type="radio" v-model="returnVal" value="Y"> Return
+                                        </div>
+
                                     </div>
 
                                 </div>
@@ -101,7 +117,7 @@
 
                                                 </td>
                                                 <td>
-                                                    <input readonly type="text" id="itemCode" class="form-control"
+                                                    <input readonly type="text"  class="form-control"
                                                            v-model="field.itemCode" placeholder="itemCode" min="0">
 
                                                 </td>
@@ -120,7 +136,7 @@
                                                         }}</span>
                                                 </td>
                                                 <td>
-                                                    <input type="text" id="quantity" class="form-control"
+                                                    <input type="text"  class="form-control"
                                                            v-model="field.quantity" placeholder="quantity" min="1">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].quantity !== undefined">{{
@@ -129,7 +145,7 @@
 
                                                 </td>
                                                 <td>
-                                                    <input type="text" id="itemValue" class="form-control"
+                                                    <input type="text" class="form-control"
                                                            v-model="field.itemValue" placeholder="Value" min="1">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].itemValue !== undefined">{{
@@ -178,8 +194,11 @@ export default {
             type: 'add',
             actionType: '',
             buttonShow: false,
+            returnVal:'',
             category: [],
             categoryType: '',
+            updateCategoryCode:'',
+            production_code:'',
             items: [],
             locations: [],
             production_date: '',
@@ -199,6 +218,7 @@ export default {
                 }
             ],
             errors: [],
+
         }
     },
     computed: {},
@@ -209,26 +229,47 @@ export default {
         });
         bus.$on('add-edit-production', (row) => {
             if (row) {
-                this.selectedBusiness = [];
-                this.selectedDepartment = [];
                 let instance = this;
-                console.log(row.Id)
-                this.axiosGet('user/get-user-info/' + row.Id, function (response) {
-                    // var user = response.data;
-                    // instance.title = 'Update User';
-                    // instance.buttonText = "Update";
-                    // instance.UserId = user.Id;
-                    // instance.status = user.Status;
-                    // instance.userType = {
-                    //     RoleName: user.roles.RoleName,
-                    //     RoleID: user.roles.RoleID
-                    // };
-                    // response.data.user_submenu.forEach(function (item) {
-                    //     instance.allSubMenuId.push(item.SubMenuID)
-                    // });
-                    // instance.buttonShow = true;
-                    // instance.actionType = 'edit';
+                this.axiosGet('production/get-production-info/' + row.ProductionCode, function (response) {
+                    instance.title = 'Update production';
+                    instance.buttonText = "Update";
+                    instance.buttonShow = true;
+                    instance.actionType = 'edit';
+                    instance.fields.splice(0, 1)
                     instance.getData();
+                    var productionInfo = response.ProductionInfo;
+
+                    //Master
+                    instance.production_code = response.ProductionInfo[0].ProductionCode
+                    instance.production_date = response.ProductionInfo[0].ProductionDate
+                    instance.updateCategoryCode = productionInfo[0].CategoryCode
+                    instance.reference = response.ProductionInfo[0].Reference
+
+                    instance.categoryType=[{
+                        'Active': response.ProductionInfo[0].Reference,
+                        'CategoryCode': response.ProductionInfo[0].CategoryCode,
+                        'CategoryName': response.ProductionInfo[0].CategoryName
+                    }
+                    ]
+
+                    //Details
+                    productionInfo.forEach(function (item,index) {
+                        instance.fields.push({
+                            item: {
+                                'ItemName': item.ItemName,
+                                'ItemCode': item.ItemCode,
+                            },
+                            itemCode: item.ItemCode,
+                            location: {
+                                'Active': 'Y',
+                                'LocationCode': item.LocationCode,
+                                'LocationName': item.LocationName
+                            },
+                            quantity: item.Quantity,
+                            itemValue: item.Value,
+                        })
+                    });
+                    instance.getItemByCategory();
                 }, function (error) {
 
                 });
@@ -281,10 +322,16 @@ export default {
         },
         getItemByCategory() {
             let instance = this;
-            instance.items = [];
+            let categoryCode = '';
+            if(instance.actionType==='add'){
+                categoryCode = instance.categoryType.CategoryCode;
+            }
+            else{
+                categoryCode = instance.updateCategoryCode;
+            }
             let url = 'production/category-wise-item';
             this.axiosPost(url, {
-                CategoryCode: instance.categoryType.CategoryCode,
+                CategoryCode:categoryCode ,
             }, (response) => {
                 instance.items = response.items;
                 instance.locations = response.locations;
@@ -317,14 +364,22 @@ export default {
         },
         onSubmit() {
             this.checkFieldValue();
+            console.log(retu)
             if (this.errors.length === 0) {
                 this.$store.commit('submitButtonLoadingStatus', true);
                 let url = '';
-
-                console.log(this.fields)
-                if (this.actionType === 'add') url = 'production/add';
-                else url = 'production/update'
+                console.log(this.returnVal)
+                if (this.actionType === 'add') {
+                    url = 'production/add';
+                }
+                if (this.returnVal === 'Y') {
+                    url = 'production/return';
+                }
+                else {
+                    url = 'production/update';
+                }
                 this.axiosPost(url, {
+                    production_code: this.production_code,
                     production_date: this.production_date,
                     reference: this.reference,
                     categoryType: this.categoryType,
