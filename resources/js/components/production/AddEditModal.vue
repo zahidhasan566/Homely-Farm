@@ -87,7 +87,7 @@
                                     </div>
                                     <div class="">
                                         <table
-                                            class="table table-bordered table-striped table-responsive  nowrap dataTable no-footer dtr-inline table-sm">
+                                            class="table table-bordered table-striped   nowrap dataTable no-footer dtr-inline table-sm">
                                             <thead class="thead-dark">
                                             <tr>
                                                 <th>Item <span class="required-field">*</span></th>
@@ -404,7 +404,7 @@ export default {
     background: linear-gradient(269deg, rgb(0 0 0), #007bffb8) !important;
 }
 </style>
-<style>
+<style scoped>
 .datepicker .vue-input, .date-range-picker .vue-input, .timepicker .vue-input, .datetime-picker .vue-input {
     padding: 7px !important;
 }
