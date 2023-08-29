@@ -85,9 +85,9 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="table-condensed">
+                                    <div class="">
                                         <table
-                                            class="table table-bordered table-striped table-responsive dt-responsive nowrap dataTable no-footer dtr-inline table-sm">
+                                            class="table table-bordered table-striped table-responsive  nowrap dataTable no-footer dtr-inline table-sm">
                                             <thead class="thead-dark">
                                             <tr>
                                                 <th>Item <span class="required-field">*</span></th>
@@ -371,9 +371,9 @@ export default {
                 if (this.actionType === 'add') {
                     url = 'production/add';
                 }
-                if (this.returnVal === 'Y') {
-                    url = 'production/return';
-                }
+                // if (this.returnVal === 'Y') {
+                //     url = 'production/return';
+                // }
                 else {
                     url = 'production/update';
                 }

@@ -8,6 +8,7 @@ use App\Models\ItemsCategory;
 use App\Models\Location;
 use App\Models\ProductionDetails;
 use App\Models\ProductionMaster;
+use App\Models\StockBatch;
 use App\Traits\CodeGeneration;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -65,7 +66,6 @@ class ProductionController extends Controller
 
     //Add Data
     public function store(Request $request){
-
         $validator = Validator::make($request->all(), [
             'production_date' => 'required',
             'reference' => 'required',
@@ -102,6 +102,17 @@ class ProductionController extends Controller
                     $productionDetails->Quantity = $singleData['quantity'];
                     $productionDetails->Value = $singleData['itemValue'];
                     $productionDetails->save();
+
+                    //Data insert into Stock Batch
+                    $stockBatch= new StockBatch();
+                    $stockBatch->ItemCode = $singleData['item']['ItemCode'];
+                    $stockBatch->LocationCode = $singleData['location']['LocationCode'];
+                    $stockBatch->BatchQty = $singleData['quantity'];
+                    $stockBatch->StockValue =  $singleData['itemValue'];
+                    $stockBatch->save();
+
+
+
                 }
                 DB::commit();
                 return [
@@ -198,6 +209,19 @@ class ProductionController extends Controller
                         $productionDetails->Quantity = $singleData['quantity'];
                         $productionDetails->Value = $singleData['itemValue'];
                         $productionDetails->save();
+
+
+                        //Data insert into Stock Batch
+                        $stockDetails =  StockBatch::where('ItemCode',$singleData['item']['ItemCode'])
+                        ->where('LocationCode',$singleData['location']['LocationCode'])
+                            ->delete();
+
+                        $stockBatch= new StockBatch();
+                        $stockBatch->ItemCode = $singleData['item']['ItemCode'];
+                        $stockBatch->LocationCode = $singleData['location']['LocationCode'];
+                        $stockBatch->BatchQty = $singleData['quantity'];
+                        $stockBatch->StockValue =  $singleData['itemValue'];
+                        $stockBatch->save();
                     }
                     DB::commit();
                     return [
