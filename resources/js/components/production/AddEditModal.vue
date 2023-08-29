@@ -64,12 +64,6 @@
                                         </ValidationProvider>
 
                                     </div>
-                                    <div class="col-12 col-md-6">
-                                        <div style="padding: 32px 0">
-                                            <input type="radio" v-model="returnVal" value="Y"> Return
-                                        </div>
-
-                                    </div>
 
                                 </div>
                             </div>
@@ -194,7 +188,6 @@ export default {
             type: 'add',
             actionType: '',
             buttonShow: false,
-            returnVal:'',
             category: [],
             categoryType: '',
             updateCategoryCode:'',
