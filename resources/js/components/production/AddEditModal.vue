@@ -404,7 +404,7 @@ export default {
     background: linear-gradient(269deg, rgb(0 0 0), #007bffb8) !important;
 }
 </style>
-<style scoped>
+<style>
 .datepicker .vue-input, .date-range-picker .vue-input, .timepicker .vue-input, .datetime-picker .vue-input {
     padding: 7px !important;
 }
