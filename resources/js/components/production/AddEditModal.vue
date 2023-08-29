@@ -364,7 +364,6 @@ export default {
         },
         onSubmit() {
             this.checkFieldValue();
-            console.log(retu)
             if (this.errors.length === 0) {
                 this.$store.commit('submitButtonLoadingStatus', true);
                 let url = '';

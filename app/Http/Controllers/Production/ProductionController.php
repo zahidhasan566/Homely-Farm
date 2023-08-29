@@ -134,8 +134,8 @@ class ProductionController extends Controller
             ->where('ProductionMaster.ProductionCode',$productionCode)
             ->select(
                 'ProductionMaster.ProductionCode',
-                 //DB::raw("FORMAT(ProductionMaster.ProductionDate,'dd-MM-yyyy') as ProductionDate"),
-                'ProductionMaster.ProductionDate',
+                 DB::raw("convert(varchar(10),ProductionMaster.ProductionDate,23) as ProductionDate"),
+                //'ProductionMaster.ProductionDate',
                 'ProductionMaster.Reference',
                 'ItemsCategory.CategoryName',
                 'ProductionMaster.Returned',
