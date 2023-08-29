@@ -87,7 +87,7 @@
                                     </div>
                                     <div class="table-condensed">
                                         <table
-                                            class="table table-bordered table-striped dt-responsive nowrap dataTable no-footer dtr-inline table-sm">
+                                            class="table table-bordered table-striped table-responsive dt-responsive nowrap dataTable no-footer dtr-inline table-sm">
                                             <thead class="thead-dark">
                                             <tr>
                                                 <th>Item <span class="required-field">*</span></th>
