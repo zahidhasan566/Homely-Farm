@@ -79,9 +79,9 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="">
+                                    <div class="table-responsive">
                                         <table
-                                            class="table table-bordered table-striped   nowrap dataTable no-footer dtr-inline table-sm">
+                                            class="table  table-bordered table-striped   nowrap dataTable no-footer dtr-inline table-sm">
                                             <thead class="thead-dark">
                                             <tr>
                                                 <th>Item <span class="required-field">*</span></th>
