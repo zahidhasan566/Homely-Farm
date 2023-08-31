@@ -7,7 +7,9 @@ import {baseurl} from '../base_url'
 import NotFound from '../views/404/Index';
 
 import Users from '../views/users/Index';
-import Production from "../views/Production/index.vue";
+import production from "../views/production/index.vue";
+import purchase from "../views/purchase/index.vue";
+import sales from "../views/sales/index.vue";
 
 
 Vue.use(VueRouter);
@@ -57,9 +59,21 @@ const routes = [
             },
             //PRODUCTION ROUTE
             {
-                path: baseurl + 'Production/Productionlist',
-                name: 'Production',
-                component: Production
+                path: baseurl + 'production/productionList',
+                name: 'production',
+                component: production
+            },
+            //PURCHASE   ROUTE
+            {
+                path: baseurl + 'purchase/purchaseList',
+                name: 'purchase',
+                component: purchase
+            },
+            //SALES   ROUTE
+            {
+                path: baseurl + 'sales/salesList',
+                name: 'sales',
+                component: sales
             },
 
         ],

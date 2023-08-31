@@ -40,11 +40,11 @@ class ProductionController extends Controller
             ->orderBy('ProductionMaster.PrepareDate', 'desc')
             ->select(
                 'ProductionMaster.ProductionCode',
-                'ProductionMaster.ProductionDate',
+                DB::raw("convert(varchar(10),ProductionMaster.ProductionDate,23) as ProductionDate"),
                 'ProductionMaster.Reference',
                 'ItemsCategory.CategoryName',
                 'ProductionMaster.Returned',
-                'ProductionMaster.PrepareDate',
+                DB::raw("convert(varchar(10),ProductionMaster.PrepareDate,23) as PrepareDate"),
                 )
             ->groupBy(
                 'ProductionMaster.ProductionCode',
@@ -117,7 +117,7 @@ class ProductionController extends Controller
                 DB::commit();
                 return [
                     'status' => 'success',
-                    'message' => 'Production Created Successfully'
+                    'message' => 'production Created Successfully'
                 ];
 
             } catch (\Exception $exception) {
@@ -190,6 +190,8 @@ class ProductionController extends Controller
                 try {
 
                     $dataProduction = ProductionMaster::where('ProductionCode',$request->production_code)->first();
+                    $dataProduction->ProductionDate = $request->production_date;
+                    $dataProduction->Reference = $request->reference;
                     $dataProduction->Returned = 'Y';
                     $dataProduction->EditDate = Carbon::now()->format('Y-m-d H:i:s');;
                     $dataProduction->EditBy = Auth::user()->Id;
@@ -214,7 +216,7 @@ class ProductionController extends Controller
                         //Data insert into Stock Batch
                         $stockDetails =  StockBatch::where('ItemCode',$singleData['item']['ItemCode'])
                         ->where('LocationCode',$singleData['location']['LocationCode'])
-                            ->delete();
+                        ->delete();
 
                         $stockBatch= new StockBatch();
                         $stockBatch->ItemCode = $singleData['item']['ItemCode'];
@@ -226,7 +228,7 @@ class ProductionController extends Controller
                     DB::commit();
                     return [
                         'status' => 'success',
-                        'message' => 'Production Updated Successfully'
+                        'message' => 'production Updated Successfully'
                     ];
 
                 } catch (\Exception $exception) {
@@ -237,7 +239,6 @@ class ProductionController extends Controller
                 }
             }
         }
-
 
     }
 
