@@ -46,8 +46,29 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('add', [\App\Http\Controllers\Production\ProductionController::class, 'store']);
         Route::get('get-production-info/{productionCode}', [\App\Http\Controllers\Production\ProductionController::class, 'getProductionInfo']);
         Route::post('update', [\App\Http\Controllers\Production\ProductionController::class, 'update']);
-        Route::post('return', [\App\Http\Controllers\Production\ProductionController::class, 'return']);
      });
+
+    //PURCHASE
+     Route::group(['prefix' =>'purchase'],function () {
+         Route::post('list', [\App\Http\Controllers\Purchase\PurchaseController::class, 'index']);
+         Route::get('supporting-data', [\App\Http\Controllers\Purchase\PurchaseController::class, 'getSupportingData']);
+         Route::post('category-wise-item', [\App\Http\Controllers\Purchase\PurchaseController::class, 'getCategoryWiseItemData']);
+         Route::post('add', [\App\Http\Controllers\Purchase\PurchaseController::class, 'store']);
+         Route::get('get-purchase-info/{purchaseCode}', [\App\Http\Controllers\Purchase\PurchaseController::class, 'getPurchaseInfo']);
+         Route::post('update', [\App\Http\Controllers\Purchase\PurchaseController::class, 'update']);
+         Route::post('return', [\App\Http\Controllers\Purchase\PurchaseController::class, 'returnProducts']);
+     });
+
+    //Sales
+    Route::group(['prefix' =>'sales'],function () {
+        Route::post('list', [\App\Http\Controllers\Sales\SalesController::class, 'index']);
+        Route::get('supporting-data', [\App\Http\Controllers\Sales\SalesController::class, 'getSupportingData']);
+        Route::post('category-wise-item', [\App\Http\Controllers\Sales\SalesController::class, 'getCategoryWiseItemData']);
+        Route::post('add', [\App\Http\Controllers\Sales\SalesController::class, 'store']);
+//        Route::get('get-purchase-info/{purchaseCode}', [\App\Http\Controllers\Purchase\PurchaseController::class, 'getPurchaseInfo']);
+//        Route::post('update', [\App\Http\Controllers\Purchase\PurchaseController::class, 'update']);
+//        Route::post('return', [\App\Http\Controllers\Purchase\PurchaseController::class, 'returnProducts']);
+    });
 
 
 });

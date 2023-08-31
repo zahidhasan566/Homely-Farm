@@ -37,8 +37,10 @@ Vue.component('add-edit-user',require('./components/users/AddEditModal').default
 Vue.component('reset-password',require('./components/users/Editpassword').default);
 Vue.component('submit-form', require('./components/buttons/Submit').default);
 
-//Production Component
+//production Component
 Vue.component('add-edit-production',require('./components/production/AddEditModal').default);
+Vue.component('add-edit-purchase',require('./components/purchase/AddEditModal').default);
+Vue.component('add-edit-sales',require('./components/sales/AddEditModal').default);
 //Vue Datepicker
 import { Datepicker } from '@livelybone/vue-datepicker';
 Vue.component('datepicker', Datepicker);

@@ -17,8 +17,8 @@
                                         <ValidationProvider name="production_date" mode="eager"
                                                             v-slot="{ errors }">
                                             <div class="form-group">
-                                                <label for="name">Production Date <span class="error">*</span></label>
-                                                <datepicker v-model="production_date" :dayStr="dayStr"
+                                                <label for="name">Sales Date<span class="error">*</span></label>
+                                                <datepicker v-model="sales_date" :dayStr="dayStr"
                                                             placeholder="YYYY-MM-DD" :firstDayOfWeek="0"/>
                                                 <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
@@ -36,7 +36,7 @@
                                             </div>
                                         </ValidationProvider>
                                     </div>
-                                    <div class="col-12 col-md-6">
+                                    <div class="col-12 col-md-4">
                                         <ValidationProvider name="UserType" mode="eager" rules="required"
                                                             v-slot="{ errors }">
                                             <div class="form-group">
@@ -64,14 +64,40 @@
                                         </ValidationProvider>
 
                                     </div>
+                                    <div class="col-12 col-md-4">
+                                        <ValidationProvider name="purchaseTypeVal" mode="eager" rules="required"
+                                                            v-slot="{ errors }">
+                                            <div class="form-group">
+                                                <label for="user-type">Customer <span class="error">*</span></label>
+                                                <multiselect v-model="customerTypeVal" :options="customers"
+                                                             :multiple="false"
+                                                             :close-on-select="true"
+                                                             :clear-on-select="false" :preserve-search="true"
+                                                             placeholder="Select Customer"
+                                                             label="CustomerWithCode" track-by="CustomerCode">
 
+                                                </multiselect>
+                                                <span class="error-message"> {{ errors[0] }}</span>
+                                            </div>
+                                        </ValidationProvider>
+
+                                    </div>
+                                    <div class="col-12 col-md-4" v-if="actionType==='edit'">
+                                            <div class="form-group">
+                                                <label for="user-type">Return<span class="error">*</span></label>
+                                                <br>
+                                                <input type="checkbox" value="Y" id="return"> Return
+                                            </div>
+
+
+                                    </div>
                                 </div>
                             </div>
                             <div class="card">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-3" style="margin-bottom: 10px;">
-                                            <label for="payment-required-by">Add production</label>
+                                            <label for="payment-required-by">Add Purchase</label>
                                         </div>
                                         <div class="offset-md-5 col-md-4">
                                             <button style="float: right;" id="add-row" type="button"
@@ -86,7 +112,8 @@
                                             <tr>
                                                 <th>Item <span class="required-field">*</span></th>
                                                 <th>Item Code<span class="required-field">*</span></th>
-                                                <th>Location <span class="required-field">*</span></th>
+                                                <th>Location<span class="required-field">*</span></th>
+                                                <th>Unit Price <span class="required-field">*</span></th>
                                                 <th>Quantity<span class="required-field">*</span></th>
                                                 <th>Value<span class="required-field">*</span></th>
                                                 <th>Action</th>
@@ -130,8 +157,16 @@
                                                         }}</span>
                                                 </td>
                                                 <td>
+                                                    <input type="text"  class="form-control"  @input="setValue(index)"
+                                                           v-model="field.unitPrice" placeholder="unit Price" min="1">
+                                                    <span class="error"
+                                                          v-if="errors[index] !== undefined && errors[index].unitPrice !== undefined">{{
+                                                            errors[index].unitPrice
+                                                        }}</span>
+                                                </td>
+                                                <td>
                                                     <input type="text"  class="form-control"
-                                                           v-model="field.quantity" placeholder="quantity" min="1">
+                                                           v-model="field.quantity" placeholder="quantity"  @input="setValue(index)" min="1">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].quantity !== undefined">{{
                                                             errors[index].quantity
@@ -139,7 +174,7 @@
 
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control"
+                                                    <input type="text" class="form-control" readonly
                                                            v-model="field.itemValue" placeholder="Value" min="1">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].itemValue !== undefined">{{
@@ -191,11 +226,22 @@ export default {
             category: [],
             categoryType: '',
             updateCategoryCode:'',
-            production_code:'',
+            sales_date:'',
             items: [],
+            customers:[],
+            purchaseCode:'',
             locations: [],
-            production_date: '',
             reference: '',
+            purchaseType:[{
+                'PurchaseTypeCode': 'direct',
+                'PurchaseTypeName': 'direct',
+            },
+                {
+                    'PurchaseTypeCode': 'indirect ',
+                    'PurchaseTypeName': 'indirect ',
+                }] ,
+            purchaseTypeVal:'',
+            customerTypeVal:'',
             dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             fields: [
                 {
@@ -206,6 +252,7 @@ export default {
                         'LocationCode': 'L0001',
                         'LocationName': 'Default'
                     },
+                    unitPrice:'',
                     quantity: '',
                     itemValue: '',
                 }
@@ -216,48 +263,48 @@ export default {
     },
     computed: {},
     mounted() {
-        this.production_date = moment().format('yyyy-MM-DD');
+        this.sales_date = moment().format('yyyy-MM-DD');
         $('#add-edit-dept').on('hidden.bs.modal', () => {
             this.$emit('changeStatus')
         });
-        bus.$on('add-edit-production', (row) => {
+        bus.$on('add-edit-sales', (row) => {
             if (row) {
                 let instance = this;
-                this.axiosGet('production/get-production-info/' + row.ProductionCode, function (response) {
-                    instance.title = 'Update production';
+                this.axiosGet('purchase/get-purchase-info/' + row.PurchaseCode, function (response) {
+                    console.log(response)
+                    instance.title = 'Update Sales';
                     instance.buttonText = "Update";
                     instance.buttonShow = true;
                     instance.actionType = 'edit';
                     instance.fields.splice(0, 1)
                     instance.getData();
-                    var productionInfo = response.ProductionInfo;
+                    var purchaseInfo = response.PurchaseInfo;
 
                     //Master
-                    instance.production_code = response.ProductionInfo[0].ProductionCode
-                    instance.production_date = response.ProductionInfo[0].ProductionDate
-                    instance.updateCategoryCode = productionInfo[0].CategoryCode
-                    instance.reference = response.ProductionInfo[0].Reference
+                    instance.purchaseCode = response.PurchaseInfo[0].PurchaseCode
+                    instance.purchase_Date = response.PurchaseInfo[0].PurchaseDate
+                    instance.updateCategoryCode = response.PurchaseInfo[0].CategoryCode
+                    instance.reference = response.PurchaseInfo[0].Reference
 
                     instance.categoryType=[{
-                        'Active': response.ProductionInfo[0].Reference,
-                        'CategoryCode': response.ProductionInfo[0].CategoryCode,
-                        'CategoryName': response.ProductionInfo[0].CategoryName
-                    }
-                    ]
+                        'Active': purchaseInfo[0].Reference,
+                        'CategoryCode': purchaseInfo[0].CategoryCode,
+                        'CategoryName': purchaseInfo[0].CategoryName
+                    }]
+                    instance.purchaseTypeVal=[{
+                        'PurchaseTypeCode': purchaseInfo[0].PurchaseType,
+                        'PurchaseTypeName': purchaseInfo[0].PurchaseType,
+                    }]
 
                     //Details
-                    productionInfo.forEach(function (item,index) {
+                    purchaseInfo.forEach(function (item,index) {
                         instance.fields.push({
                             item: {
                                 'ItemName': item.ItemName,
                                 'ItemCode': item.ItemCode,
                             },
                             itemCode: item.ItemCode,
-                            location: {
-                                'Active': 'Y',
-                                'LocationCode': item.LocationCode,
-                                'LocationName': item.LocationName
-                            },
+                            unitPrice: item.UnitPrice,
                             quantity: item.Quantity,
                             itemValue: item.Value,
                         })
@@ -267,7 +314,7 @@ export default {
 
                 });
             } else {
-                this.title = 'Add production';
+                this.title = 'Add Sales';
                 this.buttonText = "Add";
                 this.UserId = '';
 
@@ -296,6 +343,7 @@ export default {
                     'LocationCode': 'L0001',
                     'LocationName': 'Default'
                 },
+                unitPrice:'',
                 quantity: '',
                 itemValue: '',
             });
@@ -308,20 +356,23 @@ export default {
         },
         getData() {
             let instance = this;
-            this.axiosGet('production/supporting-data', function (response) {
+            this.axiosGet('sales/supporting-data', function (response) {
                 instance.category = response.category;
+                instance.customers = response.customer;
             }, function (error) {
             });
         },
         getItemByCategory() {
             let instance = this;
             let tableField = instance.fields;
+
             if (instance.actionType==='add'){
                 tableField.forEach(function (item,index) {
                     tableField.splice(index, 1)
                 });
                 this.addRow();
             }
+
             let categoryCode = '';
             if(instance.actionType==='add'){
                 categoryCode = instance.categoryType.CategoryCode;
@@ -329,7 +380,7 @@ export default {
             else{
                 categoryCode = instance.updateCategoryCode;
             }
-            let url = 'production/category-wise-item';
+            let url = 'sales/category-wise-item';
             this.axiosPost(url, {
                 CategoryCode:categoryCode ,
             }, (response) => {
@@ -344,18 +395,26 @@ export default {
             let instance = this;
             instance.fields[index].itemCode = instance.fields[index].item.ItemCode;
         },
+        setValue(index){
+            let instance = this;
+            if( instance.fields[index].unitPrice && instance.fields[index].quantity){
+                let currentPrice  = instance.fields[index].unitPrice;
+                let currentQuantity  = instance.fields[index].quantity;
+                instance.fields[index].itemValue = currentPrice*currentQuantity ;
+            }
+        },
         checkFieldValue() {
             this.errors = [];
             let instance = this;
             this.fields.forEach(function (item, index) {
                 if (item.item === '' || item.itemCode === '' || item.location === ''
-                    || item.quantity === '' || item.quantity <=0 || item.quantity === undefined || item.itemValue === ''|| item.itemValue <=0 ) {
+                    || item.quantity === '' ||  item.quantity <= 0 || item.quantity === undefined || item.itemValue === '' || item.itemValue <= 0) {
                     instance.errors[index] = {
                         item: item.item === '' ? 'Item is required' : '',
                         itemCode: item.itemCode === '' ? 'item Code is required' : '',
-                        location: item.location === '' ? 'location  is required' : '',
-                        quantity: (item.quantity === '' ||item.quantity <=0 ) ? 'quantity  is required' : '',
-                        itemValue: (item.itemValue === '' ||item.itemValue <=0)? 'item Value  is required' : '',
+                        unitPrice: item.unitPrice === '' ? 'Unit Price is required' : '',
+                        quantity: (item.quantity === '' || item.quantity <=0) ? 'quantity is required' : '',
+                        itemValue: (item.itemValue === ''|| item.itemValue <=0) ? 'item value  is required' : '',
 
                     };
                 }
@@ -363,22 +422,23 @@ export default {
         },
         onSubmit() {
             this.checkFieldValue();
+            var returnData = $('#return').prop('checked');
             if (this.errors.length === 0) {
                 this.$store.commit('submitButtonLoadingStatus', true);
-                let url = '';
+                var  submitUrl = '';
                 if (this.actionType === 'add') {
-                    url = 'production/add';
+                    submitUrl = 'sales/add';
                 }
-                // if (this.returnVal === 'Y') {
-                //     url = 'production/return';
-                // }
-                else {
-                    url = 'production/update';
+                if(returnData && this.actionType === 'edit' ){
+                    submitUrl = 'purchase/return';
                 }
-                this.axiosPost(url, {
-                    production_code: this.production_code,
-                    production_date: this.production_date,
+                if(!returnData && this.actionType === 'edit' ){
+                    submitUrl = 'purchase/update';
+                }
+                this.axiosPost(submitUrl, {
+                    sales_date: this.sales_date,
                     reference: this.reference,
+                    customerTypeVal: this.customerTypeVal,
                     categoryType: this.categoryType,
                     details: this.fields,
                 }, (response) => {
