@@ -31,11 +31,13 @@ class SalesController extends Controller
             $data['CustomerCode'] = $single_data->CustomerCode;
             array_push($finalCustomer,$data);
         }
+        $allStock = StockBatch::select('ItemCode',DB::raw("SUM(BatchQty) as stock"))->groupBy('ItemCode')->get();
 
         return response()->json([
             'status' => 'success',
             'category' => ItemsCategory::all(),
             'customer' => $finalCustomer,
+            'allStock' => $allStock,
             'locations' => Location::all(),
         ]);
     }
@@ -84,13 +86,22 @@ class SalesController extends Controller
         ]);
     }
 
+    //Check Stock
+    public function getCategoryWiseItemStock(Request $request){
+
+        $totalStock =  StockBatch::select(DB::raw("SUM(BatchQty) as stock"))->where('ItemCode',$request->ItemCode)->groupBy('ItemCode')->first();
+        $totalStock = floatval($totalStock->stock);
+        return response()->json([
+            'status' => 'success',
+            'totalStock' => $totalStock,
+        ]);
+    }
+
     //Store Sales
     //Store Purchase
     public function store(Request $request){
-        dd($request);
         $validator = Validator::make($request->all(), [
             'sales_date' => 'required',
-            'reference' => 'required',
             'categoryType' => 'required',
             'customerTypeVal' => 'required',
             'details' => 'required',
@@ -129,28 +140,22 @@ class SalesController extends Controller
                     $dataSalesDetails->save();
 
                     //Data insert into Stock Batch
-                    $existingStockTable = StockBatch::where('ItemCode', $singleData['item']['ItemCode'])->where('LocationCode',$singleData['location']['LocationCode'])->first();
-                    if($existingStockTable){
-                        $existingBatchQty = $existingStockTable->BatchQty;
-                        $existingStockValue = $existingStockTable->StockValue;
-                        StockBatch::where('ItemCode', $singleData['item']['ItemCode'])->where('LocationCode','L0001')->update([
-                            'BatchQty'=>$existingBatchQty - $singleData['quantity'],
-                            'StockValue'=>$existingStockValue - $singleData['quantity'],
-                        ]);
-                    }
-                    else{
-                        $stockBatch= new StockBatch();
-                        $stockBatch->ItemCode = $singleData['item']['ItemCode'];
-                        $stockBatch->LocationCode = $singleData['location']['LocationCode'];;
-                        $stockBatch->BatchQty = $singleData['quantity'];
-                        $stockBatch->StockValue =  $singleData['itemValue'];
-                        $stockBatch->save();
+                    $existingStockTable = StockBatch::where('ItemCode', $singleData['item']['ItemCode'])->where('LocationCode',$singleData['location']['LocationCode'])->orderBy('ItemCode','desc')->get();
+                    foreach ($existingStockTable as $checkStock){
+                        $existingBatchQty = $checkStock->BatchQty;
+                        $existingStockValue = $checkStock->StockValue;
+                        if($checkStock->BatchQty > $singleData['quantity']){
+                            StockBatch::where('ItemCode', $singleData['item']['ItemCode'])->where('LocationCode',$singleData['location']['LocationCode'])->update([
+                                'BatchQty'=>$existingBatchQty - $singleData['quantity'],
+                                'StockValue'=>$existingStockValue - $singleData['itemValue'],
+                            ]);
+                        }
                     }
                 }
                 DB::commit();
                 return [
                     'status' => 'success',
-                    'message' => 'Purchase Created Successfully'
+                    'message' => 'Sales Created Successfully'
                 ];
 
             } catch (\Exception $exception) {
@@ -160,5 +165,43 @@ class SalesController extends Controller
                 ], 500);
             }
         }
+    }
+
+    public function getSalesInfo($salesCode){
+
+        $singleSales =  SalesMaster::join('SalesDetails', 'SalesDetails.SalesCode', 'SalesMaster.SalesCode')
+            ->join('ItemsCategory','ItemsCategory.CategoryCode','SalesMaster.CategoryCode')
+            ->join('Items',function ($q) {
+                $q->on('Items.ItemCode','SalesDetails.ItemCode');
+            })
+            ->join('Customer','Customer.CustomerCode','SalesMaster.CustomerCode')
+            ->where('SalesMaster.SalesCode',$salesCode)
+            ->select(
+                'SalesMaster.SalesCode',
+                DB::raw("convert(varchar(10),SalesMaster.SalesDate,23) as SalesDate"),
+                'SalesMaster.Reference',
+                'SalesMaster.CategoryCode',
+                'ItemsCategory.CategoryName',
+                'Customer.CustomerName',
+                'Customer.CustomerCode',
+                DB::raw("(CASE WHEN Customer.CustomerCode IS NOT NULL THEN (Customer.CustomerCode +'-'+Customer.CustomerName) END) AS CustomerWithCode"),
+                'SalesMaster.Returned',
+                DB::raw("convert(varchar(10),SalesMaster.PrepareDate,23) as PrepareDate"),
+
+
+                'SalesDetails.ItemCode',
+                'SalesDetails.LocationCode',
+                'SalesDetails.UnitPrice',
+                'SalesDetails.Quantity',
+                'SalesDetails.Value',
+                'Items.ItemName'
+
+            )
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'SalesInfo' => $singleSales
+        ], 200);
     }
 }

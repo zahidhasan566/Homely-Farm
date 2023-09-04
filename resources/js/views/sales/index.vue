@@ -31,7 +31,7 @@ export default {
             tableOptions: {
                 source: 'sales/list',
                 search: true,
-                slots: [6],
+                slots: [8],
                // hideColumn: ['RoleID','UserId'],
                 slotsName: ['action'],
                 sortable: [2],

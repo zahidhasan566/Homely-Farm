@@ -25,16 +25,13 @@
                                         </ValidationProvider>
                                     </div>
                                     <div class="col-12 col-md-6">
-                                        <ValidationProvider name="Reference" mode="eager" rules="required"
-                                                            v-slot="{ errors }">
                                             <div class="form-group">
-                                                <label for="name">Reference <span class="error">*</span></label>
+                                                <label for="name">Reference</label>
                                                 <input type="text" class="form-control"
                                                        :class="{'error-border': errors[0]}" id="Reference"
                                                        v-model="reference" name="staff-name" placeholder="Reference">
                                                 <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
-                                        </ValidationProvider>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <ValidationProvider name="UserType" mode="eager" rules="required"
@@ -206,8 +203,8 @@ export default {
                         'LocationCode': 'L0001',
                         'LocationName': 'Default'
                     },
-                    quantity: '',
-                    itemValue: '',
+                    quantity: 0,
+                    itemValue: 0,
                 }
             ],
             errors: [],
@@ -296,8 +293,8 @@ export default {
                     'LocationCode': 'L0001',
                     'LocationName': 'Default'
                 },
-                quantity: '',
-                itemValue: '',
+                quantity: 0,
+                itemValue: 0,
             });
         },
         removeRow(id) {
@@ -349,13 +346,13 @@ export default {
             let instance = this;
             this.fields.forEach(function (item, index) {
                 if (item.item === '' || item.itemCode === '' || item.location === ''
-                    || item.quantity === '' || item.quantity <=0 || item.quantity === undefined || item.itemValue === ''|| item.itemValue <=0 ) {
+                    || item.quantity === '' || item.quantity <=0 || item.quantity === undefined || item.itemValue === ''|| item.itemValue <0 ) {
                     instance.errors[index] = {
                         item: item.item === '' ? 'Item is required' : '',
                         itemCode: item.itemCode === '' ? 'item Code is required' : '',
                         location: item.location === '' ? 'location  is required' : '',
                         quantity: (item.quantity === '' ||item.quantity <=0 ) ? 'quantity  is required' : '',
-                        itemValue: (item.itemValue === '' ||item.itemValue <=0)? 'item Value  is required' : '',
+                        itemValue: (item.itemValue === '' ||item.itemValue <0)? 'item Value  is required' : '',
 
                     };
                 }

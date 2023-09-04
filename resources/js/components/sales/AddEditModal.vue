@@ -25,16 +25,14 @@
                                         </ValidationProvider>
                                     </div>
                                     <div class="col-12 col-md-6">
-                                        <ValidationProvider name="Reference" mode="eager" rules="required"
-                                                            v-slot="{ errors }">
                                             <div class="form-group">
-                                                <label for="name">Reference <span class="error">*</span></label>
+                                                <label for="name">Reference</label>
                                                 <input type="text" class="form-control"
                                                        :class="{'error-border': errors[0]}" id="Reference"
                                                        v-model="reference" name="staff-name" placeholder="Reference">
                                                 <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
-                                        </ValidationProvider>
+
                                     </div>
                                     <div class="col-12 col-md-4">
                                         <ValidationProvider name="UserType" mode="eager" rules="required"
@@ -113,6 +111,7 @@
                                                 <th>Item <span class="required-field">*</span></th>
                                                 <th>Item Code<span class="required-field">*</span></th>
                                                 <th>Location<span class="required-field">*</span></th>
+                                                <th>Stock</th>
                                                 <th>Unit Price <span class="required-field">*</span></th>
                                                 <th>Quantity<span class="required-field">*</span></th>
                                                 <th>Value<span class="required-field">*</span></th>
@@ -154,6 +153,14 @@
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].location !== undefined">{{
                                                             errors[index].location
+                                                        }}</span>
+                                                </td>
+                                                <td>
+                                                    <input type="text"  class="form-control"  @input="setValue(index)" readonly
+                                                           v-model="field.stock" placeholder="stock" min="1">
+                                                    <span class="error"
+                                                          v-if="errors[index] !== undefined && errors[index].stock !== undefined">{{
+                                                            errors[index].stock
                                                         }}</span>
                                                 </td>
                                                 <td>
@@ -229,9 +236,10 @@ export default {
             sales_date:'',
             items: [],
             customers:[],
-            purchaseCode:'',
+            salesCode:'',
             locations: [],
             reference: '',
+            allStock: [],
             purchaseType:[{
                 'PurchaseTypeCode': 'direct',
                 'PurchaseTypeName': 'direct',
@@ -252,9 +260,10 @@ export default {
                         'LocationCode': 'L0001',
                         'LocationName': 'Default'
                     },
-                    unitPrice:'',
-                    quantity: '',
-                    itemValue: '',
+                    unitPrice:0,
+                    quantity: 0,
+                    itemValue: 0,
+                    stock:0
                 }
             ],
             errors: [],
@@ -270,7 +279,7 @@ export default {
         bus.$on('add-edit-sales', (row) => {
             if (row) {
                 let instance = this;
-                this.axiosGet('purchase/get-purchase-info/' + row.PurchaseCode, function (response) {
+                this.axiosGet('sales/get-sales-info/' + row.SalesCode, function (response) {
                     console.log(response)
                     instance.title = 'Update Sales';
                     instance.buttonText = "Update";
@@ -278,38 +287,55 @@ export default {
                     instance.actionType = 'edit';
                     instance.fields.splice(0, 1)
                     instance.getData();
-                    var purchaseInfo = response.PurchaseInfo;
+                    var salesInfo = response.SalesInfo;
 
                     //Master
-                    instance.purchaseCode = response.PurchaseInfo[0].PurchaseCode
-                    instance.purchase_Date = response.PurchaseInfo[0].PurchaseDate
-                    instance.updateCategoryCode = response.PurchaseInfo[0].CategoryCode
-                    instance.reference = response.PurchaseInfo[0].Reference
+                    instance.salesCode = response.SalesInfo[0].SalesCode
+                    instance.sales_date = response.SalesInfo[0].SalesDate
+                    instance.updateCategoryCode = response.SalesInfo[0].CategoryCode
+                    instance.reference = response.SalesInfo[0].Reference
 
                     instance.categoryType=[{
-                        'Active': purchaseInfo[0].Reference,
-                        'CategoryCode': purchaseInfo[0].CategoryCode,
-                        'CategoryName': purchaseInfo[0].CategoryName
+                        'Active': salesInfo[0].Reference,
+                        'CategoryCode': salesInfo[0].CategoryCode,
+                        'CategoryName': salesInfo[0].CategoryName
                     }]
-                    instance.purchaseTypeVal=[{
-                        'PurchaseTypeCode': purchaseInfo[0].PurchaseType,
-                        'PurchaseTypeName': purchaseInfo[0].PurchaseType,
+                    instance.customerTypeVal=[{
+                        'CustomerWithCode': salesInfo[0].CustomerWithCode,
+                        'CustomerCode': salesInfo[0].CustomerCode,
                     }]
+                    // instance.purchaseTypeVal=[{
+                    //     'PurchaseTypeCode': purchaseInfo[0].PurchaseType,
+                    //     'PurchaseTypeName': purchaseInfo[0].PurchaseType,
+                    // }]
 
                     //Details
-                    purchaseInfo.forEach(function (item,index) {
+                    salesInfo.forEach(function (item,index) {
+                       let itemCode2 = item.ItemCode;
+                       // let test = (instance.allStock).find(function (item2){
+                       //     return item2 ===itemCode2;
+                       // })
+                        //console.log(test)
+                       // instance.checkUpdateStock(itemCode2,index)
                         instance.fields.push({
                             item: {
                                 'ItemName': item.ItemName,
                                 'ItemCode': item.ItemCode,
                             },
                             itemCode: item.ItemCode,
+                            location: {
+                                'Active': 'Y',
+                                'LocationCode': 'L0001',
+                                'LocationName': 'Default'
+                            },
                             unitPrice: item.UnitPrice,
                             quantity: item.Quantity,
                             itemValue: item.Value,
                         })
+                        console.log(instance.allStock)
                     });
                     instance.getItemByCategory();
+
                 }, function (error) {
 
                 });
@@ -328,7 +354,7 @@ export default {
         })
     },
     destroyed() {
-        bus.$off('add-edit-production')
+        bus.$off('add-edit-sales')
     },
     methods: {
         closeModal() {
@@ -343,9 +369,10 @@ export default {
                     'LocationCode': 'L0001',
                     'LocationName': 'Default'
                 },
-                unitPrice:'',
-                quantity: '',
-                itemValue: '',
+                unitPrice:0,
+                quantity: 0,
+                itemValue: 0,
+                stock:0
             });
         },
         removeRow(id) {
@@ -357,6 +384,8 @@ export default {
         getData() {
             let instance = this;
             this.axiosGet('sales/supporting-data', function (response) {
+                console.log(response.allStock)
+                instance.allStock = response.allStock;
                 instance.category = response.category;
                 instance.customers = response.customer;
             }, function (error) {
@@ -394,13 +423,41 @@ export default {
         setItemCode(index) {
             let instance = this;
             instance.fields[index].itemCode = instance.fields[index].item.ItemCode;
+            this.checkStock((instance.fields[index].item.ItemCode),index);
+        },
+        checkUpdateStock(itemCode){
+
+            return itemCode;
+        },
+        checkStock(itemCode,index){
+            let instance = this;
+
+            let url = 'sales/category-wise-item-stock';
+            this.axiosPost(url, {
+                ItemCode:itemCode ,
+            }, (response) => {
+                console.log(response.totalStock)
+                instance.fields[index].stock = response.totalStock;
+            }, (error) => {
+                this.errorNoti(error);
+
+            })
+
         },
         setValue(index){
+
             let instance = this;
-            if( instance.fields[index].unitPrice && instance.fields[index].quantity){
-                let currentPrice  = instance.fields[index].unitPrice;
-                let currentQuantity  = instance.fields[index].quantity;
+            let currentPrice  = instance.fields[index].unitPrice;
+            let currentQuantity  = instance.fields[index].quantity;
+            let currentStock  = instance.fields[index].stock;
+
+            console.log(typeof (currentStock) );
+            if( currentPrice && currentQuantity){
                 instance.fields[index].itemValue = currentPrice*currentQuantity ;
+            }
+            //compare with stock
+            if(currentQuantity > currentStock){
+                this.errorNoti('Stock is not available');
             }
         },
         checkFieldValue() {
@@ -416,6 +473,11 @@ export default {
                         quantity: (item.quantity === '' || item.quantity <=0) ? 'quantity is required' : '',
                         itemValue: (item.itemValue === ''|| item.itemValue <=0) ? 'item value  is required' : '',
 
+                    };
+                }
+                if(item.quantity> item.stock){
+                    instance.errors[index]={
+                      stock: item.stock < item.quantity ? 'Stock is not available':'',
                     };
                 }
             });
