@@ -96,18 +96,18 @@ class ProductionController extends Controller
                     $productionDetails = new ProductionDetails();
                     $productionDetails->ProductionCode = $productionCode;
                     $productionDetails->ItemCode = $singleData['itemCode'];
-                    $productionDetails->LocationCode = $singleData['location']['LocationCode'];
+                    $productionDetails->LocationCode = $singleData['LocationCode'];
                     $productionDetails->Quantity = $singleData['quantity'];
                     $productionDetails->Value = $singleData['itemValue'];
                     $productionDetails->save();
 
                     //Data insert into Stock Batch
-                    $checkExisting =StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['location']['LocationCode'])->orderBy('ItemCode','desc')->first();
+                    $checkExisting =StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['LocationCode'])->orderBy('ItemCode','desc')->first();
                     if($checkExisting){
                         $existingReceiveQty = $checkExisting->ReceiveQty;
                         $existingBatchQty = $checkExisting->BatchQty;
                         $existingStockValue = $checkExisting->StockValue;
-                            StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['location']['LocationCode'])->update([
+                            StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['LocationCode'])->update([
                                 'ReceiveQty'=>$existingReceiveQty + $singleData['quantity'],
                                 'BatchQty'=>$existingBatchQty + $singleData['quantity'],
                                 'StockValue'=>$existingBatchQty + $singleData['quantity'],
@@ -117,7 +117,7 @@ class ProductionController extends Controller
                     else{
                         $stockBatch= new StockBatch();
                         $stockBatch->ItemCode = $singleData['itemCode'];
-                        $stockBatch->LocationCode = $singleData['location']['LocationCode'];
+                        $stockBatch->LocationCode = $singleData['LocationCode'];
                         $stockBatch->ReceiveQty = $singleData['quantity'];
                         $stockBatch->BatchQty = $singleData['quantity'];
                         $stockBatch->StockValue = $singleData['quantity'];
@@ -244,7 +244,7 @@ class ProductionController extends Controller
                         else{
                             $stockBatch= new StockBatch();
                             $stockBatch->ItemCode = $singleData['itemCode'];
-                            $stockBatch->LocationCode = $singleData['location']['LocationCode'];
+                            $stockBatch->LocationCode = $singleData['LocationCode'];
                             $stockBatch->ReceiveQty = $singleData['quantity'];
                             $stockBatch->BatchQty = $singleData['quantity'];
                             $stockBatch->StockValue = $singleData['quantity'];
@@ -260,7 +260,7 @@ class ProductionController extends Controller
                         $productionDetails= new ProductionDetails();
                         $productionDetails->ProductionCode = $dataProduction->ProductionCode;
                         $productionDetails->ItemCode = $singleData['itemCode'];
-                        $productionDetails->LocationCode = $singleData['location']['LocationCode'];
+                        $productionDetails->LocationCode = $singleData['LocationCode'];
                         $productionDetails->Quantity = $singleData['quantity'];
                         $productionDetails->Value = $singleData['itemValue'];
                         $productionDetails->save();
