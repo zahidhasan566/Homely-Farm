@@ -25,16 +25,13 @@
                                         </ValidationProvider>
                                     </div>
                                     <div class="col-12 col-md-6">
-                                        <ValidationProvider name="Reference" mode="eager" rules="required"
-                                                            v-slot="{ errors }">
                                             <div class="form-group">
-                                                <label for="name">Reference <span class="error">*</span></label>
+                                                <label for="name">Reference </label>
                                                 <input type="text" class="form-control"
                                                        :class="{'error-border': errors[0]}" id="Reference"
                                                        v-model="reference" name="staff-name" placeholder="Reference">
                                                 <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
-                                        </ValidationProvider>
                                     </div>
                                     <div class="col-12 col-md-4">
                                         <ValidationProvider name="UserType" mode="eager" rules="required"
@@ -64,24 +61,24 @@
                                         </ValidationProvider>
 
                                     </div>
-                                    <div class="col-12 col-md-4">
-                                        <ValidationProvider name="purchaseTypeVal" mode="eager" rules="required"
-                                                            v-slot="{ errors }">
-                                            <div class="form-group">
-                                                <label for="user-type">Purchase Type <span class="error">*</span></label>
-                                                <multiselect v-model="purchaseTypeVal" :options="purchaseType"
-                                                             :multiple="false"
-                                                             :close-on-select="true"
-                                                             :clear-on-select="false" :preserve-search="true"
-                                                             placeholder="Select Purchase Type"
-                                                             label="PurchaseTypeCode" track-by="PurchaseTypeName">
+<!--                                    <div class="col-12 col-md-4">-->
+<!--                                        <ValidationProvider name="purchaseTypeVal" mode="eager" rules="required"-->
+<!--                                                            v-slot="{ errors }">-->
+<!--                                            <div class="form-group">-->
+<!--                                                <label for="user-type">Purchase Type <span class="error">*</span></label>-->
+<!--                                                <multiselect v-model="purchaseTypeVal" :options="purchaseType"-->
+<!--                                                             :multiple="false"-->
+<!--                                                             :close-on-select="true"-->
+<!--                                                             :clear-on-select="false" :preserve-search="true"-->
+<!--                                                             placeholder="Select Purchase Type"-->
+<!--                                                             label="PurchaseTypeCode" track-by="PurchaseTypeName">-->
 
-                                                </multiselect>
-                                                <span class="error-message"> {{ errors[0] }}</span>
-                                            </div>
-                                        </ValidationProvider>
+<!--                                                </multiselect>-->
+<!--                                                <span class="error-message"> {{ errors[0] }}</span>-->
+<!--                                            </div>-->
+<!--                                        </ValidationProvider>-->
 
-                                    </div>
+<!--                                    </div>-->
                                     <div class="col-12 col-md-4" v-if="actionType==='edit'">
                                             <div class="form-group">
                                                 <label for="user-type">Return<span class="error">*</span></label>
@@ -230,9 +227,9 @@ export default {
                 {
                     item: '',
                     itemCode: '',
-                    unitPrice:'',
-                    quantity: '',
-                    itemValue: '',
+                    unitPrice:0,
+                    quantity: 0,
+                    itemValue: 0,
                 }
             ],
             errors: [],
@@ -306,7 +303,7 @@ export default {
         })
     },
     destroyed() {
-        bus.$off('add-edit-production')
+        bus.$off('add-edit-purchase')
     },
     methods: {
         closeModal() {
@@ -316,9 +313,9 @@ export default {
             this.fields.push({
                 item: '',
                 itemCode: '',
-                unitPrice:'',
-                quantity: '',
-                itemValue: '',
+                unitPrice:0,
+                quantity: 0,
+                itemValue: 0,
             });
         },
         removeRow(id) {

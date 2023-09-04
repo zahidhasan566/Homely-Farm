@@ -69,9 +69,7 @@ class PurchaseController extends Controller
     public function store(Request $request){
         $validator = Validator::make($request->all(), [
             'purchase_date' => 'required',
-            'reference' => 'required',
             'categoryType' => 'required',
-            'purchaseTypeVal' => 'required',
             'details' => 'required',
         ]);
         if ($validator->fails()) {
@@ -89,7 +87,7 @@ class PurchaseController extends Controller
                 $dataPurchase->PurchaseDate = $request->purchase_date;
                 $dataPurchase->Reference = $request->reference;
                 $dataPurchase->CategoryCode =$request->categoryType['CategoryCode'];
-                $dataPurchase->PurchaseType =$request->purchaseTypeVal['PurchaseTypeCode'];
+                //$dataPurchase->PurchaseType =$request->purchaseTypeVal['PurchaseTypeCode'];
                 $dataPurchase->Returned = 'N';
                 $dataPurchase->PrepareDate = Carbon::now()->format('Y-m-d H:i:s');;
                 $dataPurchase->PrepareBy = Auth::user()->Id;
@@ -179,9 +177,7 @@ class PurchaseController extends Controller
         if($request->purchaseCode){
             $validator = Validator::make($request->all(), [
                 'purchase_date' => 'required',
-                'reference' => 'required',
                 'categoryType' => 'required',
-                'purchaseTypeVal' => 'required',
                 'details' => 'required',
             ]);
             if ($validator->fails()) {

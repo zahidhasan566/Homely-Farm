@@ -68,7 +68,6 @@ class ProductionController extends Controller
     public function store(Request $request){
         $validator = Validator::make($request->all(), [
             'production_date' => 'required',
-            'reference' => 'required',
             'categoryType' => 'required',
             'details' => 'required',
         ]);
@@ -104,14 +103,24 @@ class ProductionController extends Controller
                     $productionDetails->save();
 
                     //Data insert into Stock Batch
-                    $stockBatch= new StockBatch();
-                    $stockBatch->ItemCode = $singleData['item']['ItemCode'];
-                    $stockBatch->LocationCode = $singleData['location']['LocationCode'];
-                    $stockBatch->BatchQty = $singleData['quantity'];
-                    $stockBatch->StockValue =  $singleData['itemValue'];
-                    $stockBatch->save();
+                    $checkExisting =StockBatch::where('ItemCode', $singleData['item']['ItemCode'])->where('LocationCode',$singleData['location']['LocationCode'])->orderBy('ItemCode','desc')->first();
+                    if($checkExisting){
+                        $existingBatchQty = $checkExisting->BatchQty;
+                        $existingStockValue = $checkExisting->StockValue;
+                            StockBatch::where('ItemCode', $singleData['item']['ItemCode'])->where('LocationCode',$singleData['location']['LocationCode'])->update([
+                                'BatchQty'=>$existingBatchQty + $singleData['quantity'],
+                                'StockValue'=>$existingStockValue + $singleData['itemValue'],
+                            ]);
 
-
+                    }
+                    else{
+                        $stockBatch= new StockBatch();
+                        $stockBatch->ItemCode = $singleData['item']['ItemCode'];
+                        $stockBatch->LocationCode = $singleData['location']['LocationCode'];
+                        $stockBatch->BatchQty = $singleData['quantity'];
+                        $stockBatch->StockValue =  $singleData['itemValue'];
+                        $stockBatch->save();
+                    }
 
                 }
                 DB::commit();
@@ -179,7 +188,6 @@ class ProductionController extends Controller
         if($request->production_code){
             $validator = Validator::make($request->all(), [
                 'production_date' => 'required',
-                'reference' => 'required',
                 'categoryType' => 'required',
                 'details' => 'required',
             ]);
