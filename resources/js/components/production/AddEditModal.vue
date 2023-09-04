@@ -28,16 +28,15 @@
                                             <div class="form-group">
                                                 <label for="name">Reference</label>
                                                 <input type="text" class="form-control"
-                                                       :class="{'error-border': errors[0]}" id="Reference"
+                                                        id="Reference"
                                                        v-model="reference" name="staff-name" placeholder="Reference">
-                                                <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
                                     </div>
                                     <div class="col-12 col-md-6">
-                                        <ValidationProvider name="UserType" mode="eager" rules="required"
+                                        <ValidationProvider name="Category" mode="eager" rules="required"
                                                             v-slot="{ errors }">
                                             <div class="form-group">
-                                                <label for="user-type">Category <span class="error">*</span></label>
+                                                <label for="Category">Category <span class="error">*</span></label>
                                                 <multiselect v-model="categoryType" :options="category" v-if="actionType==='add'"
                                                              :multiple="false"
                                                              @input="getItemByCategory"
@@ -59,6 +58,14 @@
                                                 <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
                                         </ValidationProvider>
+                                    </div>
+                                    <div class="col-12 col-md-4" v-if="actionType==='edit'">
+                                        <div class="form-group">
+                                            <label for="user-type">Return</label>
+                                            <br>
+                                            <input type="checkbox" value="Y" id="return"> Return
+                                        </div>
+
 
                                     </div>
 
@@ -83,7 +90,7 @@
                                             <tr>
                                                 <th>Item <span class="required-field">*</span></th>
                                                 <th>Item Code<span class="required-field">*</span></th>
-                                                <th>Location <span class="required-field">*</span></th>
+                                                <th>Pac Size<span class="required-field">*</span></th>
                                                 <th>Quantity<span class="required-field">*</span></th>
                                                 <th>Value<span class="required-field">*</span></th>
                                                 <th>Action</th>
@@ -92,7 +99,7 @@
                                             <tbody>
                                             <tr v-for="(field,index) in fields" :key="index">
                                                 <td>
-                                                    <select class="form-control" :class="{'error-border': errors[0]}" id="item"
+                                                    <select class="form-control" :class="{'error-border': errors[0]}"
                                                             @change="setItemCode($event,index)"
                                                             v-model="field.itemCode" name="item">
                                                         <option v-for="(item,index) in items"
@@ -122,7 +129,12 @@
 
                                                 </td>
                                                 <td>
-                                                    <select class="form-control" :class="{'error-border': errors[0]}" id="item"
+                                                    <input readonly type="text"  class="form-control"
+                                                           v-model="field.uom" placeholder="Pack Size" min="0">
+
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" :class="{'error-border': errors[0]}"
                                                             v-model="field.LocationCode" name="item">
                                                         <option v-for="(item,index) in locations"
                                                                 :key="index"
@@ -155,10 +167,6 @@
                                                 <td>
                                                     <input type="text" class="form-control"
                                                            v-model="field.itemValue" placeholder="Value" min="1">
-                                                    <span class="error"
-                                                          v-if="errors[index] !== undefined && errors[index].itemValue !== undefined">{{
-                                                            errors[index].itemValue
-                                                        }}</span>
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-danger btn-sm"
@@ -220,6 +228,7 @@ export default {
                         'LocationCode': 'L0001',
                         'LocationName': 'Default'
                     },
+                    uom:'',
                     quantity: 0,
                     itemValue: 0,
                     LocationCode:''
@@ -275,7 +284,8 @@ export default {
                             },
                             quantity: item.Quantity,
                             itemValue: item.Value,
-                            LocationCode: item.LocationCode
+                            LocationCode: item.LocationCode,
+                            uom: item.UOM
                         })
                     });
                     instance.getItemByCategory();
@@ -293,7 +303,6 @@ export default {
                 this.getData();
             }
             $("#add-edit-dept").modal("toggle");
-            // $(".error-message").html("");
         })
     },
     destroyed() {
@@ -314,7 +323,8 @@ export default {
                 },
                 quantity: 0,
                 itemValue: 0,
-                LocationCode:''
+                LocationCode:'',
+                uom:''
             });
         },
         removeRow(id) {
@@ -351,6 +361,7 @@ export default {
                 CategoryCode:categoryCode ,
             }, (response) => {
                 instance.items = response.items;
+                console.log(instance.items)
                 instance.locations = response.locations;
             }, (error) => {
                 this.errorNoti(error);
@@ -358,24 +369,24 @@ export default {
             })
         },
         setItemCode(e, key) {
+            let item = this.items.find((row) => {
+                return row.ItemCode === e.target.value
+            })
             var itemCode = e.target.value;
             let instance = this;
-            console.log(key)
             instance.fields[key].itemCode = e.target.value;
-            // console.log(e.target.value)
-            // instance.fields[index].itemCode = instance.fields[index].item.ItemCode;
+            instance.fields[key].uom = item ? item.UOM : '';
         },
         checkFieldValue() {
             this.errors = [];
             let instance = this;
             this.fields.forEach(function (item, index) {
                 if (item.itemCode === '' || item.location === ''
-                    || item.quantity === '' || item.quantity <=0 || item.quantity === undefined || item.itemValue === ''|| item.itemValue <0 ) {
+                    || item.quantity === '' || item.quantity <=0 || item.quantity === undefined ) {
                     instance.errors[index] = {
                         itemCode: item.itemCode === '' ? 'item Code is required' : '',
                         location: item.location === '' ? 'location  is required' : '',
                         quantity: (item.quantity === '' ||item.quantity <=0 ) ? 'quantity  is required' : '',
-                        itemValue: (item.itemValue === '' ||item.itemValue <0)? 'item Value  is required' : '',
 
                     };
                 }
@@ -386,16 +397,19 @@ export default {
             if (this.errors.length === 0) {
                 this.$store.commit('submitButtonLoadingStatus', true);
                 let url = '';
+                var returnData = $('#return').prop('checked');
+                console.log(returnData)
+                var  submitUrl = '';
                 if (this.actionType === 'add') {
-                    url = 'production/add';
+                    submitUrl = 'production/add';
                 }
-                // if (this.returnVal === 'Y') {
-                //     url = 'production/return';
-                // }
-                else {
-                    url = 'production/update';
+                if(returnData && this.actionType === 'edit' ){
+                    submitUrl = 'production/return';
                 }
-                this.axiosPost(url, {
+                if(!returnData && this.actionType === 'edit' ){
+                    submitUrl = 'production/update';
+                }
+                this.axiosPost(submitUrl, {
                     production_code: this.production_code,
                     production_date: this.production_date,
                     reference: this.reference,

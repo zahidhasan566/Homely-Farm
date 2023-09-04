@@ -8,6 +8,8 @@ use App\Models\ItemsCategory;
 use App\Models\Location;
 use App\Models\ProductionDetails;
 use App\Models\ProductionMaster;
+use App\Models\PurchaseDetails;
+use App\Models\PurchaseMaster;
 use App\Models\StockBatch;
 use App\Traits\CodeGeneration;
 use Carbon\Carbon;
@@ -172,6 +174,7 @@ class ProductionController extends Controller
                 'ItemsCategory.CategoryName',
                 'ItemsCategory.Active',
                 'Items.ItemName',
+                'Items.UOM',
                 'Location.LocationName',
 
             )
@@ -202,7 +205,7 @@ class ProductionController extends Controller
                     $dataProduction = ProductionMaster::where('ProductionCode',$request->production_code)->first();
                     $dataProduction->ProductionDate = $request->production_date;
                     $dataProduction->Reference = $request->reference;
-                    $dataProduction->Returned = 'Y';
+                    $dataProduction->Returned = 'N';
                     $dataProduction->EditDate = Carbon::now()->format('Y-m-d H:i:s');;
                     $dataProduction->EditBy = Auth::user()->Id;
                     $dataProduction->save();
@@ -282,6 +285,52 @@ class ProductionController extends Controller
             }
         }
 
+    }
+
+    //Return Product
+    public function returnProducts(Request $request){
+        if($request->production_code){
+            try {
+                DB::beginTransaction();
+
+                //Data Insert PurchaseMaster
+                $dataProduction = ProductionMaster::where('ProductionCode',$request->production_code)->first();
+                $dataProduction->Returned = 'Y';
+                $dataProduction->EditDate = Carbon::now()->format('Y-m-d H:i:s');;
+                $dataProduction->EditBy = Auth::user()->Id;
+                $dataProduction->save();
+
+
+                $existingProductionDetails =  ProductionDetails::where('ProductionCode',$request->production_code)->get();
+                foreach ($existingProductionDetails as $key=>$singleData){
+
+
+                    //Data update  into Stock Batch
+                    $existingStockTable = StockBatch::where('ItemCode', $singleData->ItemCode)->where('LocationCode',$singleData['LocationCode'])->first();
+                    if($existingStockTable){
+                        $existingReceiveQty = $existingStockTable->ReceiveQty;
+                        $existingBatchQty = $existingStockTable->BatchQty;
+                        $existingStockValue = $existingStockTable->StockValue;
+                        StockBatch::where('ItemCode', $singleData->ItemCode)->where('LocationCode',$singleData['LocationCode'])->update([
+                            'ReceiveQty'=>floatval($existingBatchQty) - floatval($singleData->Quantity),
+                            'BatchQty'=>floatval($existingBatchQty) - floatval($singleData->Quantity),
+                            'StockValue'=>floatval($existingStockValue) - floatval($singleData->Quantity),
+                        ]);
+                    }
+                }
+                DB::commit();
+                return [
+                    'status' => 'success',
+                    'message' => 'Production Returned Successfully'
+                ];
+
+            } catch (\Exception $exception) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $exception->getMessage()
+                ], 500);
+            }
+        }
     }
 
 

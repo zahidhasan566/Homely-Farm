@@ -9,7 +9,7 @@
             </div>
         </div>
         <advanced-datatable :options="tableOptions">
-            <template slot="action" slot-scope="row">
+            <template slot="action" slot-scope="row" v-if="row.item.Returned === 'N'">
                 <a href="javascript:" @click="addModal(row.item)"> <i class="ti-pencil-alt">Edit</i></a>
                 <!--        <a href="javascript:" @click="changePassword(row.item.UserId)"> <i class="ti-lock"></i></a>-->
             </template>
