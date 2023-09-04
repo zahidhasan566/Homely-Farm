@@ -82,7 +82,7 @@
                                     </div>
                                     <div class="col-12 col-md-4" v-if="actionType==='edit'">
                                             <div class="form-group">
-                                                <label for="user-type">Return<span class="error">*</span></label>
+                                                <label for="user-type">Return</label>
                                                 <br>
                                                 <input type="checkbox" value="Y" id="return"> Return
                                             </div>

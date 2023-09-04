@@ -28,16 +28,15 @@
                                             <div class="form-group">
                                                 <label for="name">Reference </label>
                                                 <input type="text" class="form-control"
-                                                       :class="{'error-border': errors[0]}" id="Reference"
+                                                       id="Reference"
                                                        v-model="reference" name="staff-name" placeholder="Reference">
-                                                <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
                                     </div>
                                     <div class="col-12 col-md-4">
-                                        <ValidationProvider name="UserType" mode="eager" rules="required"
+                                        <ValidationProvider name="Category" mode="eager" rules="required"
                                                             v-slot="{ errors }">
                                             <div class="form-group">
-                                                <label for="user-type">Category <span class="error">*</span></label>
+                                                <label for="category">Category <span class="error">*</span></label>
                                                 <multiselect v-model="categoryType" :options="category" v-if="actionType==='add'"
                                                              :multiple="false"
                                                              @input="getItemByCategory"
@@ -81,7 +80,7 @@
 <!--                                    </div>-->
                                     <div class="col-12 col-md-4" v-if="actionType==='edit'">
                                             <div class="form-group">
-                                                <label for="user-type">Return<span class="error">*</span></label>
+                                                <label for="user-type">Return</label>
                                                 <br>
                                                 <input type="checkbox" value="Y" id="return"> Return
                                             </div>
@@ -109,6 +108,7 @@
                                             <tr>
                                                 <th>Item <span class="required-field">*</span></th>
                                                 <th>Item Code<span class="required-field">*</span></th>
+                                                <th>Pac Size<span class="required-field">*</span></th>
                                                 <th>Location <span class="required-field">*</span></th>
                                                 <th>Unit Price <span class="required-field">*</span></th>
                                                 <th>Quantity<span class="required-field">*</span></th>
@@ -119,7 +119,7 @@
                                             <tbody>
                                             <tr v-for="(field,index) in fields" :key="index">
                                                 <td>
-                                                    <select class="form-control" :class="{'error-border': errors[0]}" id="item"
+                                                    <select class="form-control" :class="{'error-border': errors[0]}"
                                                             @change="setItemCode($event,index)"
                                                             v-model="field.itemCode" name="item">
                                                         <option v-for="(item,index) in items"
@@ -149,7 +149,12 @@
 
                                                 </td>
                                                 <td>
-                                                    <select class="form-control" :class="{'error-border': errors[0]}" id="item"
+                                                    <input readonly type="text"  class="form-control"
+                                                           v-model="field.uom" placeholder="Pack Size" min="0">
+
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" :class="{'error-border': errors[0]}"
                                                             v-model="field.LocationCode" name="item">
                                                         <option v-for="(item,index) in locations"
                                                                 :key="index"
@@ -251,7 +256,8 @@ export default {
                     unitPrice:0,
                     quantity: 0,
                     itemValue: 0,
-                    LocationCode:''
+                    LocationCode:'',
+                    uom:'',
                 }
             ],
             errors: [],
@@ -304,6 +310,8 @@ export default {
                             unitPrice: item.UnitPrice,
                             quantity: item.Quantity,
                             itemValue: item.Value,
+                            LocationCode: item.LocationCode,
+                            uom: item.UOM
                         })
                     });
                     instance.getItemByCategory();
@@ -338,7 +346,8 @@ export default {
                 unitPrice:0,
                 quantity: 0,
                 itemValue: 0,
-                LocationCode:''
+                LocationCode:'',
+                uom:'',
             });
         },
         removeRow(id) {
@@ -383,9 +392,14 @@ export default {
 
             })
         },
-        setItemCode(index) {
+        setItemCode(e, key) {
+            let item = this.items.find((row) => {
+                return row.ItemCode === e.target.value
+            })
+            var itemCode = e.target.value;
             let instance = this;
-            instance.fields[index].itemCode = instance.fields[index].item.ItemCode;
+            instance.fields[key].itemCode = e.target.value;
+            instance.fields[key].uom = item ? item.UOM : '';
         },
         setValue(index){
             let instance = this;
@@ -400,12 +414,12 @@ export default {
             let instance = this;
             this.fields.forEach(function (item, index) {
                 if ( item.itemCode === '' || item.location === ''
-                    || item.quantity === '' ||  item.quantity <= 0 || item.quantity === undefined || item.itemValue === '' || item.itemValue <= 0) {
+                    || item.quantity === '' ||  item.quantity <= 0 || item.quantity === undefined) {
                     instance.errors[index] = {
                         itemCode: item.itemCode === '' ? 'item Code is required' : '',
                         unitPrice: item.unitPrice === '' ? 'Unit Price is required' : '',
                         quantity: (item.quantity === '' || item.quantity <=0) ? 'quantity is required' : '',
-                        itemValue: (item.itemValue === ''|| item.itemValue <=0) ? 'item value  is required' : '',
+
 
                     };
                 }

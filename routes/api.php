@@ -46,6 +46,7 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('add', [\App\Http\Controllers\Production\ProductionController::class, 'store']);
         Route::get('get-production-info/{productionCode}', [\App\Http\Controllers\Production\ProductionController::class, 'getProductionInfo']);
         Route::post('update', [\App\Http\Controllers\Production\ProductionController::class, 'update']);
+        Route::post('return', [\App\Http\Controllers\Production\ProductionController::class, 'returnProducts']);
      });
 
     //PURCHASE

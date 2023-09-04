@@ -101,6 +101,7 @@ class PurchaseController extends Controller
                     $purchaseDetails = new PurchaseDetails();
                     $purchaseDetails->PurchaseCode = $purchaseCodeCode;
                     $purchaseDetails->ItemCode = $singleData['itemCode'];
+                    $purchaseDetails->LocationCode = $singleData['LocationCode'];
                     $purchaseDetails->unitPrice = $singleData['unitPrice'];
                     $purchaseDetails->Quantity = $singleData['quantity'];
                     $purchaseDetails->Value = $singleData['itemValue'];
@@ -150,6 +151,9 @@ class PurchaseController extends Controller
             ->join('Items',function ($q) {
                 $q->on('Items.ItemCode','PurchaseDetails.ItemCode');
             })
+            ->join('Location',function ($q) {
+                $q->on('Location.LocationCode','PurchaseDetails.LocationCode');
+            })
             ->where('PurchaseMaster.PurchaseCode',$purchaseCode)
             ->select(
                 'PurchaseMaster.PurchaseCode',
@@ -163,11 +167,14 @@ class PurchaseController extends Controller
                 'PurchaseDetails.UnitPrice',
                 'PurchaseDetails.Quantity',
                 'PurchaseDetails.Value',
+                'PurchaseDetails.LocationCode',
 
                 'ItemsCategory.CategoryCode',
                 'ItemsCategory.CategoryName',
                 'ItemsCategory.Active',
-                'Items.ItemName'
+                'Items.ItemName',
+                'Items.UOM',
+                'Location.LocationName',
             )
             ->get();
 
@@ -246,6 +253,7 @@ class PurchaseController extends Controller
                         $purchaseDetails = new PurchaseDetails();
                         $purchaseDetails->PurchaseCode = $dataPurchase->PurchaseCode;
                         $purchaseDetails->ItemCode = $singleData['item']['ItemCode'];
+                        $purchaseDetails->LocationCode = $singleData['LocationCode'];
                         $purchaseDetails->unitPrice = $singleData['unitPrice'];
                         $purchaseDetails->Quantity = $singleData['quantity'];
                         $purchaseDetails->Value = $singleData['itemValue'];
@@ -287,15 +295,15 @@ class PurchaseController extends Controller
                  $existingPurchaseDetails =  PurchaseDetails::where('PurchaseCode',$request->purchaseCode)->get();
 
                  foreach ($existingPurchaseDetails as $key=>$singleData){
-
                      //Data update  into Stock Batch
-                     $existingStockTable = StockBatch::where('ItemCode', $singleData->ItemCode)->where('LocationCode','L0001')->first();
+                     $existingStockTable = StockBatch::where('ItemCode', $singleData->ItemCode)->where('LocationCode',$singleData['LocationCode'])->first();
                      if($existingStockTable){
                          $existingBatchQty = $existingStockTable->BatchQty;
                          $existingStockValue = $existingStockTable->StockValue;
-                         StockBatch::where('ItemCode', $singleData->ItemCode)->where('LocationCode','L0001')->update([
-                             'BatchQty'=>intval($existingBatchQty) - intval($singleData->Quantity),
-                             'StockValue'=>intval($existingStockValue) - intval($singleData->Value),
+                         StockBatch::where('ItemCode', $singleData->ItemCode)->where('LocationCode',$singleData['LocationCode'])->update([
+                             'ReceiveQty'=>floatval($existingBatchQty) - floatval($singleData->Quantity),
+                             'BatchQty'=>floatval($existingBatchQty) - floatval($singleData->Quantity),
+                             'StockValue'=>floatval($existingStockValue) - floatval($singleData->Quantity),
                          ]);
                      }
                  }
