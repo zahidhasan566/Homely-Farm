@@ -314,6 +314,7 @@ export default {
                 },
                 quantity: 0,
                 itemValue: 0,
+                LocationCode:''
             });
         },
         removeRow(id) {
