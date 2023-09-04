@@ -118,15 +118,24 @@
                                             <tbody>
                                             <tr v-for="(field,index) in fields" :key="index">
                                                 <td>
-                                                    <multiselect v-model="field.item" :options="items"
-                                                                 :multiple="false"
-                                                                 @input="setItemCode(index)"
-                                                                 :close-on-select="true"
-                                                                 :clear-on-select="false" :preserve-search="true"
-                                                                 placeholder="Select Category"
-                                                                 label="ItemName" track-by="ItemCode">
+                                                    <select class="form-control" :class="{'error-border': errors[0]}" id="item"
+                                                            @change="setItemCode($event,index)"
+                                                            v-model="field.itemCode" name="item">
+                                                        <option v-for="(item,index) in items"
+                                                                :key="index"
+                                                                :value="item.ItemCode">
+                                                            {{ item.ItemName }}
+                                                        </option>
+                                                    </select>
+<!--                                                    <multiselect v-model="field.item" :options="items"-->
+<!--                                                                 :multiple="false"-->
+<!--                                                                 @input="setItemCode(index)"-->
+<!--                                                                 :close-on-select="true"-->
+<!--                                                                 :clear-on-select="false" :preserve-search="true"-->
+<!--                                                                 placeholder="Select Category"-->
+<!--                                                                 label="ItemName" track-by="ItemCode">-->
 
-                                                    </multiselect>
+<!--                                                    </multiselect>-->
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].item !== undefined">{{
                                                             errors[index].item
@@ -137,6 +146,16 @@
                                                     <input readonly type="text"  class="form-control"
                                                            v-model="field.itemCode" placeholder="itemCode" min="0">
 
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" :class="{'error-border': errors[0]}" id="item"
+                                                            v-model="field.LocationCode" name="item">
+                                                        <option v-for="(item,index) in locations"
+                                                                :key="index"
+                                                                :value="item.LocationCode">
+                                                            {{ item.LocationName }}
+                                                        </option>
+                                                    </select>
                                                 </td>
                                                 <td>
                                                     <input type="text"  class="form-control"  @input="setValue(index)"
@@ -212,6 +231,7 @@ export default {
             items: [],
             purchaseCode:'',
             production_date: '',
+            locations: [],
             reference: '',
             purchaseType:[{
                 'PurchaseTypeCode': 'direct',
@@ -230,6 +250,7 @@ export default {
                     unitPrice:0,
                     quantity: 0,
                     itemValue: 0,
+                    LocationCode:''
                 }
             ],
             errors: [],
@@ -316,6 +337,7 @@ export default {
                 unitPrice:0,
                 quantity: 0,
                 itemValue: 0,
+                LocationCode:''
             });
         },
         removeRow(id) {
@@ -354,6 +376,7 @@ export default {
                 CategoryCode:categoryCode ,
             }, (response) => {
                 instance.items = response.items;
+                instance.locations = response.locations;
             }, (error) => {
                 this.errorNoti(error);
 
