@@ -109,6 +109,7 @@
                                             <tr>
                                                 <th>Item <span class="required-field">*</span></th>
                                                 <th>Item Code<span class="required-field">*</span></th>
+                                                <th>Location <span class="required-field">*</span></th>
                                                 <th>Unit Price <span class="required-field">*</span></th>
                                                 <th>Quantity<span class="required-field">*</span></th>
                                                 <th>Value<span class="required-field">*</span></th>
@@ -398,10 +399,9 @@ export default {
             this.errors = [];
             let instance = this;
             this.fields.forEach(function (item, index) {
-                if (item.item === '' || item.itemCode === '' || item.location === ''
+                if ( item.itemCode === '' || item.location === ''
                     || item.quantity === '' ||  item.quantity <= 0 || item.quantity === undefined || item.itemValue === '' || item.itemValue <= 0) {
                     instance.errors[index] = {
-                        item: item.item === '' ? 'Item is required' : '',
                         itemCode: item.itemCode === '' ? 'item Code is required' : '',
                         unitPrice: item.unitPrice === '' ? 'Unit Price is required' : '',
                         quantity: (item.quantity === '' || item.quantity <=0) ? 'quantity is required' : '',

@@ -62,11 +62,13 @@ class PurchaseController extends Controller
         return response()->json([
             'status' => 'success',
             'items' => Items::where('CategoryCode',$request->CategoryCode)->get(),
+            'locations' => Location::all(),
         ]);
     }
 
     //Store Purchase
     public function store(Request $request){
+
         $validator = Validator::make($request->all(), [
             'purchase_date' => 'required',
             'categoryType' => 'required',
@@ -98,26 +100,28 @@ class PurchaseController extends Controller
                     //Data Insert ProductionDetails
                     $purchaseDetails = new PurchaseDetails();
                     $purchaseDetails->PurchaseCode = $purchaseCodeCode;
-                    $purchaseDetails->ItemCode = $singleData['item']['ItemCode'];
+                    $purchaseDetails->ItemCode = $singleData['itemCode'];
                     $purchaseDetails->unitPrice = $singleData['unitPrice'];
                     $purchaseDetails->Quantity = $singleData['quantity'];
                     $purchaseDetails->Value = $singleData['itemValue'];
                     $purchaseDetails->save();
 
                     //Data insert into Stock Batch
-                    $existingStockTable = StockBatch::where('ItemCode', $singleData['item']['ItemCode'])->where('LocationCode','L0001')->first();
+                    $existingStockTable = StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['LocationCode'])->first();
                     if($existingStockTable){
                         $existingBatchQty = $existingStockTable->BatchQty;
                         $existingStockValue = $existingStockTable->StockValue;
-                        StockBatch::where('ItemCode', $singleData['item']['ItemCode'])->where('LocationCode','L0001')->update([
+                        StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['LocationCode'])->update([
+                            'ReceiveQty'=>$existingBatchQty + $singleData['quantity'],
                             'BatchQty'=>$existingBatchQty + $singleData['quantity'],
-                            'StockValue'=>$existingStockValue + $singleData['quantity'],
+                            'StockValue'=>$existingBatchQty + $singleData['quantity'],
                         ]);
                     }
                     else{
                         $stockBatch= new StockBatch();
-                        $stockBatch->ItemCode = $singleData['item']['ItemCode'];
-                        $stockBatch->LocationCode = 'L0001';
+                        $stockBatch->ItemCode = $singleData['itemCode'];
+                        $stockBatch->LocationCode = $singleData['LocationCode'];
+                        $stockBatch->ReceiveQty = $singleData['quantity'];
                         $stockBatch->BatchQty = $singleData['quantity'];
                         $stockBatch->StockValue =  $singleData['itemValue'];
                         $stockBatch->save();
@@ -198,21 +202,44 @@ class PurchaseController extends Controller
 
                     foreach ($request->details as $key=>$singleData){
                         $existingPurchaseDetails =  PurchaseDetails::where('PurchaseCode',$request->purchaseCode)
-                            ->where('ItemCode',$singleData['item']['ItemCode'])->first();
+                            ->where('ItemCode',$singleData['itemCode'])->first();
 
                         //Data update  into Stock Batch
-                        $existingStockTable = StockBatch::where('ItemCode', $singleData['item']['ItemCode'])->where('LocationCode','L0001')->first();
+                        $existingStockTable = StockBatch::where('ItemCode',$singleData['itemCode'])
+                            ->where('LocationCode',$singleData['LocationCode'])
+                            ->first();
+
+
                         if($existingStockTable){
+                            $existingReceiveQty = $existingStockTable->ReceiveQty;
                             $existingBatchQty = $existingStockTable->BatchQty;
                             $existingStockValue = $existingStockTable->StockValue;
-                            StockBatch::where('ItemCode', $singleData['item']['ItemCode'])->where('LocationCode','L0001')->update([
-                                'BatchQty'=>intval($existingBatchQty) - intval($existingPurchaseDetails->Quantity),
-                                'StockValue'=>intval($existingStockValue) - intval($existingPurchaseDetails->Value),
-                            ]);
-                        }
 
-                        $existingPurchaseDetails =  PurchaseDetails::where('PurchaseCode',$request->purchaseCode)
-                            ->where('ItemCode',$singleData['item']['ItemCode'])->delete();
+                            if($existingPurchaseDetails['Quantity']>$singleData['quantity']) {
+                                $UpdateLessQuantity = $existingPurchaseDetails['Quantity'] - $singleData['quantity'];
+                                //Back Existing Product
+                                StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode', $singleData['LocationCode'])->update([
+                                    'ReceiveQty' => floatval($existingReceiveQty) - floatval($UpdateLessQuantity),
+                                    'BatchQty' => floatval($existingBatchQty) - floatval($UpdateLessQuantity),
+                                    'StockValue' => floatval($existingBatchQty) - floatval($UpdateLessQuantity),
+                                ]);
+                            }
+                            else{
+
+                                $UpdateGreaterQuantity = $singleData['quantity'] - $existingPurchaseDetails['Quantity']  ;
+                                StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['LocationCode'])->update([
+                                    'ReceiveQty'=>floatval($existingReceiveQty) + floatval($UpdateGreaterQuantity),
+                                    'BatchQty'=>floatval($existingBatchQty) +  floatval($UpdateGreaterQuantity),
+                                    'StockValue'=>floatval($existingBatchQty) +  floatval($UpdateGreaterQuantity),
+                                ]);
+
+                            }
+                        }
+                        if($existingPurchaseDetails){
+                            $existingPurchaseDetails =  PurchaseDetails::where('PurchaseCode',$request->purchaseCode)
+                                ->where('ItemCode',$singleData['itemCode'])->delete();
+                          }
+
 
 
                         //Data Insert ProductionDetails
@@ -224,16 +251,6 @@ class PurchaseController extends Controller
                         $purchaseDetails->Value = $singleData['itemValue'];
                         $purchaseDetails->save();
 
-                        //Data insert into Stock Batch Newly
-                        $existingStockTable = StockBatch::where('ItemCode', $singleData['item']['ItemCode'])->where('LocationCode','L0001')->first();
-                        if($existingStockTable){
-                            $existingBatchQty = $existingStockTable->BatchQty;
-                            $existingStockValue = $existingStockTable->StockValue;
-                            StockBatch::where('ItemCode', $singleData['item']['ItemCode'])->where('LocationCode','L0001')->update([
-                                'BatchQty'=>intval($existingBatchQty) +intval($singleData['quantity']),
-                                'StockValue'=>intval($existingStockValue) + intval($singleData['itemValue']),
-                            ]);
-                        }
 
                     }
                     DB::commit();
