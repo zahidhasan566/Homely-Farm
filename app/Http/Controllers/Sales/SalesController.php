@@ -204,4 +204,78 @@ class SalesController extends Controller
             'SalesInfo' => $singleSales
         ], 200);
     }
+
+    //Update
+    public function update(Request $request){
+        dd($request);
+        $validator = Validator::make($request->all(), [
+            'sales_date' => 'required',
+            'categoryType' => 'required',
+            'customerTypeVal' => 'required',
+            'details' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()], 400);
+        }
+        else{
+            try {
+                DB::beginTransaction();
+
+                $dataSales = SalesMaster::where('SalesCode',$request->salesCode)->first();
+                $dataSales->SalesDate = $request->sales_date;
+                $dataSales->Reference = $request->reference;
+                $dataSales->CustomerCode =$request->customerTypeVal['CustomerCode'];
+                $dataSales->Returned = 'N';
+                $dataSales->EditDate = Carbon::now()->format('Y-m-d H:i:s');;
+                $dataSales->EditBy = Auth::user()->Id;
+                $dataSales->save();
+
+                //Data Insert ProductionDetails
+                $dataSalesDetails = SalesDetails::where('SalesCode',$request->salesCode)->get();
+
+                foreach ($dataSalesDetails as $singleDetail){
+                    //Data insert into Stock Batch
+                    $existingStockTable = StockBatch::where('ItemCode', $singleDetail['ItemCode'])->where('LocationCode',$singleDetail['LocationCode'])->first();
+                    $existingBatchQty = $existingStockTable->BatchQty;
+                    $existingStockValue = $existingStockTable->StockValue;
+
+                    StockBatch::where('ItemCode', $singleDetail['ItemCode'])->where('LocationCode',$singleDetail['LocationCode'])->update([
+                        'BatchQty'=>$existingBatchQty + $singleDetail['quantity'],
+                        'StockValue'=>$existingStockValue + $singleDetail['Value'],
+                    ]);
+                   // dd('dd');
+
+                }
+
+                //delete and insert the existing
+                foreach ($request->details as $key=>$singleData){
+                    $existingSalesDetails =  SalesDetails::where('SalesCode',$request->salesCode)
+                        ->where('ItemCode', $singleData['item']['ItemCode'])
+                        ->where('LocationCode',$singleData['location']['LocationCode'])->delete();
+
+
+                    //Data Insert ProductionDetails
+                    $dataSalesDetails = new SalesDetails();
+                    $dataSalesDetails->SalesCode = $dataSales->SalesCode;
+                    $dataSalesDetails->ItemCode = $singleData['item']['ItemCode'];
+                    $dataSalesDetails->LocationCode = $singleData['location']['LocationCode'];
+                    $dataSalesDetails->unitPrice = $singleData['unitPrice'];
+                    $dataSalesDetails->Quantity = $singleData['quantity'];
+                    $dataSalesDetails->Value = $singleData['itemValue'];
+                    $dataSalesDetails->save();
+                }
+                DB::commit();
+                return [
+                    'status' => 'success',
+                    'message' => 'Sales Updated Successfully'
+                ];
+
+            } catch (\Exception $exception) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $exception->getMessage()
+                ], 500);
+            }
+        }
+    }
 }

@@ -92,15 +92,24 @@
                                             <tbody>
                                             <tr v-for="(field,index) in fields" :key="index">
                                                 <td>
-                                                    <multiselect v-model="field.item" :options="items"
-                                                                 :multiple="false"
-                                                                 @input="setItemCode(index)"
-                                                                 :close-on-select="true"
-                                                                 :clear-on-select="false" :preserve-search="true"
-                                                                 placeholder="Select Category"
-                                                                 label="ItemName" track-by="ItemCode">
+                                                    <select class="form-control" :class="{'error-border': errors[0]}" id="item"
+                                                            @change="setItemCode($event,index)"
+                                                            v-model="field.itemCode" name="item">
+                                                        <option v-for="(item,index) in items"
+                                                                :key="index"
+                                                                :value="item.ItemCode">
+                                                            {{ item.ItemName }}
+                                                        </option>
+                                                    </select>
+<!--                                                    <multiselect v-model="field.item" :options="items"-->
+<!--                                                                 :multiple="false"-->
+<!--                                                                 @input="setItemCode(index)"-->
+<!--                                                                 :close-on-select="true"-->
+<!--                                                                 :clear-on-select="false" :preserve-search="true"-->
+<!--                                                                 placeholder="Select Category"-->
+<!--                                                                 label="ItemName" track-by="ItemCode">-->
 
-                                                    </multiselect>
+<!--                                                    </multiselect>-->
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].item !== undefined">{{
                                                             errors[index].item
@@ -337,18 +346,21 @@ export default {
 
             })
         },
-        setItemCode(index) {
+        setItemCode(e, key) {
+            var itemCode = e.target.value;
             let instance = this;
-            instance.fields[index].itemCode = instance.fields[index].item.ItemCode;
+            console.log(key)
+            instance.fields[key].itemCode = e.target.value;
+            // console.log(e.target.value)
+            // instance.fields[index].itemCode = instance.fields[index].item.ItemCode;
         },
         checkFieldValue() {
             this.errors = [];
             let instance = this;
             this.fields.forEach(function (item, index) {
-                if (item.item === '' || item.itemCode === '' || item.location === ''
+                if (item.itemCode === '' || item.location === ''
                     || item.quantity === '' || item.quantity <=0 || item.quantity === undefined || item.itemValue === ''|| item.itemValue <0 ) {
                     instance.errors[index] = {
-                        item: item.item === '' ? 'Item is required' : '',
                         itemCode: item.itemCode === '' ? 'item Code is required' : '',
                         location: item.location === '' ? 'location  is required' : '',
                         quantity: (item.quantity === '' ||item.quantity <=0 ) ? 'quantity  is required' : '',

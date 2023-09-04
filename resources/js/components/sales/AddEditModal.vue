@@ -248,7 +248,6 @@ export default {
                     'PurchaseTypeCode': 'indirect ',
                     'PurchaseTypeName': 'indirect ',
                 }] ,
-            purchaseTypeVal:'',
             customerTypeVal:'',
             dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             fields: [
@@ -300,7 +299,7 @@ export default {
                         'CategoryCode': salesInfo[0].CategoryCode,
                         'CategoryName': salesInfo[0].CategoryName
                     }]
-                    instance.customerTypeVal=[{
+                    instance.customers=[{
                         'CustomerWithCode': salesInfo[0].CustomerWithCode,
                         'CustomerCode': salesInfo[0].CustomerCode,
                     }]
@@ -384,10 +383,10 @@ export default {
         getData() {
             let instance = this;
             this.axiosGet('sales/supporting-data', function (response) {
-                console.log(response.allStock)
                 instance.allStock = response.allStock;
                 instance.category = response.category;
                 instance.customers = response.customer;
+                console.log(instance.allStock)
             }, function (error) {
             });
         },
@@ -495,9 +494,10 @@ export default {
                     submitUrl = 'purchase/return';
                 }
                 if(!returnData && this.actionType === 'edit' ){
-                    submitUrl = 'purchase/update';
+                    submitUrl = 'sales/update';
                 }
                 this.axiosPost(submitUrl, {
+                    salesCode : this.salesCode,
                     sales_date: this.sales_date,
                     reference: this.reference,
                     customerTypeVal: this.customerTypeVal,
