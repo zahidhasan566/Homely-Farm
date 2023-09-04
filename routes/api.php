@@ -67,7 +67,7 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('category-wise-item-stock', [\App\Http\Controllers\Sales\SalesController::class, 'getCategoryWiseItemStock']);
         Route::post('add', [\App\Http\Controllers\Sales\SalesController::class, 'store']);
         Route::get('get-sales-info/{salesCode}', [\App\Http\Controllers\Sales\SalesController::class, 'getSalesInfo']);
-//        Route::post('update', [\App\Http\Controllers\Purchase\PurchaseController::class, 'update']);
+        Route::post('update', [\App\Http\Controllers\Sales\SalesController::class, 'update']);
 //        Route::post('return', [\App\Http\Controllers\Purchase\PurchaseController::class, 'returnProducts']);
     });
 
