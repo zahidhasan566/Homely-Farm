@@ -122,14 +122,22 @@
 
                                                 </td>
                                                 <td>
-                                                    <multiselect v-model="field.location" :options="locations"
-                                                                 :multiple="false"
-                                                                 :close-on-select="true"
-                                                                 :clear-on-select="false" :preserve-search="true"
-                                                                 placeholder="Select Category"
-                                                                 label="LocationName" track-by="LocationCode">
+                                                    <select class="form-control" :class="{'error-border': errors[0]}" id="item"
+                                                            v-model="field.LocationCode" name="item">
+                                                        <option v-for="(item,index) in locations"
+                                                                :key="index"
+                                                                :value="item.LocationCode">
+                                                            {{ item.LocationName }}
+                                                        </option>
+                                                    </select>
+<!--                                                    <multiselect v-model="field.location" :options="locations"-->
+<!--                                                                 :multiple="false"-->
+<!--                                                                 :close-on-select="true"-->
+<!--                                                                 :clear-on-select="false" :preserve-search="true"-->
+<!--                                                                 placeholder="Select Category"-->
+<!--                                                                 label="LocationName" track-by="LocationCode">-->
 
-                                                    </multiselect>
+<!--                                                    </multiselect>-->
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].location !== undefined">{{
                                                             errors[index].location
@@ -214,6 +222,7 @@ export default {
                     },
                     quantity: 0,
                     itemValue: 0,
+                    LocationCode:''
                 }
             ],
             errors: [],
@@ -266,6 +275,7 @@ export default {
                             },
                             quantity: item.Quantity,
                             itemValue: item.Value,
+                            LocationCode: item.LocationCode
                         })
                     });
                     instance.getItemByCategory();
