@@ -115,7 +115,6 @@ class PurchaseController extends Controller
                         StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['LocationCode'])->update([
                             'ReceiveQty'=>$existingBatchQty + $singleData['quantity'],
                             'BatchQty'=>$existingBatchQty + $singleData['quantity'],
-                            'StockValue'=>$existingBatchQty + $singleData['quantity'],
                         ]);
                     }
                     else{
@@ -228,7 +227,6 @@ class PurchaseController extends Controller
                                 StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode', $singleData['LocationCode'])->update([
                                     'ReceiveQty' => floatval($existingReceiveQty) - floatval($UpdateLessQuantity),
                                     'BatchQty' => floatval($existingBatchQty) - floatval($UpdateLessQuantity),
-                                    'StockValue' => floatval($existingBatchQty) - floatval($UpdateLessQuantity),
                                 ]);
                             }
                             else{
@@ -237,7 +235,6 @@ class PurchaseController extends Controller
                                 StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['LocationCode'])->update([
                                     'ReceiveQty'=>floatval($existingReceiveQty) + floatval($UpdateGreaterQuantity),
                                     'BatchQty'=>floatval($existingBatchQty) +  floatval($UpdateGreaterQuantity),
-                                    'StockValue'=>floatval($existingBatchQty) +  floatval($UpdateGreaterQuantity),
                                 ]);
 
                             }
@@ -303,7 +300,6 @@ class PurchaseController extends Controller
                          StockBatch::where('ItemCode', $singleData->ItemCode)->where('LocationCode',$singleData['LocationCode'])->update([
                              'ReceiveQty'=>floatval($existingBatchQty) - floatval($singleData->Quantity),
                              'BatchQty'=>floatval($existingBatchQty) - floatval($singleData->Quantity),
-                             'StockValue'=>floatval($existingStockValue) - floatval($singleData->Quantity),
                          ]);
                      }
                  }

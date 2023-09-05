@@ -112,7 +112,6 @@ class ProductionController extends Controller
                             StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['LocationCode'])->update([
                                 'ReceiveQty'=>$existingReceiveQty + $singleData['quantity'],
                                 'BatchQty'=>$existingBatchQty + $singleData['quantity'],
-                                'StockValue'=>$existingBatchQty + $singleData['quantity'],
                             ]);
 
                     }
@@ -231,7 +230,6 @@ class ProductionController extends Controller
                                 StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['location']['LocationCode'])->update([
                                     'ReceiveQty'=>floatval($existingReceiveQty) - floatval($UpdateLessQuantity),
                                     'BatchQty'=>floatval($existingBatchQty) -  floatval($UpdateLessQuantity),
-                                    'StockValue'=>floatval($existingBatchQty) -  floatval($UpdateLessQuantity),
                                 ]);
 
                             }
@@ -239,8 +237,7 @@ class ProductionController extends Controller
                                 $UpdateGreaterQuantity = $singleData['quantity'] - $existingProductionDetail['Quantity']  ;
                                 StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['location']['LocationCode'])->update([
                                     'ReceiveQty'=>floatval($existingReceiveQty) + floatval($UpdateGreaterQuantity),
-                                    'BatchQty'=>floatval($existingBatchQty) +  floatval($UpdateGreaterQuantity),
-                                    'StockValue'=>floatval($existingBatchQty) +  floatval($UpdateGreaterQuantity),
+                                    'BatchQty'=>floatval($existingBatchQty) +  floatval($UpdateGreaterQuantity)
                                 ]);
                             }
                         }
@@ -314,7 +311,6 @@ class ProductionController extends Controller
                         StockBatch::where('ItemCode', $singleData->ItemCode)->where('LocationCode',$singleData['LocationCode'])->update([
                             'ReceiveQty'=>floatval($existingBatchQty) - floatval($singleData->Quantity),
                             'BatchQty'=>floatval($existingBatchQty) - floatval($singleData->Quantity),
-                            'StockValue'=>floatval($existingStockValue) - floatval($singleData->Quantity),
                         ]);
                     }
                 }

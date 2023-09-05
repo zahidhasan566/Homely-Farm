@@ -21,6 +21,11 @@
                                :placeholder="filter.title" format="DD-MM-YYYY" range valueType="format"></date-picker>
                 </div>
               </div>
+<!--                <div :class="options.colSize[0]" v-if="options.showFilter && options.showFilter.includes('CategoryCode')">-->
+<!--                    <div>-->
+<!--                        <input type="text" class="form-control" placeholder="Cow Code" v-model="requestParams.CategoryCode">-->
+<!--                    </div>-->
+<!--                </div>-->
               <div class="col-12 col-md-1 ml-1">
                 <div class="form-group" style="margin-bottom: unset">
                   <button class="btn btn-primary" @click="readData">Filter</button>

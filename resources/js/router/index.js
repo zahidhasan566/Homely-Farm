@@ -11,6 +11,8 @@ import production from "../views/production/index.vue";
 import purchase from "../views/purchase/index.vue";
 import sales from "../views/sales/index.vue";
 import customers from "../views/customers/index.vue";
+import dailyProductionReport from "../views/reports/dailyProductionReport.vue";
+import dailySalesReport from "../views/reports/dailySalesReport.vue";
 
 
 Vue.use(VueRouter);
@@ -81,6 +83,17 @@ const routes = [
                 path: baseurl + 'customer/customerList',
                 name: 'customer',
                 component: customers
+            },
+            //Report
+            {
+                path: baseurl + 'report/dailyProduction',
+                name: 'dailyProductionReport',
+                component: dailyProductionReport
+            },
+            {
+                path: baseurl + 'report/dailySales',
+                name: 'dailySalesReport',
+                component: dailySalesReport
             },
 
         ],

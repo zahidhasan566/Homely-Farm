@@ -451,8 +451,6 @@ export default {
             let instance = this;
             instance.fields[key].itemCode = e.target.value;
             instance.fields[key].uom = item ? item.UOM : '';
-
-            console.log(instance.fields[key].LocationCode)
         },
         checkUpdateStock(e, key){
             let instance = this;
@@ -484,10 +482,14 @@ export default {
             this.errors = [];
             let instance = this;
             this.fields.forEach(function (item, index) {
+                console.log(item.stock)
                 if (item.itemCode === '' || item.location === ''
-                    || item.quantity === '' ||  item.quantity <= 0 || item.quantity === undefined || item.itemValue === '' || item.itemValue <= 0) {
+                    || item.quantity === '' ||  item.quantity <= 0 || item.quantity === undefined || item.itemValue === '' || item.itemValue <= 0
+                    || item.stock === '' || item.stock === 0
+                ) {
                     instance.errors[index] = {
                         itemCode: item.itemCode === '' ? 'item Code is required' : '',
+                        stock: item.stock === '' ? 'stock is required' : '',
                         unitPrice: item.unitPrice === '' ? 'Unit Price is required' : '',
                         quantity: (item.quantity === '' || item.quantity <=0) ? 'quantity is required' : '',
                         itemValue: (item.itemValue === ''|| item.itemValue <=0) ? 'item value  is required' : '',

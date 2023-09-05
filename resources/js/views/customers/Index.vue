@@ -9,10 +9,15 @@
       </div>
     </div>
     <advanced-datatable :options="tableOptions">
+        <template slot="status" slot-scope="row">
+            <span v-if="row.item.Active==='Y'">Active</span>
+            <span v-else>Inactive</span>
+        </template>
       <template slot="action" slot-scope="row">
         <a href="javascript:" @click="addUserModal(row.item)"> <i class="ti-pencil-alt">Edit</i></a>
 <!--        <a href="javascript:" @click="changePassword(row.item.UserId)"> <i class="ti-lock"></i></a>-->
       </template>
+
     </advanced-datatable>
     <add-edit-customers @changeStatus="changeStatus" v-if="loading"/>
   </div>
@@ -30,9 +35,9 @@ export default {
       tableOptions: {
         source: 'customers/list',
         search: true,
-        slots: [4],
+        slots: [3,4],
         //hideColumn: ['RoleID','UserId'],
-        slotsName: ['action'],
+        slotsName: ['status','action'],
         sortable: [2],
         pages: [20, 50, 100],
         addHeader: ['Action']

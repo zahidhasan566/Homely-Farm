@@ -150,7 +150,6 @@ class SalesController extends Controller
                         $existingStockValue = $checkExisting->StockValue;
                         StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode', $singleData['LocationCode'])->update([
                             'BatchQty' => $existingBatchQty - $singleData['quantity'],
-                            'StockValue' => $existingBatchQty - $singleData['quantity'],
                         ]);
 
                     }
@@ -277,7 +276,6 @@ class SalesController extends Controller
                             //Back Existing Product
                             StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode', $singleData['LocationCode'])->update([
                                 'BatchQty' => floatval($existingBatchQty) + floatval($UpdateLessQuantity),
-                                'StockValue' => floatval($existingBatchQty) + floatval($UpdateLessQuantity),
                             ]);
                         }
                         else{
@@ -285,7 +283,6 @@ class SalesController extends Controller
                             $UpdateGreaterQuantity = $singleData['quantity'] - $existingSalesDetail['Quantity']  ;
                             StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['LocationCode'])->update([
                                 'BatchQty'=>floatval($existingBatchQty) -  floatval($UpdateGreaterQuantity),
-                                'StockValue'=>floatval($existingBatchQty) -  floatval($UpdateGreaterQuantity),
                             ]);
 
                         }
@@ -348,7 +345,6 @@ class SalesController extends Controller
 
                         StockBatch::where('ItemCode', $singleData->ItemCode)->where('LocationCode',$singleData['LocationCode'])->update([
                             'BatchQty'=>floatval($existingBatchQty) + floatval($singleData->Quantity),
-                            'StockValue'=>floatval($existingStockValue) + floatval($singleData->Quantity),
                         ]);
                     }
                 }

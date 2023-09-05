@@ -4,11 +4,18 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\SubMenuPermission;
 use App\Models\User;
+use App\Traits\CodeGeneration;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
 {
+    use CodeGeneration;
     public function index(Request $request)
     {
         $take = $request->take;
@@ -21,4 +28,78 @@ class CustomerController extends Controller
             ->paginate($take);
         return $customers;
     }
+
+    //Store Data
+    public function store(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'Name' => 'required|string',
+            'Address' => 'required',
+            'status' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()], 400);
+        }
+        //Data Insert
+        try {
+            DB::beginTransaction();
+            $customerCode = $this->generateCustomerCode();
+            $customer = new Customer();
+            $customer->CustomerCode =$customerCode;
+            $customer->CustomerName = $request->Name;
+            $customer->Address = $request->Address;
+            $customer->Active = $request->status;
+            $customer->save();
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Customer Created Successfully'
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $exception->getMessage() . '-' . $exception->getLine()
+            ], 500);
+        }
+    }
+
+    public function getCustomerInfo($customerCode){
+        $customer = Customer::where('CustomerCode', $customerCode)->first();
+        return response()->json([
+            'status' => 'success',
+            'data' => $customer,
+        ]);
+    }
+
+    //Update Customer
+    public function update(Request $request){
+        $validator = Validator::make($request->all(), [
+            'Name' => 'required|string',
+            'Address' => 'required',
+            'status' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()], 400);
+        }
+        try {
+            DB::beginTransaction();
+            $customer = Customer::where('CustomerCode', $request->CustomerCode)->first();
+            $customer->CustomerName = $request->Name;
+            $customer->Address = $request->Address;
+            $customer->Active = $request->status;
+            $customer->save();
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Customer Updated Successfully'
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $exception->getMessage()
+            ], 500);
+        }
+
+    }
+
 }
