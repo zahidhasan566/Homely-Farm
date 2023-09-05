@@ -10,6 +10,7 @@ import Users from '../views/users/Index';
 import production from "../views/production/index.vue";
 import purchase from "../views/purchase/index.vue";
 import sales from "../views/sales/index.vue";
+import customers from "../views/customers/index.vue";
 
 
 Vue.use(VueRouter);
@@ -74,6 +75,12 @@ const routes = [
                 path: baseurl + 'sales/salesList',
                 name: 'sales',
                 component: sales
+            },
+            //Customer   ROUTE
+            {
+                path: baseurl + 'customer/customerList',
+                name: 'customer',
+                component: customers
             },
 
         ],

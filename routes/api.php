@@ -65,11 +65,16 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('list', [\App\Http\Controllers\Sales\SalesController::class, 'index']);
         Route::get('supporting-data', [\App\Http\Controllers\Sales\SalesController::class, 'getSupportingData']);
         Route::post('category-wise-item', [\App\Http\Controllers\Sales\SalesController::class, 'getCategoryWiseItemData']);
-        Route::post('category-wise-item-stock', [\App\Http\Controllers\Sales\SalesController::class, 'getCategoryWiseItemStock']);
+        Route::post('category-wise-item-stock', [\App\Http\Controllers\Sales\SalesController::class, 'getCategoryWiseTotalItemStock']);
         Route::post('add', [\App\Http\Controllers\Sales\SalesController::class, 'store']);
         Route::get('get-sales-info/{salesCode}', [\App\Http\Controllers\Sales\SalesController::class, 'getSalesInfo']);
         Route::post('update', [\App\Http\Controllers\Sales\SalesController::class, 'update']);
-//        Route::post('return', [\App\Http\Controllers\Purchase\PurchaseController::class, 'returnProducts']);
+        Route::post('return', [\App\Http\Controllers\Sales\SalesController::class, 'returnProducts']);
+    });
+
+    //Customer
+    Route::group(['prefix' =>'customers'],function () {
+        Route::post('list', [\App\Http\Controllers\Customer\CustomerController::class, 'index']);
     });
 
 

@@ -41,6 +41,7 @@ Vue.component('submit-form', require('./components/buttons/Submit').default);
 Vue.component('add-edit-production',require('./components/production/AddEditModal').default);
 Vue.component('add-edit-purchase',require('./components/purchase/AddEditModal').default);
 Vue.component('add-edit-sales',require('./components/sales/AddEditModal').default);
+Vue.component('add-edit-customers',require('./components/customers/AddEditModal').default);
 //Vue Datepicker
 import { Datepicker } from '@livelybone/vue-datepicker';
 Vue.component('datepicker', Datepicker);

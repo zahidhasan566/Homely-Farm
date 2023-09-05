@@ -28,9 +28,8 @@
                                             <div class="form-group">
                                                 <label for="name">Reference</label>
                                                 <input type="text" class="form-control"
-                                                       :class="{'error-border': errors[0]}" id="Reference"
+                                                      id="Reference"
                                                        v-model="reference" name="staff-name" placeholder="Reference">
-                                                <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
 
                                     </div>
@@ -63,10 +62,10 @@
 
                                     </div>
                                     <div class="col-12 col-md-4">
-                                        <ValidationProvider name="purchaseTypeVal" mode="eager" rules="required"
+                                        <ValidationProvider name="Customer" mode="eager" rules="required"
                                                             v-slot="{ errors }">
                                             <div class="form-group">
-                                                <label for="user-type">Customer <span class="error">*</span></label>
+                                                <label for="customer">Customer <span class="error">*</span></label>
                                                 <multiselect v-model="customerTypeVal" :options="customers"
                                                              :multiple="false"
                                                              :close-on-select="true"
@@ -110,6 +109,7 @@
                                             <tr>
                                                 <th>Item <span class="required-field">*</span></th>
                                                 <th>Item Code<span class="required-field">*</span></th>
+                                                <th>Pac Size<span class="required-field">*</span></th>
                                                 <th>Location<span class="required-field">*</span></th>
                                                 <th>Stock</th>
                                                 <th>Unit Price <span class="required-field">*</span></th>
@@ -121,15 +121,24 @@
                                             <tbody>
                                             <tr v-for="(field,index) in fields" :key="index">
                                                 <td>
-                                                    <multiselect v-model="field.item" :options="items"
-                                                                 :multiple="false"
-                                                                 @input="setItemCode(index)"
-                                                                 :close-on-select="true"
-                                                                 :clear-on-select="false" :preserve-search="true"
-                                                                 placeholder="Select Category"
-                                                                 label="ItemName" track-by="ItemCode">
+                                                    <select class="form-control" :class="{'error-border': errors[0]}"
+                                                            @change="setItemCode($event,index)"
+                                                            v-model="field.itemCode" name="item">
+                                                        <option v-for="(item,index) in items"
+                                                                :key="index"
+                                                                :value="item.ItemCode">
+                                                            {{ item.ItemName }}
+                                                        </option>
+                                                    </select>
+<!--                                                    <multiselect v-model="field.item" :options="items"-->
+<!--                                                                 :multiple="false"-->
+<!--                                                                 @input="setItemCode(index)"-->
+<!--                                                                 :close-on-select="true"-->
+<!--                                                                 :clear-on-select="false" :preserve-search="true"-->
+<!--                                                                 placeholder="Select Category"-->
+<!--                                                                 label="ItemName" track-by="ItemCode">-->
 
-                                                    </multiselect>
+<!--                                                    </multiselect>-->
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].item !== undefined">{{
                                                             errors[index].item
@@ -142,21 +151,36 @@
 
                                                 </td>
                                                 <td>
-                                                    <multiselect v-model="field.location" :options="locations"
-                                                                 :multiple="false"
-                                                                 :close-on-select="true"
-                                                                 :clear-on-select="false" :preserve-search="true"
-                                                                 placeholder="Select Category"
-                                                                 label="LocationName" track-by="LocationCode">
+                                                    <input readonly type="text"  class="form-control"
+                                                           v-model="field.uom" placeholder="Pack Size" min="0">
 
-                                                    </multiselect>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" :class="{'error-border': errors[0]}"
+                                                            v-model="field.LocationCode"
+                                                            @change="checkUpdateStock($event,index)"
+                                                            name="item">
+                                                        <option v-for="(item,index) in locations"
+                                                                :key="index"
+                                                                :value="item.LocationCode">
+                                                            {{ item.LocationName }}
+                                                        </option>
+                                                    </select>
+<!--                                                    <multiselect v-model="field.location" :options="locations"-->
+<!--                                                                 :multiple="false"-->
+<!--                                                                 :close-on-select="true"-->
+<!--                                                                 :clear-on-select="false" :preserve-search="true"-->
+<!--                                                                 placeholder="Select Category"-->
+<!--                                                                 label="LocationName" track-by="LocationCode">-->
+
+<!--                                                    </multiselect>-->
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].location !== undefined">{{
                                                             errors[index].location
                                                         }}</span>
                                                 </td>
                                                 <td>
-                                                    <input type="text"  class="form-control"  @input="setValue(index)" readonly
+                                                    <input type="number"  class="form-control"  @input="setValue(index)" readonly style="text-align: end"
                                                            v-model="field.stock" placeholder="stock" min="1">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].stock !== undefined">{{
@@ -164,7 +188,7 @@
                                                         }}</span>
                                                 </td>
                                                 <td>
-                                                    <input type="text"  class="form-control"  @input="setValue(index)"
+                                                    <input type="number"  class="form-control"  @input="setValue(index)" style="text-align: end"
                                                            v-model="field.unitPrice" placeholder="unit Price" min="1">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].unitPrice !== undefined">{{
@@ -172,7 +196,7 @@
                                                         }}</span>
                                                 </td>
                                                 <td>
-                                                    <input type="text"  class="form-control"
+                                                    <input type="number"  class="form-control" style="text-align: end"
                                                            v-model="field.quantity" placeholder="quantity"  @input="setValue(index)" min="1">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].quantity !== undefined">{{
@@ -181,8 +205,8 @@
 
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control" readonly
-                                                           v-model="field.itemValue" placeholder="Value" min="1">
+                                                    <input type="number" class="form-control" style="text-align: end" readonly
+                                                           v-model="field.itemValue" placeholder="Value">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].itemValue !== undefined">{{
                                                             errors[index].itemValue
@@ -244,10 +268,10 @@ export default {
                 'PurchaseTypeCode': 'direct',
                 'PurchaseTypeName': 'direct',
             },
-                {
-                    'PurchaseTypeCode': 'indirect ',
-                    'PurchaseTypeName': 'indirect ',
-                }] ,
+            {
+                'PurchaseTypeCode': 'indirect ',
+                'PurchaseTypeName': 'indirect ',
+            }] ,
             customerTypeVal:'',
             dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             fields: [
@@ -262,7 +286,9 @@ export default {
                     unitPrice:0,
                     quantity: 0,
                     itemValue: 0,
-                    stock:0
+                    stock:0,
+                    LocationCode:'',
+                    uom:'',
                 }
             ],
             errors: [],
@@ -279,12 +305,12 @@ export default {
             if (row) {
                 let instance = this;
                 this.axiosGet('sales/get-sales-info/' + row.SalesCode, function (response) {
-                    console.log(response)
                     instance.title = 'Update Sales';
                     instance.buttonText = "Update";
                     instance.buttonShow = true;
                     instance.actionType = 'edit';
                     instance.fields.splice(0, 1)
+
                     instance.getData();
                     var salesInfo = response.SalesInfo;
 
@@ -299,10 +325,10 @@ export default {
                         'CategoryCode': salesInfo[0].CategoryCode,
                         'CategoryName': salesInfo[0].CategoryName
                     }]
-                    instance.customers=[{
+                    instance.customerTypeVal={
                         'CustomerWithCode': salesInfo[0].CustomerWithCode,
-                        'CustomerCode': salesInfo[0].CustomerCode,
-                    }]
+                        'CustomerCode': salesInfo[0].CustomerCode
+                    }
                     // instance.purchaseTypeVal=[{
                     //     'PurchaseTypeCode': purchaseInfo[0].PurchaseType,
                     //     'PurchaseTypeName': purchaseInfo[0].PurchaseType,
@@ -310,12 +336,6 @@ export default {
 
                     //Details
                     salesInfo.forEach(function (item,index) {
-                       let itemCode2 = item.ItemCode;
-                       // let test = (instance.allStock).find(function (item2){
-                       //     return item2 ===itemCode2;
-                       // })
-                        //console.log(test)
-                       // instance.checkUpdateStock(itemCode2,index)
                         instance.fields.push({
                             item: {
                                 'ItemName': item.ItemName,
@@ -330,8 +350,10 @@ export default {
                             unitPrice: item.UnitPrice,
                             quantity: item.Quantity,
                             itemValue: item.Value,
+                            LocationCode: item.LocationCode,
+                            uom: item.UOM,
+                            stock: item.stock
                         })
-                        console.log(instance.allStock)
                     });
                     instance.getItemByCategory();
 
@@ -371,7 +393,9 @@ export default {
                 unitPrice:0,
                 quantity: 0,
                 itemValue: 0,
-                stock:0
+                stock:0,
+                LocationCode:'',
+                uom:'',
             });
         },
         removeRow(id) {
@@ -386,7 +410,7 @@ export default {
                 instance.allStock = response.allStock;
                 instance.category = response.category;
                 instance.customers = response.customer;
-                console.log(instance.allStock)
+
             }, function (error) {
             });
         },
@@ -419,54 +443,50 @@ export default {
 
             })
         },
-        setItemCode(index) {
-            let instance = this;
-            instance.fields[index].itemCode = instance.fields[index].item.ItemCode;
-            this.checkStock((instance.fields[index].item.ItemCode),index);
-        },
-        checkUpdateStock(itemCode){
-
-            return itemCode;
-        },
-        checkStock(itemCode,index){
-            let instance = this;
-
-            let url = 'sales/category-wise-item-stock';
-            this.axiosPost(url, {
-                ItemCode:itemCode ,
-            }, (response) => {
-                console.log(response.totalStock)
-                instance.fields[index].stock = response.totalStock;
-            }, (error) => {
-                this.errorNoti(error);
-
+        setItemCode(e, key) {
+            let item = this.items.find((row) => {
+                return row.ItemCode === e.target.value
             })
+            var itemCode = e.target.value;
+            let instance = this;
+            instance.fields[key].itemCode = e.target.value;
+            instance.fields[key].uom = item ? item.UOM : '';
+
+            console.log(instance.fields[key].LocationCode)
+        },
+        checkUpdateStock(e, key){
+            let instance = this;
+            var currentLocationCode = e.target.value;
+            var currentItemCode = instance.fields[key].itemCode
+            let updateStock = this.allStock.find((row)=>{
+                return (row.ItemCode ===currentItemCode && row.LocationCode===currentLocationCode);
+            });
+            instance.fields[key].stock = updateStock ? updateStock.stock : '';
 
         },
         setValue(index){
 
             let instance = this;
-            let currentPrice  = instance.fields[index].unitPrice;
-            let currentQuantity  = instance.fields[index].quantity;
-            let currentStock  = instance.fields[index].stock;
+            let currentPrice  =parseFloat( instance.fields[index].unitPrice);
+            let currentQuantity  = parseFloat(instance.fields[index].quantity);
+            let currentStock  = parseFloat(instance.fields[index].stock);
 
-            console.log(typeof (currentStock) );
             if( currentPrice && currentQuantity){
                 instance.fields[index].itemValue = currentPrice*currentQuantity ;
+                //compare with stock
+                if(currentQuantity > currentStock){
+                    this.errorNoti('Stock is not available');
+                }
             }
-            //compare with stock
-            if(currentQuantity > currentStock){
-                this.errorNoti('Stock is not available');
-            }
+
         },
         checkFieldValue() {
             this.errors = [];
             let instance = this;
             this.fields.forEach(function (item, index) {
-                if (item.item === '' || item.itemCode === '' || item.location === ''
+                if (item.itemCode === '' || item.location === ''
                     || item.quantity === '' ||  item.quantity <= 0 || item.quantity === undefined || item.itemValue === '' || item.itemValue <= 0) {
                     instance.errors[index] = {
-                        item: item.item === '' ? 'Item is required' : '',
                         itemCode: item.itemCode === '' ? 'item Code is required' : '',
                         unitPrice: item.unitPrice === '' ? 'Unit Price is required' : '',
                         quantity: (item.quantity === '' || item.quantity <=0) ? 'quantity is required' : '',
@@ -474,7 +494,7 @@ export default {
 
                     };
                 }
-                if(item.quantity> item.stock){
+                if(parseFloat(item.quantity)> parseFloat(item.stock)){
                     instance.errors[index]={
                       stock: item.stock < item.quantity ? 'Stock is not available':'',
                     };
@@ -491,7 +511,7 @@ export default {
                     submitUrl = 'sales/add';
                 }
                 if(returnData && this.actionType === 'edit' ){
-                    submitUrl = 'purchase/return';
+                    submitUrl = 'sales/return';
                 }
                 if(!returnData && this.actionType === 'edit' ){
                     submitUrl = 'sales/update';

@@ -91,6 +91,7 @@
                                                 <th>Item <span class="required-field">*</span></th>
                                                 <th>Item Code<span class="required-field">*</span></th>
                                                 <th>Pac Size<span class="required-field">*</span></th>
+                                                <th>Location<span class="required-field">*</span></th>
                                                 <th>Quantity<span class="required-field">*</span></th>
                                                 <th>Value<span class="required-field">*</span></th>
                                                 <th>Action</th>
@@ -156,7 +157,7 @@
                                                         }}</span>
                                                 </td>
                                                 <td>
-                                                    <input type="text"  class="form-control"
+                                                    <input type="number"  class="form-control" style="text-align: end"
                                                            v-model="field.quantity" placeholder="quantity" min="1">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].quantity !== undefined">{{
@@ -165,8 +166,8 @@
 
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control"
-                                                           v-model="field.itemValue" placeholder="Value" min="1">
+                                                    <input type="number" class="form-control" style="text-align: end"
+                                                           v-model="field.itemValue" placeholder="Value">
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-danger btn-sm"
@@ -361,7 +362,6 @@ export default {
                 CategoryCode:categoryCode ,
             }, (response) => {
                 instance.items = response.items;
-                console.log(instance.items)
                 instance.locations = response.locations;
             }, (error) => {
                 this.errorNoti(error);
@@ -398,7 +398,6 @@ export default {
                 this.$store.commit('submitButtonLoadingStatus', true);
                 let url = '';
                 var returnData = $('#return').prop('checked');
-                console.log(returnData)
                 var  submitUrl = '';
                 if (this.actionType === 'add') {
                     submitUrl = 'production/add';
