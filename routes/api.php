@@ -75,6 +75,14 @@ Route::group(['middleware' => ['jwt:api']], function () {
     //Customer
     Route::group(['prefix' =>'customers'],function () {
         Route::post('list', [\App\Http\Controllers\Customer\CustomerController::class, 'index']);
+        Route::post('add', [\App\Http\Controllers\Customer\CustomerController::class, 'store']);
+        Route::get('get-customer-info/{customerCode}',[\App\Http\Controllers\Customer\CustomerController::class,'getCustomerInfo']);
+        Route::post('update', [\App\Http\Controllers\Customer\CustomerController::class, 'update']);
+    });
+    Route::group(['prefix' =>'report'],function () {
+        Route::post('daily-production', [\App\Http\Controllers\Report\DailyProductionController::class, 'index']);
+        Route::get('daily-production-supporting-data', [\App\Http\Controllers\Report\DailyProductionController::class, 'getSupportingData']);
+        Route::post('daily-sales', [\App\Http\Controllers\Report\DailySalesController::class, 'index']);
     });
 
 

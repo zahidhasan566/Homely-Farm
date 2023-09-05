@@ -60,5 +60,21 @@ trait CodeGeneration
         }
         return $nextCode;
     }
+    public function generateCustomerCode()
+    {
+        $combinedCode = 'CM';
+        $combinedLength = strlen($combinedCode);
+        $maxCode = DB::select(DB::raw("select MAX(CustomerCode) as MaxNo FROM Customer WHERE LEFT(CustomerCode,'$combinedLength') = '$combinedCode'"));
+        $maxCode = $maxCode[0]->MaxNo;
+        if ($maxCode === null) {
+            $nextCode = $combinedCode.'001';
+        } else {
+            $nextCode = substr($maxCode,$combinedLength);
+            $nextCodeInc = $nextCode + 1;
+            $nextCode = sprintf("%0".strlen($nextCode)."d", $nextCodeInc);
+            $nextCode = $combinedCode.$nextCode;
+        }
+        return $nextCode;
+    }
 
 }
