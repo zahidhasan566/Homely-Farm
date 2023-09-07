@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :options="['Users']">
-      <button class="btn btn-primary" @click="addUserModal()">Add Customer</button>
+    <breadcrumb :options="['Location']">
+      <button class="btn btn-primary" @click="addUserModal()">Add Location</button>
     </breadcrumb>
     <div class="row" style="padding:8px 0px;">
       <div class="col-md-4">
@@ -19,7 +19,7 @@
       </template>
 
     </advanced-datatable>
-    <add-edit-customers @changeStatus="changeStatus" v-if="loading"/>
+    <add-edit-location @changeStatus="changeStatus" v-if="loading"/>
   </div>
 </template>
 <script >
@@ -33,9 +33,9 @@ export default {
   data() {
     return {
       tableOptions: {
-        source: 'customers/list',
+        source: 'setup/location-list',
         search: true,
-        slots: [3,4],
+        slots: [2,3],
         //hideColumn: ['RoleID','UserId'],
         slotsName: ['status','action'],
         sortable: [2],
@@ -58,11 +58,11 @@ export default {
       addUserModal(row = '') {
       this.loading = true;
       setTimeout(() => {
-        bus.$emit('add-edit-customers', row);
+        bus.$emit('add-edit-location', row);
       })
     },
     exportData() {
-      bus.$emit('export-data','customer-list-'+moment().format('YYYY-MM-DD'))
+      bus.$emit('export-data','location-list-'+moment().format('YYYY-MM-DD'))
     }
   }
 }

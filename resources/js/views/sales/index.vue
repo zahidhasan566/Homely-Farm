@@ -47,6 +47,9 @@ export default {
             this.changeStatus()
         })
     },
+    destroyed() {
+        bus.$off('add-edit-sales')
+    },
     methods: {
         changeStatus() {
             this.loading = false

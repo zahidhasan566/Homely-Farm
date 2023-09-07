@@ -8,6 +8,9 @@
             </div>
         </div>
         <advanced-datatable :options="tableOptions" v-if="showTable">
+            <template style="text-align:center" slot="quantity" slot-scope="row">
+                <span style="text-align:center">   {{Number(row.item.Quantity)}}</span>
+            </template>
         </advanced-datatable>
     </div>
 </template>
@@ -44,10 +47,11 @@ export default {
             this.tableOptions = {
                 source: 'report/daily-production',
                 search: true,
-                slots: [10],
+                slots: [7],
                 // hideColumn: ['CreatedAt'],
                 sortable: [2],
                 pages: [20, 50, 100],
+                slotsName: ['quantity'],
                 showFilter: ['CategoryCode'],
                 // colSize: ['col-lg-1','col-lg-1','col-lg-1','col-lg-1','col-lg-2','col-lg-2','col-lg-2','col-lg-2'],
                 filters: [

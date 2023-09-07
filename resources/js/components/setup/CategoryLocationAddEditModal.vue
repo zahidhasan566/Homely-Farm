@@ -11,33 +11,43 @@
                             <div class="modal-body">
                                 <div class="row">
                                     <div class="col-12 col-md-6">
-                                        <ValidationProvider name="Name" mode="eager" rules="required"
+                                        <ValidationProvider name="CategoryName" mode="eager" rules="required"
                                                             v-slot="{ errors }">
-                                            <div class="form-group">
-                                                <label for="name">Name <span class="error">*</span></label>
-                                                <input type="text" class="form-control"
-                                                       :class="{'error-border': errors[0]}" id="name"
-                                                       v-model="Name" name="staff-name" placeholder="Name">
-                                                <span class="error-message"> {{ errors[0] }}</span>
-                                            </div>
+                                            <label for="CategoryName">Category Name <span class="error">*</span></label>
+                                            <select class="form-control" :class="{'error-border': errors[0]}"
+                                                    v-model="CategoryCode" name="item">
+                                                <option value="">
+                                                    Select category
+                                                </option>
+                                                <option v-for="(item,index) in category"
+                                                        :key="index"
+                                                        :value="item.CategoryCode">
+                                                    {{ item.CategoryName }}
+                                                </option>
+                                            </select>
                                         </ValidationProvider>
                                     </div>
                                     <div class="col-12 col-md-6">
-                                        <ValidationProvider name="Address" mode="eager" rules="required"
+                                        <ValidationProvider name="LocationName" mode="eager" rules="required"
                                                             v-slot="{ errors }">
-                                            <div class="form-group">
-                                                <label for="name">Address <span class="error">*</span></label>
-                                                <input type="text" class="form-control"
-                                                       :class="{'error-border': errors[0]}" id="Address"
-                                                       v-model="Address" name="Address" placeholder="Address">
-                                                <span class="error-message"> {{ errors[0] }}</span>
-                                            </div>
+                                        <label for="LocationName">Location Name <span class="error">*</span></label>
+                                        <select class="form-control" :class="{'error-border': errors[0]}"
+                                                v-model="LocationCode" name="item">
+                                            <option value="">
+                                                Select Location
+                                            </option>
+                                            <option v-for="(item,index) in location"
+                                                    :key="index"
+                                                    :value="item.LocationCode">
+                                                {{ item.LocationName }}
+                                            </option>
+                                        </select>
                                         </ValidationProvider>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <ValidationProvider name="Status" mode="eager" rules="required"
                                                             v-slot="{ errors }">
-                                            <div class="form-group">
+                                            <div class="form-group" style="padding-top:20px">
                                                 <label for="status">Status <span class="error">*</span></label>
                                                 <select class="form-control" v-model="status">
                                                     <option value="Y">Active</option>
@@ -86,9 +96,13 @@ export default {
             type: 'add',
             actionType: '',
             buttonShow: false,
+            category:[],
+            location:[],
             roles: [],
             allSubMenu: [],
             allSubMenuId: [],
+            CategoryCode:'',
+            LocationCode:'',
         }
     },
     computed: {},
@@ -96,20 +110,22 @@ export default {
         $('#add-edit-dept').on('hidden.bs.modal', () => {
             this.$emit('changeStatus')
         });
-        bus.$on('add-edit-customers', (row) => {
+        bus.$on('add-edit-category-location', (row) => {
             if (row) {
                 this.selectedBusiness = [];
                 this.selectedDepartment = [];
                 let instance = this;
-                console.log(row.Id)
-                this.axiosGet('customers/get-customer-info/' + row.CustomerCode, function (response) {
-                    var user = response.data;
-                    instance.title = 'Update User';
+
+                this.axiosGet('setup/get-category-location-info/'+row.CategoryCode+'/'+ row.LocationCode, function (response) {
+                    console.log(response)
+                    var data = response.data;
+                    instance.title = 'Update Category Location';
                     instance.buttonText = "Update";
-                    instance.customerCode = user.CustomerCode;
-                    instance.Name = user.CustomerName;
-                    instance.Address = user.Address;
-                    instance.status = user.Active;
+
+                    instance.CategoryCode=data.CategoryCode
+                    instance.LocationCode = data.LocationCode
+                    instance.status = data.Active;
+
                     instance.buttonShow = true;
                     instance.actionType = 'edit';
                     instance.getData();
@@ -117,7 +133,7 @@ export default {
 
                 });
             } else {
-                this.title = 'Add Customer';
+                this.title = 'Add Category Location';
                 this.buttonText = "Add";
                 this.UserId = '';
                 this.Name = '';
@@ -139,7 +155,7 @@ export default {
         })
     },
     destroyed() {
-        bus.$off('add-edit-customers')
+        bus.$off('add-edit-category-location')
     },
     methods: {
         closeModal() {
@@ -147,9 +163,9 @@ export default {
         },
         getData() {
             let instance = this;
-            this.axiosGet('user/modal', function (response) {
-                instance.roles = response.roles;
-                instance.allSubMenu = response.allSubMenus;
+            this.axiosGet('setup/get-category-location-supporting-data', function (response) {
+                instance.category =  response.category
+                instance.location =  response.location
             }, function (error) {
 
             });
@@ -157,19 +173,13 @@ export default {
         onSubmit() {
             this.$store.commit('submitButtonLoadingStatus', true);
             let url = '';
-            if (this.actionType === 'add') url = 'customers/add';
-            else url = 'customers/update'
+            if (this.actionType === 'add') url = 'setup/category-location-add';
+            else url = 'setup/category-location-update'
             this.axiosPost(url, {
-                CustomerCode: this.customerCode,
-                Name: this.Name,
-                email: this.email,
-                mobile: this.mobile,
+                CategoryCode: this.CategoryCode,
+                LocationCode : this.LocationCode,
                 status: this.status,
-                NID: this.NID,
-                Address: this.Address,
-                userType: this.userType,
-                password: this.password,
-                selectedSubMenu: this.allSubMenuId
+
             }, (response) => {
                 this.successNoti(response.message);
                 $("#add-edit-dept").modal("toggle");
