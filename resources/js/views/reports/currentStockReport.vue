@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid">
-        <breadcrumb :options="['Daily Production Report']">
+        <breadcrumb :options="['Current Stock Report']">
         </breadcrumb>
         <div class="row" style="padding:8px 0px;">
             <div class="col-md-4">
@@ -31,44 +31,46 @@ export default {
         let instance = this;
         instance.getData();
     },
+
     methods: {
+        changeStatus() {
+            this.loading = false
+        },
         getData() {
             let instance = this;
-            this.axiosGet('report/daily-production-supporting-data', function (response) {
-                instance.loadDatatable(response)
-            }, function (error) {
-            });
+            instance.loadDatatable();
+            // this.axiosGet('report/daily-sales-supporting-data', function (response) {
+            //     instance.loadDatatable(response)
+            // }, function (error) {
+            // });
         },
         loadDatatable(response) {
             this.showTable = true
             this.tableOptions = {
-                source: 'report/daily-production',
+                source: 'report/current-stock',
                 search: true,
                 slots: [10],
                 // hideColumn: ['CreatedAt'],
                 sortable: [2],
                 pages: [20, 50, 100],
-                showFilter: ['CategoryCode'],
+              //  showFilter: ['CategoryCode'],
                 // colSize: ['col-lg-1','col-lg-1','col-lg-1','col-lg-1','col-lg-2','col-lg-2','col-lg-2','col-lg-2'],
-                filters: [
-                    {
-                        type: 'rangepicker',
-                        value: [moment().format('DD-MM-YYYY'),moment().format('DD-MM-YYYY')]
-                    },
-                    {
-                        type: 'dropdown',
-                        title: 'Select Category',
-                        value: '',
-                        options: response.category
-                    }
-                ]
+                // filters: [
+                //     {
+                //         type: 'rangepicker',
+                //         value: [moment().format('DD-MM-YYYY'),moment().format('DD-MM-YYYY')]
+                //     },
+                //     // {
+                //     //     type: 'dropdown',
+                //     //     title: 'Select Category',
+                //     //     value: '',
+                //     //     options: response.category
+                //     // }
+                // ]
             }
         },
-        changeStatus() {
-            this.loading = false
-        },
         exportData() {
-            bus.$emit('export-data','Daily-Production-Report-'+moment().format('YYYY-MM-DD'))
+            bus.$emit('export-data','Current-Stock-Report-'+moment().format('YYYY-MM-DD'))
         }
     }
 }

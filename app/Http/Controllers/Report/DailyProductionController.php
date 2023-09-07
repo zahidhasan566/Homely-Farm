@@ -12,6 +12,7 @@ class DailyProductionController extends Controller
 {
     public function index(Request $request){
 
+        $search = $request->search;
         if(!empty($request->filters[0]['value'])){
             $first = $request->filters[0]['value'][0];
             $second = $request->filters[0]['value'][1];
@@ -23,10 +24,14 @@ class DailyProductionController extends Controller
             $dateFrom = Carbon::now()->format('Y-m-d');;
             $dateTo =  Carbon::now()->format('Y-m-d');;
         }
-      //  dd($dateFrom,$dateTo);
+        if(!empty($request->filters[1]['value'])){
+            $catergoryCode  = $request->filters[1]['value'];
+        }
+        else{
+            $catergoryCode = '%';
+        }
 
-        $catergoryCode = '%';
-        $dailyProduction = DB::select("exec sp_DailyProduction '$dateFrom','$dateTo','$catergoryCode'");
+        $dailyProduction = DB::select("exec sp_DailyProduction '$dateFrom','$dateTo','$catergoryCode','$search'");
 
         return response()->json([
             'data' => $dailyProduction,

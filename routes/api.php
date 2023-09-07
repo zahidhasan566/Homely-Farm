@@ -83,6 +83,18 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('daily-production', [\App\Http\Controllers\Report\DailyProductionController::class, 'index']);
         Route::get('daily-production-supporting-data', [\App\Http\Controllers\Report\DailyProductionController::class, 'getSupportingData']);
         Route::post('daily-sales', [\App\Http\Controllers\Report\DailySalesController::class, 'index']);
+        Route::get('daily-sales-supporting-data', [\App\Http\Controllers\Report\DailySalesController::class, 'getSupportingData']);
+        Route::post('current-stock', [\App\Http\Controllers\Report\CurrentStockController::class, 'index']);
+    });
+    Route::group(['prefix' =>'setup'],function () {
+        //Category
+        Route::post('category-list', [\App\Http\Controllers\Setup\CategorySetupController::class, 'index']);
+        Route::post('category-add', [\App\Http\Controllers\Setup\CategorySetupController::class, 'store']);
+        Route::get('get-category-info/{categoryCode}',[\App\Http\Controllers\Setup\CategorySetupController::class,'getCategoryInfo']);
+        Route::post('category-update', [\App\Http\Controllers\Setup\CategorySetupController::class, 'update']);
+
+        //Location
+        Route::post('location-list', [\App\Http\Controllers\Setup\LocationSetupController::class, 'index']);
     });
 
 

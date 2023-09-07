@@ -11,25 +11,13 @@
                             <div class="modal-body">
                                 <div class="row">
                                     <div class="col-12 col-md-6">
-                                        <ValidationProvider name="Name" mode="eager" rules="required"
+                                        <ValidationProvider name="CategoryName" mode="eager" rules="required"
                                                             v-slot="{ errors }">
                                             <div class="form-group">
-                                                <label for="name">Name <span class="error">*</span></label>
+                                                <label for="name">Category Name <span class="error">*</span></label>
                                                 <input type="text" class="form-control"
                                                        :class="{'error-border': errors[0]}" id="name"
                                                        v-model="Name" name="staff-name" placeholder="Name">
-                                                <span class="error-message"> {{ errors[0] }}</span>
-                                            </div>
-                                        </ValidationProvider>
-                                    </div>
-                                    <div class="col-12 col-md-6">
-                                        <ValidationProvider name="Address" mode="eager" rules="required"
-                                                            v-slot="{ errors }">
-                                            <div class="form-group">
-                                                <label for="name">Address <span class="error">*</span></label>
-                                                <input type="text" class="form-control"
-                                                       :class="{'error-border': errors[0]}" id="Address"
-                                                       v-model="Address" name="Address" placeholder="Address">
                                                 <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
                                         </ValidationProvider>
@@ -72,7 +60,7 @@ export default {
         return {
             title: '',
             UserId: '',
-            customerCode: '',
+            categoryCode: '',
             Name: '',
             Address: '',
             NID: '',
@@ -96,20 +84,20 @@ export default {
         $('#add-edit-dept').on('hidden.bs.modal', () => {
             this.$emit('changeStatus')
         });
-        bus.$on('add-edit-customers', (row) => {
+        bus.$on('add-edit-category', (row) => {
             if (row) {
                 this.selectedBusiness = [];
                 this.selectedDepartment = [];
                 let instance = this;
                 console.log(row.Id)
-                this.axiosGet('customers/get-customer-info/' + row.CustomerCode, function (response) {
-                    var user = response.data;
-                    instance.title = 'Update Customer';
+                this.axiosGet('setup/get-category-info/' + row.CategoryCode, function (response) {
+                    console.log(response);
+                    var category = response.category;
+                    instance.title = 'Update Category';
                     instance.buttonText = "Update";
-                    instance.customerCode = user.CustomerCode;
-                    instance.Name = user.CustomerName;
-                    instance.Address = user.Address;
-                    instance.status = user.Active;
+                    instance.categoryCode = category.CategoryCode;
+                    instance.Name = category.CategoryName;
+                    instance.status = category.Active;
                     instance.buttonShow = true;
                     instance.actionType = 'edit';
                     instance.getData();
@@ -117,7 +105,7 @@ export default {
 
                 });
             } else {
-                this.title = 'Add Customer';
+                this.title = 'Add Category';
                 this.buttonText = "Add";
                 this.UserId = '';
                 this.Name = '';
@@ -139,7 +127,7 @@ export default {
         })
     },
     destroyed() {
-        bus.$off('add-edit-customers')
+        bus.$off('add-edit-category')
     },
     methods: {
         closeModal() {
@@ -157,19 +145,12 @@ export default {
         onSubmit() {
             this.$store.commit('submitButtonLoadingStatus', true);
             let url = '';
-            if (this.actionType === 'add') url = 'customers/add';
-            else url = 'customers/update'
+            if (this.actionType === 'add') url = 'setup/category-add';
+            else url = 'setup/category-update'
             this.axiosPost(url, {
-                CustomerCode: this.customerCode,
+                CategoryCode: this.categoryCode,
                 Name: this.Name,
-                email: this.email,
-                mobile: this.mobile,
                 status: this.status,
-                NID: this.NID,
-                Address: this.Address,
-                userType: this.userType,
-                password: this.password,
-                selectedSubMenu: this.allSubMenuId
             }, (response) => {
                 this.successNoti(response.message);
                 $("#add-edit-dept").modal("toggle");

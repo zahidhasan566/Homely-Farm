@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Purchase;
 
 use App\Http\Controllers\Controller;
+use App\Models\CategoryLocation;
 use App\Models\Items;
 use App\Models\ItemsCategory;
 use App\Models\Location;
@@ -25,7 +26,7 @@ class PurchaseController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'category' => ItemsCategory::all(),
+            'category' => ItemsCategory::where('Active','Y')->get(),
         ]);
     }
     public function index(Request $request){
@@ -37,6 +38,7 @@ class PurchaseController extends Controller
                 $q->where('PurchaseMaster.PurchaseCode', 'like', '%' . $search . '%');
                 $q->orWhere('PurchaseMaster.Preparedate', 'like', '%' . $search . '%');
             })
+            ->where('PurchaseMaster.Returned','!=','Y')
 
             ->orderBy('PurchaseMaster.Preparedate', 'desc')
             ->select(
@@ -59,10 +61,19 @@ class PurchaseController extends Controller
         return $purchaseMaster;
     }
     public function getCategoryWiseItemData(Request $request){
+        $location = CategoryLocation::select(
+            'CategoryLocation.CategoryCode',
+            'CategoryLocation.LocationCode',
+            'CategoryLocation.Active',
+            'Location.LocationName',
+        )->join('Location','Location.LocationCode','CategoryLocation.LocationCode')
+            ->where('CategoryLocation.CategoryCode',$request->CategoryCode)
+            ->where('CategoryLocation.Active','Y')->get();
+
         return response()->json([
             'status' => 'success',
             'items' => Items::where('CategoryCode',$request->CategoryCode)->get(),
-            'locations' => Location::all(),
+            'locations' => $location,
         ]);
     }
 

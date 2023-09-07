@@ -42,6 +42,12 @@ Vue.component('add-edit-production',require('./components/production/AddEditModa
 Vue.component('add-edit-purchase',require('./components/purchase/AddEditModal').default);
 Vue.component('add-edit-sales',require('./components/sales/AddEditModal').default);
 Vue.component('add-edit-customers',require('./components/customers/AddEditModal').default);
+
+Vue.component('add-edit-category',require('./components/setup/CategoryAddEditModal.vue').default);
+Vue.component('add-edit-location',require('./components/setup/LocationAddEditModal.vue').default);
+Vue.component('add-edit-category-location',require('./components/setup/CategoryLocationAddEditModal.vue').default);
+
+
 //Vue Datepicker
 import { Datepicker } from '@livelybone/vue-datepicker';
 Vue.component('datepicker', Datepicker);
