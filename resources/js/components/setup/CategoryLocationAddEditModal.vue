@@ -104,7 +104,7 @@ export default {
                 console.log(row.Id)
                 this.axiosGet('customers/get-customer-info/' + row.CustomerCode, function (response) {
                     var user = response.data;
-                    instance.title = 'Update Customer';
+                    instance.title = 'Update User';
                     instance.buttonText = "Update";
                     instance.customerCode = user.CustomerCode;
                     instance.Name = user.CustomerName;

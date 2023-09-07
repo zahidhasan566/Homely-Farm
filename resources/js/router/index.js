@@ -13,6 +13,10 @@ import sales from "../views/sales/index.vue";
 import customers from "../views/customers/index.vue";
 import dailyProductionReport from "../views/reports/dailyProductionReport.vue";
 import dailySalesReport from "../views/reports/dailySalesReport.vue";
+import currentStockReport from "../views/reports/currentStockReport.vue";
+import categoryIndex from "../views/setup/CategoryIndex.vue";
+import locationIndex from "../views/setup/LocationIndex.vue";
+import categoryLocationIndex from "../views/setup/CategoryLocationIndex.vue";
 
 
 Vue.use(VueRouter);
@@ -78,12 +82,24 @@ const routes = [
                 name: 'sales',
                 component: sales
             },
-            //Customer   ROUTE
+            //Setup Customer   ROUTE
             {
                 path: baseurl + 'customer/customerList',
                 name: 'customer',
                 component: customers
             },
+            {
+                path: baseurl + 'setup/category',
+                name: 'category',
+                component: categoryIndex
+            },
+            {
+                path: baseurl + 'setup/location',
+                name: 'location',
+                component: locationIndex
+            },
+
+
             //Report
             {
                 path: baseurl + 'report/dailyProduction',
@@ -94,6 +110,11 @@ const routes = [
                 path: baseurl + 'report/dailySales',
                 name: 'dailySalesReport',
                 component: dailySalesReport
+            },
+            {
+                path: baseurl + 'report/current-stock',
+                name: 'currentStockReport',
+                component: currentStockReport
             },
 
         ],

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Sales;
 
 use App\Http\Controllers\Controller;
+use App\Models\CategoryLocation;
 use App\Models\Customer;
 use App\Models\Items;
 use App\Models\ItemsCategory;
@@ -35,9 +36,11 @@ class SalesController extends Controller
         }
         $totalStock = StockBatch::select('ItemCode','LocationCode', DB::raw("SUM(BatchQty) as stock"))->groupBy('ItemCode','LocationCode')->get();
 
+
+
         return response()->json([
             'status' => 'success',
-            'category' => ItemsCategory::all(),
+            'category' => ItemsCategory::where('Active','Y')->get(),
             'customer' => $finalCustomer,
             'allStock' => $totalStock,
             'locations' => Location::all(),
@@ -55,6 +58,7 @@ class SalesController extends Controller
                 $q->where('SalesMaster.SalesCode', 'like', '%' . $search . '%');
                 $q->orWhere('SalesMaster.SalesDate', 'like', '%' . $search . '%');
             })
+            ->where('SalesMaster.Returned','!=','Y')
             ->orderBy('SalesMaster.PrepareDate', 'desc')
             ->select(
                 'SalesMaster.SalesCode',
@@ -83,10 +87,19 @@ class SalesController extends Controller
     //Category Wise Item
     public function getCategoryWiseItemData(Request $request)
     {
+        $location = CategoryLocation::select(
+            'CategoryLocation.CategoryCode',
+            'CategoryLocation.LocationCode',
+            'CategoryLocation.Active',
+            'Location.LocationName',
+        )->join('Location','Location.LocationCode','CategoryLocation.LocationCode')
+            ->where('CategoryLocation.CategoryCode',$request->CategoryCode)
+            ->where('CategoryLocation.Active','Y')->get();
+
         return response()->json([
             'status' => 'success',
             'items' => Items::where('CategoryCode', $request->CategoryCode)->get(),
-            'locations' => Location::all(),
+            'locations' => $location,
         ]);
     }
 

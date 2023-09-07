@@ -7,7 +7,7 @@
                 <button type="button" class="btn btn-success btn-sm" @click="exportData">Export to Excel</button>
             </div>
         </div>
-        <advanced-datatable :options="tableOptions">
+        <advanced-datatable :options="tableOptions" v-if="showTable">
         </advanced-datatable>
     </div>
 </template>
@@ -21,7 +21,32 @@ export default {
 
     data() {
         return {
+            showTable:false,
             tableOptions: {
+            },
+            loading: false,
+            cpLoading: false,
+        }
+    },
+    mounted() {
+        let instance = this;
+        instance.getData();
+    },
+
+    methods: {
+        changeStatus() {
+            this.loading = false
+        },
+        getData() {
+            let instance = this;
+            this.axiosGet('report/daily-production-supporting-data', function (response) {
+                instance.loadDatatable(response)
+            }, function (error) {
+            });
+        },
+        loadDatatable(response) {
+            this.showTable = true
+            this.tableOptions = {
                 source: 'report/daily-sales',
                 search: true,
                 slots: [10],
@@ -35,22 +60,14 @@ export default {
                         type: 'rangepicker',
                         value: [moment().format('DD-MM-YYYY'),moment().format('DD-MM-YYYY')]
                     },
-                    // {
-                    //     type: 'dropdown',
-                    //     title: 'Select Category',
-                    //     value: '',
-                    //     options: this.categoryOptions
-                    // }
+                    {
+                        type: 'dropdown',
+                        title: 'Select Category',
+                        value: '',
+                        options: response.category
+                    }
                 ]
-            },
-            loading: false,
-            cpLoading: false,
-        }
-    },
-
-    methods: {
-        changeStatus() {
-            this.loading = false
+            }
         },
         exportData() {
             bus.$emit('export-data','Daily-Sales-Report-'+moment().format('YYYY-MM-DD'))

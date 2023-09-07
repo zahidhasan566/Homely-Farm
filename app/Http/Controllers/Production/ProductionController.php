@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Production;
 
 use App\Http\Controllers\Controller;
+use App\Models\CategoryLocation;
 use App\Models\Items;
 use App\Models\ItemsCategory;
 use App\Models\Location;
@@ -24,7 +25,7 @@ class ProductionController extends Controller
     public function getSupportingData(){
         return response()->json([
             'status' => 'success',
-            'category' => ItemsCategory::all(),
+            'category' => ItemsCategory::where('Active','Y')->get(),
         ]);
     }
     public function index(Request $request){
@@ -37,6 +38,7 @@ class ProductionController extends Controller
                                     $q->where('ProductionMaster.ProductionCode', 'like', '%' . $search . '%');
                                     $q->orWhere('ProductionMaster.ProductionDate', 'like', '%' . $search . '%');
                                  })
+                                ->where('ProductionMaster.Returned','!=','Y')
 
             ->orderBy('ProductionMaster.PrepareDate', 'desc')
             ->select(
@@ -58,10 +60,20 @@ class ProductionController extends Controller
         return $productionMaster;
     }
     public function getCategoryWiseItemData(Request $request){
+
+        $location = CategoryLocation::select(
+            'CategoryLocation.CategoryCode',
+            'CategoryLocation.LocationCode',
+            'CategoryLocation.Active',
+            'Location.LocationName',
+        )->join('Location','Location.LocationCode','CategoryLocation.LocationCode')
+        ->where('CategoryLocation.CategoryCode',$request->CategoryCode)
+        ->where('CategoryLocation.Active','Y')->get();
+
         return response()->json([
             'status' => 'success',
             'items' => Items::where('CategoryCode',$request->CategoryCode)->get(),
-            'locations' => Location::all(),
+            'locations' => $location,
         ]);
     }
 
