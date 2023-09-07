@@ -8,6 +8,10 @@
             </div>
         </div>
         <advanced-datatable :options="tableOptions" v-if="showTable">
+            <template  slot="currentStock" slot-scope="row">
+                <span style="text-align:center">   {{Number(row.item.CurrentStock)}}</span>
+
+            </template>
         </advanced-datatable>
     </div>
 </template>
@@ -31,7 +35,9 @@ export default {
         let instance = this;
         instance.getData();
     },
-
+    // destroyed() {
+    //     bus.$off('export-data')
+    // },
     methods: {
         changeStatus() {
             this.loading = false
@@ -49,9 +55,10 @@ export default {
             this.tableOptions = {
                 source: 'report/current-stock',
                 search: true,
-                slots: [10],
+                slots: [2],
                 // hideColumn: ['CreatedAt'],
                 sortable: [2],
+                slotsName: ['currentStock'],
                 pages: [20, 50, 100],
               //  showFilter: ['CategoryCode'],
                 // colSize: ['col-lg-1','col-lg-1','col-lg-1','col-lg-1','col-lg-2','col-lg-2','col-lg-2','col-lg-2'],

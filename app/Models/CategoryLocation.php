@@ -12,5 +12,6 @@ class CategoryLocation extends Model
     public $primaryKey = false;
     protected $guarded = [];
     public $timestamps = false;
+    public $incrementing=false;
     protected $keyType = 'string';
 }

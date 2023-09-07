@@ -47,6 +47,9 @@ export default {
             this.changeStatus()
         })
     },
+    destroyed() {
+        bus.$off('export-data')
+    },
     methods: {
         changeStatus() {
             this.loading = false

@@ -212,7 +212,10 @@ export default {
       this.readData('export');
     })
   },
-  methods: {
+    destroyed() {
+        bus.$off('export-data')
+    },
+    methods: {
     sortedKeyValue(key, type) {
       this.requestParams.sortedKey = key;
       this.requestParams.sortedType = type;

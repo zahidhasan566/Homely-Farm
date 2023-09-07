@@ -95,6 +95,17 @@ Route::group(['middleware' => ['jwt:api']], function () {
 
         //Location
         Route::post('location-list', [\App\Http\Controllers\Setup\LocationSetupController::class, 'index']);
+        Route::post('location-add', [\App\Http\Controllers\Setup\LocationSetupController::class, 'store']);
+        Route::get('get-location-info/{locationCode}',[\App\Http\Controllers\Setup\LocationSetupController::class,'getLocationInfo']);
+        Route::post('location-update', [\App\Http\Controllers\Setup\LocationSetupController::class, 'update']);
+
+        //Category Location
+        Route::post('category-location-list', [\App\Http\Controllers\Setup\CategoryLocationSetupController::class, 'index']);
+        Route::get('get-category-location-supporting-data', [\App\Http\Controllers\Setup\CategoryLocationSetupController::class, 'getSupportingData']);
+        Route::post('category-location-add', [\App\Http\Controllers\Setup\CategoryLocationSetupController::class, 'store']);
+        Route::get('get-category-location-info/{categoryCode}/{locationCode}',[\App\Http\Controllers\Setup\CategoryLocationSetupController::class,'getCategoryLocationInfo']);
+        Route::post('category-location-update', [\App\Http\Controllers\Setup\CategoryLocationSetupController::class, 'update']);
+
     });
 
 

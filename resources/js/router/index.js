@@ -98,6 +98,11 @@ const routes = [
                 name: 'location',
                 component: locationIndex
             },
+            {
+                path: baseurl + 'setup/category-location',
+                name: 'categoryLocation',
+                component: categoryLocationIndex
+            },
 
 
             //Report
