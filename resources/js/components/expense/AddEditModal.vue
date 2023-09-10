@@ -13,26 +13,46 @@
                         <form class="form-horizontal" id="formProduction" @submit.prevent="handleSubmit(onSubmit)">
                             <div class="modal-body">
                                 <div class="row">
-                                    <div class="col-12 col-md-6">
-                                        <ValidationProvider name="production_date" mode="eager"
+                                    <div class="col-12 col-md-4">
+                                        <ValidationProvider name="ExpenseDate" mode="eager"
                                                             v-slot="{ errors }">
                                             <div class="form-group">
-                                                <label for="name">Production Date <span class="error">*</span></label>
-                                                <datepicker v-model="production_date" :dayStr="dayStr"
+                                                <label for="name">Expense Date <span class="error">*</span></label>
+                                                <datepicker v-model="expenseDate" :dayStr="dayStr"
                                                             placeholder="YYYY-MM-DD" :firstDayOfWeek="0"/>
                                                 <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
                                         </ValidationProvider>
                                     </div>
-                                    <div class="col-12 col-md-6">
+                                    <div class="col-12 col-md-4">
                                             <div class="form-group">
-                                                <label for="name">Reference</label>
-                                                <input type="text" class="form-control"
-                                                        id="Reference"
-                                                       v-model="reference" name="staff-name" placeholder="Reference">
+                                                <label for="ExpenseHead">Expense Head </label>
+                                                <multiselect v-model="expenseHeadVal" :options="expenseHead"
+                                                             :multiple="false"
+                                                             @input="getItemByCategory"
+                                                             :close-on-select="true"
+                                                             :clear-on-select="false" :preserve-search="true"
+                                                             placeholder="Select Expense Head"
+                                                             label="ExpenseHead" track-by="HeadCode">
+
+                                                </multiselect>
                                             </div>
                                     </div>
-                                    <div class="col-12 col-md-6">
+<!--                                    <div class="col-12 col-md-4">-->
+<!--                                        <div class="form-group">-->
+<!--                                            <label for="ExpenseHead">Employee </label>-->
+<!--                                            <multiselect v-model="employeeVal" :options="employee"-->
+<!--                                                         :multiple="false"-->
+<!--                                                         @input="getItemByCategory"-->
+<!--                                                         :close-on-select="true"-->
+<!--                                                         :clear-on-select="false" :preserve-search="true"-->
+<!--                                                         placeholder="Select Employee"-->
+<!--                                                         label="EmployeeName" track-by="EmployeeCode">-->
+
+<!--                                            </multiselect>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+                                    <div class="col-12 col-md-4">
                                         <ValidationProvider name="Category" mode="eager" rules="required"
                                                             v-slot="{ errors }">
                                             <div class="form-group">
@@ -59,14 +79,15 @@
                                             </div>
                                         </ValidationProvider>
                                     </div>
-                                    <div class="col-12 col-md-4" v-if="actionType==='edit'">
-                                        <div class="form-group">
-                                            <label for="user-type">Return</label>
-                                            <br>
-                                            <input type="checkbox" value="Y" id="return"> Return
-                                        </div>
-
-
+                                    <div class="col-12 col-md-4">
+                                        <label for="naration">Naration </label>
+                                        <input  type="text"  class="form-control"
+                                               v-model="naration" placeholder="Naration">
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <label for="Rate">Rate</label>
+                                        <input  type="text"  class="form-control"
+                                               v-model="rate" placeholder="Rate">
                                     </div>
 
                                 </div>
@@ -75,25 +96,25 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-3" style="margin-bottom: 10px;">
-                                            <label for="payment-required-by">Add production</label>
+                                            <label for="payment-required-by">Add Expense</label>
                                         </div>
-                                        <div class="offset-md-5 col-md-4">
-                                            <button style="float: right;" id="add-row" type="button"
-                                                    class="btn btn-success btn-sm" @click="addRow">Add Row
-                                            </button>
-                                        </div>
+<!--                                        <div class="offset-md-5 col-md-4">-->
+<!--                                            <button style="float: right;" id="add-row" type="button"-->
+<!--                                                    class="btn btn-success btn-sm" @click="addRow">Add Row-->
+<!--                                            </button>-->
+<!--                                        </div>-->
                                     </div>
                                     <div class="table-responsive">
                                         <table
                                             class="table  table-bordered table-striped   nowrap dataTable no-footer dtr-inline table-sm">
                                             <thead class="thead-dark">
                                             <tr>
-                                                <th>Item <span class="required-field">*</span></th>
-                                                <th>Item Code<span class="required-field">*</span></th>
-                                                <th>Pac Size<span class="required-field">*</span></th>
-                                                <th>Location<span class="required-field">*</span></th>
-                                                <th>Quantity<span class="required-field">*</span></th>
-                                                <th>Value<span class="required-field">*</span></th>
+                                                <th>Item </th>
+                                                <th>Item Code</th>
+                                                <th>Pac Size</th>
+                                                <th>Location</th>
+                                                <th>Quantity</th>
+                                                <th>Amount</th>
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
@@ -126,7 +147,7 @@
                                                 </td>
                                                 <td>
                                                     <input readonly type="text"  class="form-control"
-                                                           v-model="field.itemCode" placeholder="itemCode" min="0">
+                                                           v-model="field.itemCode" placeholder="itemCode">
 
                                                 </td>
                                                 <td>
@@ -214,9 +235,17 @@ export default {
             category: [],
             categoryType: '',
             updateCategoryCode:'',
+            expenseDate:'',
             production_code:'',
+            expenseCode:'',
             items: [],
             locations: [],
+            expenseHead:[],
+            expenseHeadVal:'',
+            naration:'',
+            rate:'',
+            employee:[],
+            employeeVal:'',
             production_date: '',
             reference: '',
             dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
@@ -245,46 +274,51 @@ export default {
         $('#add-edit-dept').on('hidden.bs.modal', () => {
             this.$emit('changeStatus')
         });
-        bus.$on('add-edit-production', (row) => {
+        bus.$on('add-edit-expense', (row) => {
             if (row) {
                 let instance = this;
-                this.axiosGet('production/get-production-info/' + row.ProductionCode, function (response) {
-                    instance.title = 'Update production';
+                this.axiosGet('expense/get-expense-info/' + row.ExpenseCode, function (response) {
+                    instance.title = 'Update expense';
                     instance.buttonText = "Update";
                     instance.buttonShow = true;
                     instance.actionType = 'edit';
                     instance.fields.splice(0, 1)
                     instance.getData();
-                    var productionInfo = response.ProductionInfo;
+                    var expenseInfo = response.expenseInfo;
+                    console.log(expenseInfo)
 
                     //Master
-                    instance.production_code = response.ProductionInfo[0].ProductionCode
-                    instance.production_date = response.ProductionInfo[0].ProductionDate
-                    instance.updateCategoryCode = productionInfo[0].CategoryCode
-                    instance.reference = response.ProductionInfo[0].Reference
+                    instance.expenseDate = expenseInfo[0].ExpenseDate;
+                    instance.expenseCode = expenseInfo[0].ExpenseCode;
+                    instance.expenseHeadVal =[{
+                        'HeadCode':expenseInfo[0].HeadCode,
+                        'ExpenseHead':expenseInfo[0].ExpenseHead
+                    }];
+                    instance.updateCategoryCode = expenseInfo[0].CategoryCode
+                    instance.naration = expenseInfo[0].Naration
+                    instance.rate = expenseInfo[0].Rate
 
                     instance.categoryType=[{
-                        'Active': response.ProductionInfo[0].Active,
-                        'CategoryCode': response.ProductionInfo[0].CategoryCode,
-                        'CategoryName': response.ProductionInfo[0].CategoryName
+                        'CategoryCode': expenseInfo[0].CategoryCode,
+                        'CategoryName': expenseInfo[0].CategoryName
                     }
                     ]
 
                     //Details
-                    productionInfo.forEach(function (item,index) {
+                    expenseInfo.forEach(function (item,index) {
                         instance.fields.push({
                             item: {
                                 'ItemName': item.ItemName,
                                 'ItemCode': item.ItemCode,
                             },
                             itemCode: item.ItemCode,
-                            location: {
-                                'Active': 'Y',
-                                'LocationCode': item.LocationCode,
-                                'LocationName': item.LocationName
-                            },
+                            // location: {
+                            //     'Active': 'Y',
+                            //     'LocationCode': item.LocationCode,
+                            //     'LocationName': item.LocationName
+                            // },
                             quantity: item.Quantity,
-                            itemValue: item.Value,
+                            itemValue: item.Amount,
                             LocationCode: item.LocationCode,
                             uom: item.UOM
                         })
@@ -294,7 +328,7 @@ export default {
 
                 });
             } else {
-                this.title = 'Add production';
+                this.title = 'Add expense';
                 this.buttonText = "Add";
                 this.UserId = '';
 
@@ -307,7 +341,7 @@ export default {
         })
     },
     destroyed() {
-        bus.$off('add-edit-production')
+        bus.$off('add-edit-expense')
     },
     methods: {
         closeModal() {
@@ -336,8 +370,10 @@ export default {
         },
         getData() {
             let instance = this;
-            this.axiosGet('production/supporting-data', function (response) {
+            this.axiosGet('expense/supporting-data', function (response) {
                 instance.category = response.category;
+                instance.expenseHead = response.expenseHead;
+                instance.employee = response.employee;
             }, function (error) {
             });
         },
@@ -357,7 +393,7 @@ export default {
             else{
                 categoryCode = instance.updateCategoryCode;
             }
-            let url = 'production/category-wise-item';
+            let url = 'expense/category-wise-item';
             this.axiosPost(url, {
                 CategoryCode:categoryCode ,
             }, (response) => {
@@ -380,39 +416,41 @@ export default {
         checkFieldValue() {
             this.errors = [];
             let instance = this;
-            this.fields.forEach(function (item, index) {
-                if (item.itemCode === '' || item.location === ''
-                    || item.quantity === '' || item.quantity <=0 || item.quantity === undefined ) {
-                    instance.errors[index] = {
-                        itemCode: item.itemCode === '' ? 'item Code is required' : '',
-                        location: item.location === '' ? 'location  is required' : '',
-                        quantity: (item.quantity === '' ||item.quantity <=0 ) ? 'quantity  is required' : '',
+            if(instance.categoryType === ''|| instance.categoryType === undefined || instance.expenseDate === ''|| instance.expenseDate === undefined ){
+                this.errors = 'Value Required'
+            }
 
-                    };
-                }
-            });
+            // this.fields.forEach(function (item, index) {
+            //     if (item.itemCode === '' || item.location === ''
+            //         || item.quantity === '' || item.quantity <=0 || item.quantity === undefined ) {
+            //         instance.errors[index] = {
+            //             itemCode: item.itemCode === '' ? 'item Code is required' : '',
+            //             location: item.location === '' ? 'location  is required' : '',
+            //             quantity: (item.quantity === '' ||item.quantity <=0 ) ? 'quantity  is required' : '',
+            //
+            //         };
+            //     }
+            // });
         },
         onSubmit() {
             this.checkFieldValue();
             if (this.errors.length === 0) {
                 this.$store.commit('submitButtonLoadingStatus', true);
                 let url = '';
-                var returnData = $('#return').prop('checked');
                 var  submitUrl = '';
                 if (this.actionType === 'add') {
-                    submitUrl = 'production/add';
+                    submitUrl = 'expense/add';
                 }
-                if(returnData && this.actionType === 'edit' ){
-                    submitUrl = 'production/return';
-                }
-                if(!returnData && this.actionType === 'edit' ){
-                    submitUrl = 'production/update';
+                if(this.actionType === 'edit' ){
+                    submitUrl = 'expense/update';
                 }
                 this.axiosPost(submitUrl, {
-                    production_code: this.production_code,
-                    production_date: this.production_date,
-                    reference: this.reference,
+                    expenseCode: this.expenseCode,
+                    expenseDate: this.expenseDate,
+                    expenseHeadVal: this.expenseHeadVal,
                     categoryType: this.categoryType,
+                    narration : this.naration,
+                    rate: this.rate,
                     details: this.fields,
                 }, (response) => {
                     this.successNoti(response.message);

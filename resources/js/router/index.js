@@ -17,6 +17,9 @@ import currentStockReport from "../views/reports/currentStockReport.vue";
 import categoryIndex from "../views/setup/CategoryIndex.vue";
 import locationIndex from "../views/setup/LocationIndex.vue";
 import categoryLocationIndex from "../views/setup/CategoryLocationIndex.vue";
+import expenseHeadIndex from "../views/setup/ExpenseHeadIndex.vue";
+import expense from "../views/expense/index.vue";
+
 
 
 Vue.use(VueRouter);
@@ -82,6 +85,14 @@ const routes = [
                 name: 'sales',
                 component: sales
             },
+            //EXPENSE   ROUTE
+            {
+                path: baseurl + 'expense/expenseList',
+                name: 'expense',
+                component: expense
+            },
+
+
             //Setup Customer   ROUTE
             {
                 path: baseurl + 'customer/customerList',
@@ -102,6 +113,11 @@ const routes = [
                 path: baseurl + 'setup/category-location',
                 name: 'categoryLocation',
                 component: categoryLocationIndex
+            },
+            {
+                path: baseurl + 'setup/expense-head',
+                name: 'expenseHeadIndex',
+                component: expenseHeadIndex
             },
 
 

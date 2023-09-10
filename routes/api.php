@@ -106,6 +106,22 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::get('get-category-location-info/{categoryCode}/{locationCode}',[\App\Http\Controllers\Setup\CategoryLocationSetupController::class,'getCategoryLocationInfo']);
         Route::post('category-location-update', [\App\Http\Controllers\Setup\CategoryLocationSetupController::class, 'update']);
 
+        //Expense Head
+        Route::post('expense-head-list', [\App\Http\Controllers\Setup\ExpenseHeadController::class, 'index']);
+        Route::post('expense-head-add', [\App\Http\Controllers\Setup\ExpenseHeadController::class, 'store']);
+        Route::get('get-expense-head-info/{headCode}',[\App\Http\Controllers\Setup\ExpenseHeadController::class,'getExpenseHeadInfo']);
+        Route::post('expense-head-update', [\App\Http\Controllers\Setup\ExpenseHeadController::class, 'update']);
+
+    });
+
+    //Expense
+    Route::group(['prefix' =>'expense'],function () {
+        Route::post('expense-list', [\App\Http\Controllers\Expense\ExpenseController::class, 'index']);
+        Route::get('supporting-data', [\App\Http\Controllers\Expense\ExpenseController::class, 'getSupportingData']);
+        Route::post('category-wise-item', [\App\Http\Controllers\Expense\ExpenseController::class, 'getCategoryWiseItemData']);
+        Route::post('add', [\App\Http\Controllers\Expense\ExpenseController::class, 'store']);
+        Route::get('get-expense-info/{expenseCode}', [\App\Http\Controllers\Expense\ExpenseController::class, 'getExpenseInfo']);
+        Route::post('update', [\App\Http\Controllers\Expense\ExpenseController::class, 'update']);
     });
 
 
