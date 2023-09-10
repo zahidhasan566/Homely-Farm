@@ -20,8 +20,9 @@ class CurrentStockController extends Controller
                 $q->where('Items.ItemName', 'like', '%' . $search . '%');
                 $q->orWhere('Location.LocationName', 'like', '%' . $search . '%');
             })
-            ->select('Items.ItemName as Item', 'Location.LocationName as Location',
-                DB::raw("CASE WHEN ReceiveQty IS NOT NULL AND BatchQty IS NOT NULL THEN (ReceiveQty-BatchQty) end as CurrentStock"));
+            ->select('Items.ItemName as Item', 'Location.LocationName as Location','StockBatch.BatchQty as CurrentStock',
+                //DB::raw("CASE WHEN ReceiveQty IS NOT NULL AND BatchQty IS NOT NULL THEN (ReceiveQty-BatchQty) end as CurrentStock")
+            );
 //        if(!empty($request->filters[0]['value'])){
 //            $first = $request->filters[0]['value'][0];
 //            $second = $request->filters[0]['value'][1];
