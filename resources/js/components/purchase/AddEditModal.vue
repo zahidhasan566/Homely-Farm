@@ -164,7 +164,7 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input type="number"  class="form-control"  @input="setValue(index)" style="text-align: end"
+                                                    <input type="text"  class="form-control"  @input="setValue(index)" style="text-align: end"
                                                            v-model="field.unitPrice" placeholder="unit Price" min="1">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].unitPrice !== undefined">{{
@@ -172,7 +172,7 @@
                                                         }}</span>
                                                 </td>
                                                 <td>
-                                                    <input type="number"  class="form-control" style="text-align: end"
+                                                    <input type="text"  class="form-control" style="text-align: end"
                                                            v-model="field.quantity" placeholder="quantity"  @input="setValue(index)" min="1">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].quantity !== undefined">{{
@@ -181,7 +181,7 @@
 
                                                 </td>
                                                 <td>
-                                                    <input type="number" class="form-control" readonly style="text-align: end"
+                                                    <input type="text" class="form-control" readonly style="text-align: end"
                                                            v-model="field.itemValue" placeholder="Value">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].itemValue !== undefined">{{

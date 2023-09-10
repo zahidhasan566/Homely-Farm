@@ -157,8 +157,8 @@
                                                         }}</span>
                                                 </td>
                                                 <td>
-                                                    <input type="number"  class="form-control" style="text-align: end"
-                                                           v-model="field.quantity" placeholder="quantity" min="1">
+                                                    <input type="text"  class="form-control" style="text-align: end"
+                                                           v-model="field.quantity" placeholder="quantity">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].quantity !== undefined">{{
                                                             errors[index].quantity
@@ -166,7 +166,7 @@
 
                                                 </td>
                                                 <td>
-                                                    <input type="number" class="form-control" style="text-align: end"
+                                                    <input type="text" class="form-control" style="text-align: end"
                                                            v-model="field.itemValue" placeholder="Value">
                                                 </td>
                                                 <td>
