@@ -124,14 +124,32 @@ trait CodeGeneration
         }
         return $nextCode;
     }
+    // public function generateExpenseCode()
+    // {
+    //     $combinedCode = 'EX';
+    //     $combinedLength = strlen($combinedCode);
+    //     $maxCode = DB::select(DB::raw("select MAX(ExpenseCode) as MaxNo FROM ExpenseMaster WHERE LEFT(ExpenseCode,'$combinedLength') = '$combinedCode'"));
+    //     $maxCode = $maxCode[0]->MaxNo;
+    //     if ($maxCode === null) {
+    //         $nextCode = $combinedCode.'0001';
+    //     } else {
+    //         $nextCode = substr($maxCode,$combinedLength);
+    //         $nextCodeInc = $nextCode + 1;
+    //         $nextCode = sprintf("%0".strlen($nextCode)."d", $nextCodeInc);
+    //         $nextCode = $combinedCode.$nextCode;
+    //     }
+    //     return $nextCode;
+    // }
+
     public function generateExpenseCode()
     {
-        $combinedCode = 'EX';
+        $combinedCode = 'EX'.Carbon::now()->format('y');
         $combinedLength = strlen($combinedCode);
-        $maxCode = DB::select(DB::raw("select MAX(ExpenseCode) as MaxNo FROM ExpenseMaster WHERE LEFT(ExpenseCode,'$combinedLength') = '$combinedCode'"));
+        $maxCode = DB::select(DB::raw("select MAX(ExpenseCode) as MaxNo FROM ExpenseMaster
+            WHERE LEFT(ExpenseCode,'$combinedLength') = '$combinedCode'"));
         $maxCode = $maxCode[0]->MaxNo;
         if ($maxCode === null) {
-            $nextCode = $combinedCode.'0001';
+            $nextCode = $combinedCode.'000001';
         } else {
             $nextCode = substr($maxCode,$combinedLength);
             $nextCodeInc = $nextCode + 1;
