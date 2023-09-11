@@ -105,9 +105,9 @@ class ExpenseController extends Controller
                 $expense->ItemCode = ($request->details) ? $request->details[0]['itemCode'] :'' ;
                 $expense->LocationCode = ($request->details) ? $request->details[0]['location']['LocationCode']:'';
                 $expense->Naration = $request->narration;
-                $expense->Rate = $request->rate;
+                $expense->Rate = ($request->details) ? $request->details[0]['rate']:'';
                 $expense->Quantity = ($request->details) ? $request->details[0]['quantity']:'';
-                $expense->Amount = ($request->details) ? $request->details[0]['itemValue']:'';
+                $expense->Amount = $expense->Rate * $expense->Quantity;
                 $expense->PrepareDate = Carbon::now()->format('Y-m-d H:i:s');
                 $expense->PrepareBy = Auth::user()->Id;
                 $expense->save();
@@ -179,9 +179,9 @@ class ExpenseController extends Controller
                     $expense->ItemCode = ($request->details) ? $request->details[0]['itemCode'] :'' ;
                     $expense->LocationCode = ($request->details) ? $request->details[0]['LocationCode']:'';
                     $expense->Naration = $request->narration;
-                    $expense->Rate = $request->rate;
+                    $expense->Rate = ($request->details) ? $request->details[0]['rate']:'';
                     $expense->Quantity = ($request->details) ? $request->details[0]['quantity']:'';
-                    $expense->Amount = ($request->details) ? $request->details[0]['itemValue']:'';
+                    $expense->Amount = $expense->Rate * $expense->Quantity;
                     $expense->EditDate = Carbon::now()->format('Y-m-d H:i:s');
                     $expense->EditBy = Auth::user()->Id;
                     $expense->save();

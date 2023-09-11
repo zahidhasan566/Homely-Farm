@@ -38,20 +38,7 @@
                                                 </multiselect>
                                             </div>
                                     </div>
-<!--                                    <div class="col-12 col-md-4">-->
-<!--                                        <div class="form-group">-->
-<!--                                            <label for="ExpenseHead">Employee </label>-->
-<!--                                            <multiselect v-model="employeeVal" :options="employee"-->
-<!--                                                         :multiple="false"-->
-<!--                                                         @input="getItemByCategory"-->
-<!--                                                         :close-on-select="true"-->
-<!--                                                         :clear-on-select="false" :preserve-search="true"-->
-<!--                                                         placeholder="Select Employee"-->
-<!--                                                         label="EmployeeName" track-by="EmployeeCode">-->
 
-<!--                                            </multiselect>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
                                     <div class="col-12 col-md-4">
                                         <ValidationProvider name="Category" mode="eager" rules="required"
                                                             v-slot="{ errors }">
@@ -84,11 +71,11 @@
                                         <input  type="text"  class="form-control"
                                                v-model="naration" placeholder="Naration">
                                     </div>
-                                    <div class="col-12 col-md-4">
+                                    <!-- <div class="col-12 col-md-4">
                                         <label for="Rate">Rate</label>
                                         <input  type="text"  class="form-control"
                                                v-model="rate" placeholder="Rate">
-                                    </div>
+                                    </div> -->
 
                                 </div>
                             </div>
@@ -113,9 +100,10 @@
                                                 <th>Item Code</th>
                                                 <th>Pac Size</th>
                                                 <th>Location</th>
+                                                <th>Rate</th>
                                                 <th>Quantity</th>
                                                 <th>Amount</th>
-                                                <th>Action</th>
+                                                <!-- <th>Action</th> -->
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -130,15 +118,7 @@
                                                             {{ item.ItemName }}
                                                         </option>
                                                     </select>
-<!--                                                    <multiselect v-model="field.item" :options="items"-->
-<!--                                                                 :multiple="false"-->
-<!--                                                                 @input="setItemCode(index)"-->
-<!--                                                                 :close-on-select="true"-->
-<!--                                                                 :clear-on-select="false" :preserve-search="true"-->
-<!--                                                                 placeholder="Select Category"-->
-<!--                                                                 label="ItemName" track-by="ItemCode">-->
 
-<!--                                                    </multiselect>-->
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].item !== undefined">{{
                                                             errors[index].item
@@ -164,22 +144,20 @@
                                                             {{ item.LocationName }}
                                                         </option>
                                                     </select>
-<!--                                                    <multiselect v-model="field.location" :options="locations"-->
-<!--                                                                 :multiple="false"-->
-<!--                                                                 :close-on-select="true"-->
-<!--                                                                 :clear-on-select="false" :preserve-search="true"-->
-<!--                                                                 placeholder="Select Category"-->
-<!--                                                                 label="LocationName" track-by="LocationCode">-->
-
-<!--                                                    </multiselect>-->
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].location !== undefined">{{
                                                             errors[index].location
                                                         }}</span>
                                                 </td>
                                                 <td>
+                                                    <input  type="text"  class="form-control"
+                                                            v-model="field.rate" placeholder="Rate"
+                                                            @keyup="calculateAmount">
+                                                </td>
+                                                <td>
                                                     <input type="text"  class="form-control" style="text-align: end"
-                                                           v-model="field.quantity" placeholder="quantity">
+                                                           v-model="field.quantity" placeholder="quantity"
+                                                           @keyup="calculateAmount">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].quantity !== undefined">{{
                                                             errors[index].quantity
@@ -188,13 +166,15 @@
                                                 </td>
                                                 <td>
                                                     <input type="text" class="form-control" style="text-align: end"
-                                                           v-model="field.itemValue" placeholder="Value">
+                                                           v-model="field.itemValue"
+                                                           placeholder="Value"
+                                                           readonly="">
                                                 </td>
-                                                <td>
+                                                <!-- <td>
                                                     <button type="button" class="btn btn-danger btn-sm"
                                                             @click="removeRow(index)"><i
                                                         class="ti-close"></i></button>
-                                                </td>
+                                                </td> -->
                                             </tr>
                                             </tbody>
                                         </table>
@@ -259,6 +239,7 @@ export default {
                         'LocationName': 'Default'
                     },
                     uom:'',
+                    rate: 0,
                     quantity: 0,
                     itemValue: 0,
                     LocationCode:''
@@ -296,7 +277,7 @@ export default {
                     }];
                     instance.updateCategoryCode = expenseInfo[0].CategoryCode
                     instance.naration = expenseInfo[0].Naration
-                    instance.rate = expenseInfo[0].Rate
+                    //instance.rate = expenseInfo[0].Rate
 
                     instance.categoryType=[{
                         'CategoryCode': expenseInfo[0].CategoryCode,
@@ -317,6 +298,7 @@ export default {
                             //     'LocationCode': item.LocationCode,
                             //     'LocationName': item.LocationName
                             // },
+                            rate: item.Rate,
                             quantity: item.Quantity,
                             itemValue: item.Amount,
                             LocationCode: item.LocationCode,
@@ -347,6 +329,9 @@ export default {
         closeModal() {
             $("#add-edit-dept").modal("toggle");
         },
+        calculateAmount(){
+            this.fields[0].itemValue = parseFloat(parseFloat(this.fields[0].rate) * parseFloat(this.fields[0].quantity)).toFixed(2);
+        },
         addRow() {
             this.fields.push({
                 item: '',
@@ -356,6 +341,7 @@ export default {
                     'LocationCode': 'L0001',
                     'LocationName': 'Default'
                 },
+                rate: 0,
                 quantity: 0,
                 itemValue: 0,
                 LocationCode:'',
@@ -420,17 +406,6 @@ export default {
                 this.errors = 'Value Required'
             }
 
-            // this.fields.forEach(function (item, index) {
-            //     if (item.itemCode === '' || item.location === ''
-            //         || item.quantity === '' || item.quantity <=0 || item.quantity === undefined ) {
-            //         instance.errors[index] = {
-            //             itemCode: item.itemCode === '' ? 'item Code is required' : '',
-            //             location: item.location === '' ? 'location  is required' : '',
-            //             quantity: (item.quantity === '' ||item.quantity <=0 ) ? 'quantity  is required' : '',
-            //
-            //         };
-            //     }
-            // });
         },
         onSubmit() {
             this.checkFieldValue();
@@ -450,7 +425,7 @@ export default {
                     expenseHeadVal: this.expenseHeadVal,
                     categoryType: this.categoryType,
                     narration : this.naration,
-                    rate: this.rate,
+                    //rate: this.rate,
                     details: this.fields,
                 }, (response) => {
                     this.successNoti(response.message);
