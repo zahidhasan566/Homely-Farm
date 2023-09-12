@@ -101,7 +101,7 @@ class ProductionController extends Controller
                 $dataProduction->CategoryCode =$request->categoryType['CategoryCode'];
                 $dataProduction->Returned = 'N';
                 $dataProduction->PrepareDate = Carbon::now()->format('Y-m-d H:i:s');;
-                $dataProduction->PrepareBy = Auth::user()->Id;
+                $dataProduction->PrepareBy = Auth::user()->UserId;
                 $dataProduction->save();
 
                 foreach ($request->details as $key=>$singleData){
@@ -218,7 +218,7 @@ class ProductionController extends Controller
                     $dataProduction->Reference = $request->reference;
                     $dataProduction->Returned = 'N';
                     $dataProduction->EditDate = Carbon::now()->format('Y-m-d H:i:s');;
-                    $dataProduction->EditBy = Auth::user()->Id;
+                    $dataProduction->EditBy = Auth::user()->UserId;
                     $dataProduction->save();
 
                     foreach ($request->details as $key=>$singleData){
@@ -306,7 +306,7 @@ class ProductionController extends Controller
                 $dataProduction = ProductionMaster::where('ProductionCode',$request->production_code)->first();
                 $dataProduction->Returned = 'Y';
                 $dataProduction->EditDate = Carbon::now()->format('Y-m-d H:i:s');;
-                $dataProduction->EditBy = Auth::user()->Id;
+                $dataProduction->EditBy = Auth::user()->UserId;
                 $dataProduction->save();
 
 
