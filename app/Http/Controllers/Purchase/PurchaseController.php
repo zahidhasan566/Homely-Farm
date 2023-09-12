@@ -103,7 +103,7 @@ class PurchaseController extends Controller
                 //$dataPurchase->PurchaseType =$request->purchaseTypeVal['PurchaseTypeCode'];
                 $dataPurchase->Returned = 'N';
                 $dataPurchase->PrepareDate = Carbon::now()->format('Y-m-d H:i:s');;
-                $dataPurchase->PrepareBy = Auth::user()->Id;
+                $dataPurchase->PrepareBy = Auth::user()->UserId;
                 $dataPurchase->save();
 
                 foreach ($request->details as $key=>$singleData){
@@ -214,7 +214,7 @@ class PurchaseController extends Controller
                     $dataPurchase->PurchaseDate = $request->purchase_date;
                     $dataPurchase->Reference = $request->reference;
                     $dataPurchase->EditDate = Carbon::now()->format('Y-m-d H:i:s');;
-                    $dataPurchase->EditBy = Auth::user()->Id;
+                    $dataPurchase->EditBy = Auth::user()->UserId;
                     $dataPurchase->save();
 
                     foreach ($request->details as $key=>$singleData){
@@ -296,7 +296,7 @@ class PurchaseController extends Controller
                  $dataPurchase = PurchaseMaster::where('PurchaseCode',$request->purchaseCode)->first();
                  $dataPurchase->Returned = 'Y';
                  $dataPurchase->EditDate = Carbon::now()->format('Y-m-d H:i:s');;
-                 $dataPurchase->EditBy = Auth::user()->Id;
+                 $dataPurchase->EditBy = Auth::user()->UserId;
                  $dataPurchase->save();
 
 
