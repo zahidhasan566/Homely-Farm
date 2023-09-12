@@ -18,7 +18,7 @@
                                                 <input type="text" class="form-control"
                                                        :class="{'error-border': errors[0]}"
                                                        v-model="UserId" placeholder="User ID"
-                                                       :disabled="actionType==='edit'" autocomplete="off" readonly>
+                                                       :disabled="actionType==='edit'" autocomplete="off" >
                                                 <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
                                         </ValidationProvider>
@@ -217,7 +217,7 @@ export default {
                     instance.title = 'Update User';
                     instance.buttonText = "Update";
                     instance.Name = user.Name;
-                    instance.UserId = user.Id;
+                    instance.UserId = user.UserId;
                     instance.NID = user.NID;
                     instance.Address = user.Address;
                     instance.password = user.RawPassword;

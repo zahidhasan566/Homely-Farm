@@ -60,6 +60,7 @@ class AdminUserController extends Controller
         try {
             DB::beginTransaction();
             $user = new User();
+            $user->UserId = $request->UserId;
             $user->Name = $request->Name;
             $user->Email = $request->email;
             $user->Mobile = $request->mobile;
