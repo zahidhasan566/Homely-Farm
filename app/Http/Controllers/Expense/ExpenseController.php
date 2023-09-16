@@ -27,8 +27,8 @@ class ExpenseController extends Controller
             $search = $request->search;
             $expense =  ExpenseMaster::join('ExpenseHead','ExpenseHead.HeadCode','ExpenseMaster.HeadCode')
                 ->join('ItemsCategory','ItemsCategory.CategoryCode','ExpenseMaster.CategoryCode')
-                ->join('Items','Items.ItemCode','ExpenseMaster.ItemCode')
-                ->join('Location','Location.LocationCode','ExpenseMaster.LocationCode')
+                ->leftjoin('Items','Items.ItemCode','ExpenseMaster.ItemCode')
+                ->leftjoin('Location','Location.LocationCode','ExpenseMaster.LocationCode')
                 ->where(function ($q) use ($search) {
                 $q->where('ExpenseMaster.ExpenseCode', 'like', '%' . $search . '%');
                 $q->orWhere('ExpenseHead.HeadCode', 'like', '%' . $search . '%');
@@ -80,6 +80,7 @@ class ExpenseController extends Controller
 
     //Add
     public function store(Request $request){
+//return $request->details;
         $validator = Validator::make($request->all(), [
             'expenseDate' => 'required',
             'categoryType' => 'required',
@@ -99,11 +100,10 @@ class ExpenseController extends Controller
                 $expense->ExpenseCode = $expenseCode;
                 $expense->HeadCode = $request->expenseHeadVal['HeadCode'];
                 $expense->ExpenseDate = $request->expenseDate;
-
-                $expense->CategoryCode =$request->categoryType['CategoryCode'];;
-
+                $expense->CategoryCode =$request->categoryType['CategoryCode'];
                 $expense->ItemCode = ($request->details) ? $request->details[0]['itemCode'] :'' ;
                 $expense->LocationCode = ($request->details) ? $request->details[0]['location']['LocationCode']:'';
+                    if($expense->LocationCode === null){ $expense->LocationCode = ''; }
                 $expense->Naration = $request->narration;
                 $expense->Rate = ($request->details) ? $request->details[0]['rate']:'';
                 $expense->Quantity = ($request->details) ? $request->details[0]['quantity']:'';
@@ -129,8 +129,8 @@ class ExpenseController extends Controller
     public function getExpenseInfo($expenseCode){
         $expense =  ExpenseMaster::join('ExpenseHead','ExpenseHead.HeadCode','ExpenseMaster.HeadCode')
             ->join('ItemsCategory','ItemsCategory.CategoryCode','ExpenseMaster.CategoryCode')
-            ->join('Items','Items.ItemCode','ExpenseMaster.ItemCode')
-            ->join('Location','Location.LocationCode','ExpenseMaster.LocationCode')
+            ->leftjoin('Items','Items.ItemCode','ExpenseMaster.ItemCode')
+            ->leftjoin('Location','Location.LocationCode','ExpenseMaster.LocationCode')
             ->where('ExpenseMaster.ExpenseCode',$expenseCode)
             ->select(
                 'ExpenseMaster.ExpenseCode',
