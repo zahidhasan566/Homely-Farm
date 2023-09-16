@@ -27,8 +27,8 @@ class ExpenseController extends Controller
             $search = $request->search;
             $expense =  ExpenseMaster::join('ExpenseHead','ExpenseHead.HeadCode','ExpenseMaster.HeadCode')
                 ->join('ItemsCategory','ItemsCategory.CategoryCode','ExpenseMaster.CategoryCode')
-                ->join('Items','Items.ItemCode','ExpenseMaster.ItemCode')
-                ->join('Location','Location.LocationCode','ExpenseMaster.LocationCode')
+                ->leftjoin('Items','Items.ItemCode','ExpenseMaster.ItemCode')
+                ->leftjoin('Location','Location.LocationCode','ExpenseMaster.LocationCode')
                 ->where(function ($q) use ($search) {
                 $q->where('ExpenseMaster.ExpenseCode', 'like', '%' . $search . '%');
                 $q->orWhere('ExpenseHead.HeadCode', 'like', '%' . $search . '%');
@@ -129,8 +129,8 @@ class ExpenseController extends Controller
     public function getExpenseInfo($expenseCode){
         $expense =  ExpenseMaster::join('ExpenseHead','ExpenseHead.HeadCode','ExpenseMaster.HeadCode')
             ->join('ItemsCategory','ItemsCategory.CategoryCode','ExpenseMaster.CategoryCode')
-            ->join('Items','Items.ItemCode','ExpenseMaster.ItemCode')
-            ->join('Location','Location.LocationCode','ExpenseMaster.LocationCode')
+            ->leftjoin('Items','Items.ItemCode','ExpenseMaster.ItemCode')
+            ->leftjoin('Location','Location.LocationCode','ExpenseMaster.LocationCode')
             ->where('ExpenseMaster.ExpenseCode',$expenseCode)
             ->select(
                 'ExpenseMaster.ExpenseCode',
