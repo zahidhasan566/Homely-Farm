@@ -333,6 +333,28 @@ export default {
         calculateAmount(){
             this.fields[0].itemValue = parseFloat(parseFloat(this.fields[0].rate) * parseFloat(this.fields[0].quantity)).toFixed(2);
         },
+        addRow() {
+            this.fields.push({
+                item: '',
+                itemCode: '',
+                location: {
+                    'Active': 'Y',
+                    'LocationCode': '',
+                    'LocationName': ''
+                },
+                rate: 0,
+                quantity: 0,
+                itemValue: 0,
+                LocationCode:'',
+                uom:''
+            });
+        },
+        removeRow(id) {
+            this.fields.splice(id, 1)
+            if (this.errors[id] !== undefined) {
+                this.errors.splice(id, 1)
+            }
+        },
         getData() {
             let instance = this;
             this.axiosGet('expense/supporting-data', function (response) {
