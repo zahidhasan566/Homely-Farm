@@ -141,7 +141,7 @@ class SalesController extends Controller
                 $dataSales->CustomerCode = $request->customerTypeVal['CustomerCode'];
                 $dataSales->Returned = 'N';
                 $dataSales->PrepareDate = Carbon::now()->format('Y-m-d H:i:s');;
-                $dataSales->PrepareBy = Auth::user()->Id;
+                $dataSales->PrepareBy = Auth::user()->UserId;
                 $dataSales->save();
 
                 foreach ($request->details as $key => $singleData) {
@@ -264,7 +264,7 @@ class SalesController extends Controller
                 $dataSales->CustomerCode = $request->customerTypeVal['CustomerCode'];
                 $dataSales->Returned = 'N';
                 $dataSales->EditDate = Carbon::now()->format('Y-m-d H:i:s');;
-                $dataSales->EditBy = Auth::user()->Id;
+                $dataSales->EditBy = Auth::user()->UserId;
                 $dataSales->save();
 
 
@@ -344,7 +344,7 @@ class SalesController extends Controller
                 $dataPurchase = SalesMaster::where('SalesCode',$request->salesCode)->first();
                 $dataPurchase->Returned = 'Y';
                 $dataPurchase->EditDate = Carbon::now()->format('Y-m-d H:i:s');;
-                $dataPurchase->EditBy = Auth::user()->Id;
+                $dataPurchase->EditBy = Auth::user()->UserId;
                 $dataPurchase->save();
 
                 $existingSalesDetails =  SalesDetails::where('SalesCode',$request->salesCode)->get();

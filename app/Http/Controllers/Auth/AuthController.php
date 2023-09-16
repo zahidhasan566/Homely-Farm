@@ -35,7 +35,7 @@ class AuthController extends Controller
         if ($phone && $token = JWTAuth::attempt(['Mobile' => $phone, 'password' => $request->password,'Status' => 1])) {
             return $this->respondWithToken($token);
         }
-        elseif ($username && $token = JWTAuth::attempt(['Name' => $username, 'password' => $request->password,'Status' => 1]) ) {
+        elseif ($username && $token = JWTAuth::attempt(['UserId' => $username, 'password' => $request->password,'Status' => 1]) ) {
             return $this->respondWithToken($token);
         }
         elseif ($email && $token = JWTAuth::attempt(['Email' => $email, 'password' => $request->password,'Status' => 1]) ) {

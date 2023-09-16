@@ -109,7 +109,7 @@ class ExpenseController extends Controller
                 $expense->Quantity = ($request->details) ? $request->details[0]['quantity']:'';
                 $expense->Amount = $expense->Rate * $expense->Quantity;
                 $expense->PrepareDate = Carbon::now()->format('Y-m-d H:i:s');
-                $expense->PrepareBy = Auth::user()->Id;
+                $expense->PrepareBy = Auth::user()->UserId;
                 $expense->save();
 
                 DB::commit();
@@ -183,7 +183,7 @@ class ExpenseController extends Controller
                     $expense->Quantity = ($request->details) ? $request->details[0]['quantity']:'';
                     $expense->Amount = $expense->Rate * $expense->Quantity;
                     $expense->EditDate = Carbon::now()->format('Y-m-d H:i:s');
-                    $expense->EditBy = Auth::user()->Id;
+                    $expense->EditBy = Auth::user()->UserId;
                     $expense->save();
 
                     DB::commit();
