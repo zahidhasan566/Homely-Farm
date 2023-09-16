@@ -80,6 +80,7 @@ class ExpenseController extends Controller
 
     //Add
     public function store(Request $request){
+//return $request->details;
         $validator = Validator::make($request->all(), [
             'expenseDate' => 'required',
             'categoryType' => 'required',
@@ -99,11 +100,10 @@ class ExpenseController extends Controller
                 $expense->ExpenseCode = $expenseCode;
                 $expense->HeadCode = $request->expenseHeadVal['HeadCode'];
                 $expense->ExpenseDate = $request->expenseDate;
-
-                $expense->CategoryCode =$request->categoryType['CategoryCode'];;
-
+                $expense->CategoryCode =$request->categoryType['CategoryCode'];
                 $expense->ItemCode = ($request->details) ? $request->details[0]['itemCode'] :'' ;
                 $expense->LocationCode = ($request->details) ? $request->details[0]['location']['LocationCode']:'';
+                    if($expense->LocationCode === null){ $expense->LocationCode = ''; }
                 $expense->Naration = $request->narration;
                 $expense->Rate = ($request->details) ? $request->details[0]['rate']:'';
                 $expense->Quantity = ($request->details) ? $request->details[0]['quantity']:'';

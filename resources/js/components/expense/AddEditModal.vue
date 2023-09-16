@@ -138,6 +138,7 @@
                                                 <td>
                                                     <select class="form-control" :class="{'error-border': errors[0]}"
                                                             v-model="field.LocationCode" name="item">
+                                                        <option value="">SELECT</option>
                                                         <option v-for="(item,index) in locations"
                                                                 :key="index"
                                                                 :value="item.LocationCode">
@@ -235,8 +236,8 @@ export default {
                     itemCode: '',
                     location: {
                         'Active': 'Y',
-                        'LocationCode': 'L0001',
-                        'LocationName': 'Default'
+                        'LocationCode': '',
+                        'LocationName': ''
                     },
                     uom:'',
                     rate: 0,
@@ -331,28 +332,6 @@ export default {
         },
         calculateAmount(){
             this.fields[0].itemValue = parseFloat(parseFloat(this.fields[0].rate) * parseFloat(this.fields[0].quantity)).toFixed(2);
-        },
-        addRow() {
-            this.fields.push({
-                item: '',
-                itemCode: '',
-                location: {
-                    'Active': 'Y',
-                    'LocationCode': 'L0001',
-                    'LocationName': 'Default'
-                },
-                rate: 0,
-                quantity: 0,
-                itemValue: 0,
-                LocationCode:'',
-                uom:''
-            });
-        },
-        removeRow(id) {
-            this.fields.splice(id, 1)
-            if (this.errors[id] !== undefined) {
-                this.errors.splice(id, 1)
-            }
         },
         getData() {
             let instance = this;
