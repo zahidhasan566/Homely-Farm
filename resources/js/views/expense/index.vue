@@ -31,7 +31,7 @@ export default {
             tableOptions: {
                 source: 'expense/expense-list',
                 search: true,
-                slots: [11],
+                slots: [7],
                // hideColumn: ['RoleID','UserId'],
                 slotsName: ['action'],
                 sortable: [11],

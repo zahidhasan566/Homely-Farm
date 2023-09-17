@@ -79,14 +79,20 @@
                                         </ValidationProvider>
 
                                     </div>
-                                    <div class="col-12 col-md-4" v-if="actionType==='edit'">
+                                    <div class="col-12 col-md-2">
+                                        <div class="form-group">
+                                            <label for="user-type">paid</label>
+                                            <br>
+                                            <input type="radio" v-model="paid" value="Y"> Yes
+                                            <input type="radio" checked="checked" v-model="paid" value="N"> No
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-2" v-if="actionType==='edit'">
                                             <div class="form-group">
                                                 <label for="user-type">Return</label>
                                                 <br>
                                                 <input type="checkbox" value="Y" id="return"> Return
                                             </div>
-
-
                                     </div>
                                 </div>
                             </div>
@@ -264,6 +270,7 @@ export default {
             locations: [],
             reference: '',
             allStock: [],
+            paid:'',
             purchaseType:[{
                 'PurchaseTypeCode': 'direct',
                 'PurchaseTypeName': 'direct',
@@ -313,12 +320,14 @@ export default {
 
                     instance.getData();
                     var salesInfo = response.SalesInfo;
+                    console.log(salesInfo);
 
                     //Master
                     instance.salesCode = response.SalesInfo[0].SalesCode
                     instance.sales_date = response.SalesInfo[0].SalesDate
                     instance.updateCategoryCode = response.SalesInfo[0].CategoryCode
                     instance.reference = response.SalesInfo[0].Reference
+                    instance.paid = response.SalesInfo[0].Paid
 
                     instance.categoryType=[{
                         'Active': salesInfo[0].Reference,
@@ -524,6 +533,7 @@ export default {
                     reference: this.reference,
                     customerTypeVal: this.customerTypeVal,
                     categoryType: this.categoryType,
+                    paid:this.paid,
                     details: this.fields,
                 }, (response) => {
                     this.successNoti(response.message);

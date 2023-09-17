@@ -51,6 +51,7 @@ class SalesController extends Controller
     {
         $take = $request->take;
         $search = $request->search;
+
         $salesMaster = SalesMaster::join('SalesDetails', 'SalesDetails.SalesCode', 'SalesMaster.SalesCode')
             ->join('ItemsCategory', 'ItemsCategory.CategoryCode', 'SalesMaster.CategoryCode')
             ->join('Customer', 'Customer.CustomerCode', 'SalesMaster.CustomerCode')
@@ -59,15 +60,17 @@ class SalesController extends Controller
                 $q->orWhere('SalesMaster.SalesDate', 'like', '%' . $search . '%');
             })
             ->where('SalesMaster.Returned','!=','Y')
-            ->orderBy('SalesMaster.PrepareDate', 'desc')
+            //->orderBy('SalesMaster.PrepareDate', 'desc')
             ->select(
                 'SalesMaster.SalesCode',
+                //'SalesMaster.SalesDate',
                 DB::raw("convert(varchar(10),SalesMaster.SalesDate,23) as SalesDate"),
                 'SalesMaster.Reference',
                 'SalesMaster.CategoryCode',
                 'ItemsCategory.CategoryName',
                 'Customer.CustomerName',
-                'SalesMaster.Returned',
+                DB::raw("(CASE WHEN SalesMaster.Returned = 'Y' THEN 'Yes' ELSE 'No' END) AS Returned"),
+                DB::raw("(CASE WHEN SalesMaster.Paid = 'Y' THEN 'Yes' ELSE 'No' END) AS Paid"),
                 DB::raw("convert(varchar(10),SalesMaster.PrepareDate,23) as PrepareDate"),
             )
             ->groupBy(
@@ -78,10 +81,12 @@ class SalesController extends Controller
                 'ItemsCategory.CategoryName',
                 'Customer.CustomerName',
                 'SalesMaster.Returned',
+                'SalesMaster.Paid',
                 'SalesMaster.PrepareDate'
             )
             ->paginate($take);
-        return $salesMaster;
+
+       return $salesMaster;
     }
 
     //Category Wise Item
@@ -122,6 +127,7 @@ class SalesController extends Controller
             'sales_date' => 'required',
             'categoryType' => 'required',
             'customerTypeVal' => 'required',
+            'paid' => 'required',
             'details' => 'required',
         ]);
         if ($validator->fails()) {
@@ -140,6 +146,7 @@ class SalesController extends Controller
                 $dataSales->CategoryCode = $request->categoryType['CategoryCode'];
                 $dataSales->CustomerCode = $request->customerTypeVal['CustomerCode'];
                 $dataSales->Returned = 'N';
+                $dataSales->Paid =  $request->paid;
                 $dataSales->PrepareDate = Carbon::now()->format('Y-m-d H:i:s');;
                 $dataSales->PrepareBy = Auth::user()->UserId;
                 $dataSales->save();
@@ -202,6 +209,7 @@ class SalesController extends Controller
                 DB::raw("convert(varchar(10),SalesMaster.SalesDate,23) as SalesDate"),
                 'SalesMaster.Reference',
                 'SalesMaster.CategoryCode',
+                'SalesMaster.Paid',
                 'ItemsCategory.CategoryName',
                 'Customer.CustomerName',
                 'Customer.CustomerCode',
@@ -222,6 +230,7 @@ class SalesController extends Controller
                 'SalesMaster.SalesDate',
                 'SalesMaster.Reference',
                 'SalesMaster.CategoryCode',
+                'SalesMaster.Paid',
                 'ItemsCategory.CategoryName',
                 'Customer.CustomerName',
                 'Customer.CustomerCode',
@@ -251,6 +260,7 @@ class SalesController extends Controller
             'categoryType' => 'required',
             'customerTypeVal' => 'required',
             'details' => 'required',
+            'paid' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors()], 400);
@@ -263,6 +273,7 @@ class SalesController extends Controller
                 $dataSales->Reference = $request->reference;
                 $dataSales->CustomerCode = $request->customerTypeVal['CustomerCode'];
                 $dataSales->Returned = 'N';
+                $dataSales->paid = $request->paid;
                 $dataSales->EditDate = Carbon::now()->format('Y-m-d H:i:s');;
                 $dataSales->EditBy = Auth::user()->UserId;
                 $dataSales->save();
