@@ -8,6 +8,7 @@
             </div>
         </div>
         <advanced-datatable :options="tableOptions" v-if="showTable">
+
         </advanced-datatable>
     </div>
 </template>

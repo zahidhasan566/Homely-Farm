@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Expense;
 use App\Http\Controllers\Controller;
 use App\Models\CategoryLocation;
 use App\Models\Employee;
+use App\Models\ExpenseDetails;
 use App\Models\ExpenseHead;
 use App\Models\ExpenseMaster;
 use App\Models\Items;
@@ -25,28 +26,32 @@ class ExpenseController extends Controller
         public function index(Request $request){
             $take = $request->take;
             $search = $request->search;
-            $expense =  ExpenseMaster::join('ExpenseHead','ExpenseHead.HeadCode','ExpenseMaster.HeadCode')
+            $expense =  ExpenseMaster::join('ExpenseDetails','ExpenseDetails.ExpenseCode','ExpenseMaster.ExpenseCode')
+                ->join('ExpenseHead','ExpenseHead.HeadCode','ExpenseMaster.HeadCode')
                 ->join('ItemsCategory','ItemsCategory.CategoryCode','ExpenseMaster.CategoryCode')
-                ->leftjoin('Items','Items.ItemCode','ExpenseMaster.ItemCode')
-                ->leftjoin('Location','Location.LocationCode','ExpenseMaster.LocationCode')
                 ->where(function ($q) use ($search) {
                 $q->where('ExpenseMaster.ExpenseCode', 'like', '%' . $search . '%');
                 $q->orWhere('ExpenseHead.HeadCode', 'like', '%' . $search . '%');
                 $q->orWhere('ExpenseMaster.ExpenseDate', 'like', '%' . $search . '%');
             })
-                ->orderBy('ExpenseMaster.ExpenseCode','desc')
+                //->orderBy('ExpenseMaster.ExpenseCode','desc')
                 ->select(
                     'ExpenseMaster.ExpenseCode',
                     'ExpenseHead.ExpenseHead',
                     DB::raw("convert(varchar(10),ExpenseMaster.ExpenseDate,23) as ExpenseDate"),
                     'ItemsCategory.CategoryName',
-                    'Items.ItemName',
-                    'Location.LocationName',
                     'ExpenseMaster.Naration',
-                    'ExpenseMaster.Rate',
-                    'ExpenseMaster.Quantity',
                     'ExpenseMaster.Amount',
                     DB::raw("convert(varchar(10),ExpenseMaster.PrepareDate,23) as PrepareDate"),
+
+                )->groupBy(
+                    'ExpenseMaster.ExpenseCode',
+                    'ExpenseHead.ExpenseHead',
+                    'ExpenseMaster.ExpenseDate',
+                    'ItemsCategory.CategoryName',
+                    'ExpenseMaster.Naration',
+                    'ExpenseMaster.Amount',
+                    'ExpenseMaster.PrepareDate',
 
                 )
                 ->paginate($take);
@@ -101,16 +106,30 @@ class ExpenseController extends Controller
                 $expense->HeadCode = $request->expenseHeadVal['HeadCode'];
                 $expense->ExpenseDate = $request->expenseDate;
                 $expense->CategoryCode =$request->categoryType['CategoryCode'];
-                $expense->ItemCode = ($request->details) ? $request->details[0]['itemCode'] :'' ;
-                $expense->LocationCode = ($request->details) ? $request->details[0]['location']['LocationCode']:'';
-                    if($expense->LocationCode === null){ $expense->LocationCode = ''; }
                 $expense->Naration = $request->narration;
-                $expense->Rate = ($request->details) ? $request->details[0]['rate']:'';
-                $expense->Quantity = ($request->details) ? $request->details[0]['quantity']:'';
-                $expense->Amount = $expense->Rate * $expense->Quantity;
+                $expense->Amount = 0;
                 $expense->PrepareDate = Carbon::now()->format('Y-m-d H:i:s');
                 $expense->PrepareBy = Auth::user()->UserId;
                 $expense->save();
+
+                $totalAmount =0;
+
+                foreach ($request->details as $key=>$singleData){
+                    $expenseDetails = new ExpenseDetails();
+                    $expenseDetails->ExpenseCode = $expenseCode;
+                    $expenseDetails->ItemCode = $singleData['itemCode'];
+                    $expenseDetails->LocationCode = $singleData['LocationCode'];
+                    $expenseDetails->rate = $singleData['rate'];
+                    $expenseDetails->Quantity = $singleData['quantity'];
+                    $expenseDetails->Amount = $singleData['itemValue'];
+                    $totalAmount += $singleData['itemValue'];
+                    $expenseDetails->save();
+                }
+                $addTotal = ExpenseMaster::where('ExpenseCode',$expenseCode)->first();
+                $addTotal->Amount =  $totalAmount;
+                $addTotal->save();
+
+
 
                 DB::commit();
                 return [
@@ -127,27 +146,28 @@ class ExpenseController extends Controller
         }
     }
     public function getExpenseInfo($expenseCode){
-        $expense =  ExpenseMaster::join('ExpenseHead','ExpenseHead.HeadCode','ExpenseMaster.HeadCode')
+        $expense =  ExpenseMaster::join('ExpenseDetails','ExpenseDetails.ExpenseCode','ExpenseMaster.ExpenseCode')
+            ->join('ExpenseHead','ExpenseHead.HeadCode','ExpenseMaster.HeadCode')
             ->join('ItemsCategory','ItemsCategory.CategoryCode','ExpenseMaster.CategoryCode')
-            ->leftjoin('Items','Items.ItemCode','ExpenseMaster.ItemCode')
-            ->leftjoin('Location','Location.LocationCode','ExpenseMaster.LocationCode')
+            ->leftjoin('Items','Items.ItemCode','ExpenseDetails.ItemCode')
+            ->leftjoin('Location','Location.LocationCode','ExpenseDetails.LocationCode')
             ->where('ExpenseMaster.ExpenseCode',$expenseCode)
             ->select(
                 'ExpenseMaster.ExpenseCode',
                 'ExpenseMaster.HeadCode',
                 'ExpenseHead.ExpenseHead',
                 'ExpenseMaster.CategoryCode',
-                'ExpenseMaster.LocationCode',
-                'ExpenseMaster.ItemCode',
+                'ExpenseDetails.LocationCode',
+                'ExpenseDetails.ItemCode',
                 DB::raw("convert(varchar(10),ExpenseMaster.ExpenseDate,23) as ExpenseDate"),
                 'ItemsCategory.CategoryName',
                 'Items.ItemName',
                 'Items.UOM',
                 'Location.LocationName',
                 'ExpenseMaster.Naration',
-                'ExpenseMaster.Rate',
-                'ExpenseMaster.Quantity',
-                'ExpenseMaster.Amount',
+                'ExpenseDetails.Rate',
+                'ExpenseDetails.Quantity',
+                'ExpenseDetails.Amount',
                 DB::raw("convert(varchar(10),ExpenseMaster.PrepareDate,23) as PrepareDate"),
             )->get();
 
@@ -172,19 +192,36 @@ class ExpenseController extends Controller
             else{
                 try {
                     $expense = ExpenseMaster::where('ExpenseCode',$request->expenseCode)->first();
-
-                    $expense->HeadCode = $request->expenseHeadVal[0]['HeadCode'] ? $request->expenseHeadVal[0]['HeadCode']:$request->expenseHeadVal['HeadCode'];
+                    $expense->HeadCode = (isset($request->expenseHeadVal[0]['HeadCode']))? $request->expenseHeadVal[0]['HeadCode']: $request->expenseHeadVal['HeadCode'] ;
                     $expense->ExpenseDate = $request->expenseDate;
-
-                    $expense->ItemCode = ($request->details) ? $request->details[0]['itemCode'] :'' ;
-                    $expense->LocationCode = ($request->details) ? $request->details[0]['LocationCode']:'';
+                    $expense->CategoryCode = (isset($request->categoryType[0]['CategoryCode']))?$request->categoryType[0]['CategoryCode']:$request->categoryType[0]['CategoryCode'];
                     $expense->Naration = $request->narration;
-                    $expense->Rate = ($request->details) ? $request->details[0]['rate']:'';
-                    $expense->Quantity = ($request->details) ? $request->details[0]['quantity']:'';
-                    $expense->Amount = $expense->Rate * $expense->Quantity;
+                    $expense->Amount = 0;
                     $expense->EditDate = Carbon::now()->format('Y-m-d H:i:s');
-                    $expense->EditBy = Auth::user()->UserId;
+                    $expense->EditBy =Auth::user()->UserId;
                     $expense->save();
+
+                    $totalAmount =0;
+
+                    //delete existing One
+                    ExpenseDetails::where('ExpenseCode',$request->expenseCode)->delete();
+
+
+                    foreach ($request->details as $key=>$singleData){
+                        $expenseDetails = new ExpenseDetails();
+                        $expenseDetails->ExpenseCode = $request->expenseCode;
+                        $expenseDetails->ItemCode = $singleData['itemCode'];
+                        $expenseDetails->LocationCode = $singleData['LocationCode'];
+                        $expenseDetails->rate = $singleData['rate'];
+                        $expenseDetails->Quantity = $singleData['quantity'];
+                        $expenseDetails->Amount = $singleData['itemValue'];
+                        $totalAmount += $singleData['itemValue'];
+                        $expenseDetails->save();
+                    }
+
+                    $addTotal = ExpenseMaster::where('ExpenseCode',$request->expenseCode)->first();
+                    $addTotal->Amount =  $totalAmount;
+                    $addTotal->save();
 
                     DB::commit();
                     return [

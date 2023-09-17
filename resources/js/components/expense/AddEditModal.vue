@@ -85,11 +85,11 @@
                                         <div class="col-md-3" style="margin-bottom: 10px;">
                                             <label for="payment-required-by">Add Expense</label>
                                         </div>
-<!--                                        <div class="offset-md-5 col-md-4">-->
-<!--                                            <button style="float: right;" id="add-row" type="button"-->
-<!--                                                    class="btn btn-success btn-sm" @click="addRow">Add Row-->
-<!--                                            </button>-->
-<!--                                        </div>-->
+                                        <div class="offset-md-5 col-md-4">
+                                            <button style="float: right;" id="add-row" type="button"
+                                                    class="btn btn-success btn-sm" @click="addRow">Add Row
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="table-responsive">
                                         <table
@@ -158,7 +158,7 @@
                                                 <td>
                                                     <input type="text"  class="form-control" style="text-align: end"
                                                            v-model="field.quantity" placeholder="quantity"
-                                                           @keyup="calculateAmount">
+                                                           @keyup="calculateAmount(index)">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].quantity !== undefined">{{
                                                             errors[index].quantity
@@ -267,7 +267,6 @@ export default {
                     instance.fields.splice(0, 1)
                     instance.getData();
                     var expenseInfo = response.expenseInfo;
-                    console.log(expenseInfo)
 
                     //Master
                     instance.expenseDate = expenseInfo[0].ExpenseDate;
@@ -330,8 +329,8 @@ export default {
         closeModal() {
             $("#add-edit-dept").modal("toggle");
         },
-        calculateAmount(){
-            this.fields[0].itemValue = parseFloat(parseFloat(this.fields[0].rate) * parseFloat(this.fields[0].quantity)).toFixed(2);
+        calculateAmount(index){
+            this.fields[index].itemValue = parseFloat(parseFloat(this.fields[index].rate) * parseFloat(this.fields[index].quantity)).toFixed(2);
         },
         addRow() {
             this.fields.push({

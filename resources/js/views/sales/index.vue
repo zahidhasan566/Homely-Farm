@@ -9,7 +9,7 @@
             </div>
         </div>
         <advanced-datatable :options="tableOptions">
-            <template slot="action" slot-scope="row" v-if="row.item.Returned === 'N'">
+            <template slot="action" slot-scope="row" v-if="row.item.Returned === 'No'">
                 <a href="javascript:" @click="addModal(row.item)"> <i class="ti-pencil-alt">Edit</i></a>
                 <!--        <a href="javascript:" @click="changePassword(row.item.UserId)"> <i class="ti-lock"></i></a>-->
             </template>
@@ -31,7 +31,7 @@ export default {
             tableOptions: {
                 source: 'sales/list',
                 search: true,
-                slots: [8],
+                slots: [9],
                // hideColumn: ['RoleID','UserId'],
                 slotsName: ['action'],
                 sortable: [2],

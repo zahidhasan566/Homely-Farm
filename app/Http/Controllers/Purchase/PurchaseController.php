@@ -40,7 +40,7 @@ class PurchaseController extends Controller
             })
             ->where('PurchaseMaster.Returned','!=','Y')
 
-            ->orderBy('PurchaseMaster.Preparedate', 'desc')
+            //->orderBy('PurchaseMaster.Preparedate', 'desc')
             ->select(
                 'PurchaseMaster.PurchaseCode',
                 DB::raw("convert(varchar(10),PurchaseMaster.PurchaseDate,23) as PurchaseDate"),

@@ -40,13 +40,14 @@ class ProductionController extends Controller
                                  })
                                 ->where('ProductionMaster.Returned','!=','Y')
 
-            ->orderBy('ProductionMaster.PrepareDate', 'desc')
+          //  ->orderBy('ProductionMaster.PrepareDate', 'desc')
             ->select(
                 'ProductionMaster.ProductionCode',
                 DB::raw("convert(varchar(10),ProductionMaster.ProductionDate,23) as ProductionDate"),
                 'ProductionMaster.Reference',
                 'ItemsCategory.CategoryName',
-                'ProductionMaster.Returned',
+                DB::raw("(CASE WHEN ProductionMaster.Returned = 'Y' THEN 'Yes' ELSE 'No' END) AS Returned"),
+
                 DB::raw("convert(varchar(10),ProductionMaster.PrepareDate,23) as PrepareDate"),
                 )
             ->groupBy(
@@ -105,8 +106,6 @@ class ProductionController extends Controller
                 $dataProduction->save();
 
                 foreach ($request->details as $key=>$singleData){
-                   // dd( $singleData);
-                    //Data Insert ProductionDetails
                     $productionDetails = new ProductionDetails();
                     $productionDetails->ProductionCode = $productionCode;
                     $productionDetails->ItemCode = $singleData['itemCode'];
