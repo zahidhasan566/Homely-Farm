@@ -8,24 +8,23 @@
               <div class="col-12 col-md-3"
                    v-for="(filter,index) in requestParams.filters" :key="index">
                 <div class="form-group" style="margin-bottom: unset">
-                  <select class="form-control" id="filter" v-if="filter.type==='dropdown'" v-model="filter.value"
-                          name="rider">
-                    <option value="" readonly>{{ filter.title }}</option>
-                    <option :value="option.value" v-for="(option,opIndex) in filter.options" :key="opIndex">
-                      {{ option.text }}
-                    </option>
-                  </select>
-                  <date-picker v-else-if="filter.type==='datepicker'" v-model="filter.value" :placeholder="filter.title"
-                               format="DD-MM-YYYY" valueType="format"></date-picker>
-                  <date-picker v-else-if="filter.type==='rangepicker'" v-model="filter.value"
+
+                    <select class="form-control" id="filter" v-if="filter.type==='dropdown'"
+                            v-model="filter.value" name="rider">
+                        <option value="" readonly>{{ filter.title }}</option>
+                        <option :value="option.value" v-for="(option,opIndex) in filter.options" :key="opIndex">
+                        {{ option.text }}
+                        </option>
+                    </select>
+
+                    <date-picker v-else-if="filter.type==='datepicker'" v-model="filter.value" :placeholder="filter.title"
+                                format="DD-MM-YYYY" valueType="format"></date-picker>
+                    <date-picker v-else-if="filter.type==='rangepicker'" v-model="filter.value"
                                :placeholder="filter.title" format="DD-MM-YYYY" range valueType="format"></date-picker>
+
+
                 </div>
               </div>
-<!--                <div :class="options.colSize[0]" v-if="options.showFilter && options.showFilter.includes('CategoryCode')">-->
-<!--                    <div>-->
-<!--                        <input type="text" class="form-control" placeholder="Cow Code" v-model="requestParams.CategoryCode">-->
-<!--                    </div>-->
-<!--                </div>-->
               <div class="col-12 col-md-1 ml-1">
                 <div class="form-group" style="margin-bottom: unset">
                   <button class="btn btn-primary" @click="readData">Filter</button>

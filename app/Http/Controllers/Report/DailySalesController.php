@@ -30,7 +30,14 @@ class DailySalesController extends Controller
             $catergoryCode = '%';
         }
 
-        $dailyProduction = DB::select("exec sp_DailySales '$dateFrom','$dateTo','$catergoryCode','$search'");
+        if(!empty($request->filters[2]['value'])){
+            $paid  = $request->filters[2]['value'];
+        }
+        else{
+            $paid = '%';
+        }
+
+        $dailyProduction = DB::select("exec sp_DailySales '$dateFrom','$dateTo','$catergoryCode','$search','$paid'");
 
         return response()->json([
             'data' => $dailyProduction,
