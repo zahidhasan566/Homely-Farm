@@ -119,11 +119,6 @@
                                                         </option>
                                                     </select>
 
-                                                    <span class="error"
-                                                          v-if="errors[index] !== undefined && errors[index].item !== undefined">{{
-                                                            errors[index].item
-                                                        }}</span>
-
                                                 </td>
                                                 <td>
                                                     <input readonly type="text"  class="form-control"
@@ -145,15 +140,11 @@
                                                             {{ item.LocationName }}
                                                         </option>
                                                     </select>
-                                                    <span class="error"
-                                                          v-if="errors[index] !== undefined && errors[index].location !== undefined">{{
-                                                            errors[index].location
-                                                        }}</span>
                                                 </td>
                                                 <td>
                                                     <input  type="text"  class="form-control"
                                                             v-model="field.rate" placeholder="Rate"
-                                                            @keyup="calculateAmount">
+                                                            @keyup="calculateAmount(index)">
                                                 </td>
                                                 <td>
                                                     <input type="text"  class="form-control" style="text-align: end"
@@ -171,11 +162,11 @@
                                                            placeholder="Value"
                                                            readonly="">
                                                 </td>
-                                                <!-- <td>
+                                                <td>
                                                     <button type="button" class="btn btn-danger btn-sm"
                                                             @click="removeRow(index)"><i
                                                         class="ti-close"></i></button>
-                                                </td> -->
+                                                </td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -200,6 +191,7 @@ import {bus} from "../../app";
 import {Common} from "../../mixins/common";
 import {mapGetters} from "vuex";
 import moment from "moment"
+import Login from "../../views/auth/Login.vue";
 
 export default {
     mixins: [Common],
@@ -282,7 +274,7 @@ export default {
                     instance.categoryType=[{
                         'CategoryCode': expenseInfo[0].CategoryCode,
                         'CategoryName': expenseInfo[0].CategoryName
-                    }
+                         }
                     ]
 
                     //Details
