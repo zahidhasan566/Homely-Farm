@@ -66,6 +66,15 @@ export default {
                         title: 'Select Category',
                         value: '',
                         options: response.category
+                    },
+                    {
+                        type: 'dropdown',
+                        title: '',
+                        value: 'Y',
+                        options: [
+                            {text:"Paid", value:"Y"},
+                            {text:"Not Paid", value:"N"}
+                        ]
                     }
                 ]
             }
