@@ -26,9 +26,9 @@ class ExpenseController extends Controller
         public function index(Request $request){
             $take = $request->take;
             $search = $request->search;
-            $expense =  ExpenseMaster::join('ExpenseDetails','ExpenseDetails.ExpenseCode','ExpenseMaster.ExpenseCode')
-                ->join('ExpenseHead','ExpenseHead.HeadCode','ExpenseMaster.HeadCode')
-                ->join('ItemsCategory','ItemsCategory.CategoryCode','ExpenseMaster.CategoryCode')
+            $expense =  ExpenseMaster::leftJoin('ExpenseDetails','ExpenseDetails.ExpenseCode','ExpenseMaster.ExpenseCode')
+                ->leftJoin('ExpenseHead','ExpenseHead.HeadCode','ExpenseMaster.HeadCode')
+                ->leftJoin('ItemsCategory','ItemsCategory.CategoryCode','ExpenseMaster.CategoryCode')
                 ->where(function ($q) use ($search) {
                 $q->where('ExpenseMaster.ExpenseCode', 'like', '%' . $search . '%');
                 $q->orWhere('ExpenseHead.HeadCode', 'like', '%' . $search . '%');
@@ -114,17 +114,25 @@ class ExpenseController extends Controller
 
                 $totalAmount =0;
 
-                foreach ($request->details as $key=>$singleData){
-                    $expenseDetails = new ExpenseDetails();
-                    $expenseDetails->ExpenseCode = $expenseCode;
-                    $expenseDetails->ItemCode = $singleData['itemCode'];
-                    $expenseDetails->LocationCode = $singleData['LocationCode'];
-                    $expenseDetails->rate = $singleData['rate'];
-                    $expenseDetails->Quantity = $singleData['quantity'];
-                    $expenseDetails->Amount = $singleData['itemValue'];
-                    $totalAmount += $singleData['itemValue'];
-                    $expenseDetails->save();
+                if($request->details){
+                    foreach ($request->details as $key=>$singleData){
+                        $expenseDetails = new ExpenseDetails();
+                        $expenseDetails->ExpenseCode = $expenseCode;
+                        if($singleData['itemCode']===Null || $singleData['itemCode']==='' ){
+                            $expenseDetails->ItemCode = '';
+                        }
+                        else{
+                            $expenseDetails->ItemCode = $singleData['itemCode'];
+                        }
+                        $expenseDetails->LocationCode = $singleData['LocationCode'] ? $singleData['LocationCode']  :'';
+                        $expenseDetails->rate = $singleData['rate'];
+                        $expenseDetails->Quantity = $singleData['quantity'];
+                        $expenseDetails->Amount = $singleData['itemValue'];
+                        $totalAmount += $singleData['itemValue'];
+                        $expenseDetails->save();
+                    }
                 }
+
                 $addTotal = ExpenseMaster::where('ExpenseCode',$expenseCode)->first();
                 $addTotal->Amount =  $totalAmount;
                 $addTotal->save();
@@ -146,11 +154,11 @@ class ExpenseController extends Controller
         }
     }
     public function getExpenseInfo($expenseCode){
-        $expense =  ExpenseMaster::join('ExpenseDetails','ExpenseDetails.ExpenseCode','ExpenseMaster.ExpenseCode')
-            ->join('ExpenseHead','ExpenseHead.HeadCode','ExpenseMaster.HeadCode')
+        $expense =  ExpenseMaster::leftJoin('ExpenseDetails','ExpenseDetails.ExpenseCode','ExpenseMaster.ExpenseCode')
+            ->leftJoin('ExpenseHead','ExpenseHead.HeadCode','ExpenseMaster.HeadCode')
             ->join('ItemsCategory','ItemsCategory.CategoryCode','ExpenseMaster.CategoryCode')
-            ->leftjoin('Items','Items.ItemCode','ExpenseDetails.ItemCode')
-            ->leftjoin('Location','Location.LocationCode','ExpenseDetails.LocationCode')
+            ->leftJoin('Items','Items.ItemCode','ExpenseDetails.ItemCode')
+            ->leftJoin('Location','Location.LocationCode','ExpenseDetails.LocationCode')
             ->where('ExpenseMaster.ExpenseCode',$expenseCode)
             ->select(
                 'ExpenseMaster.ExpenseCode',
@@ -206,17 +214,24 @@ class ExpenseController extends Controller
                     //delete existing One
                     ExpenseDetails::where('ExpenseCode',$request->expenseCode)->delete();
 
+                    if($request->details){
 
-                    foreach ($request->details as $key=>$singleData){
-                        $expenseDetails = new ExpenseDetails();
-                        $expenseDetails->ExpenseCode = $request->expenseCode;
-                        $expenseDetails->ItemCode = $singleData['itemCode'];
-                        $expenseDetails->LocationCode = $singleData['LocationCode'];
-                        $expenseDetails->rate = $singleData['rate'];
-                        $expenseDetails->Quantity = $singleData['quantity'];
-                        $expenseDetails->Amount = $singleData['itemValue'];
-                        $totalAmount += $singleData['itemValue'];
-                        $expenseDetails->save();
+                        foreach ($request->details as $key=>$singleData){
+                            $expenseDetails = new ExpenseDetails();
+                            $expenseDetails->ExpenseCode = $request->expenseCode;
+                            if($singleData['itemCode']===Null || $singleData['itemCode']==='' ){
+                                $expenseDetails->ItemCode = '';
+                            }
+                            else{
+                                $expenseDetails->ItemCode = $singleData['itemCode'];
+                            }
+                            $expenseDetails->LocationCode = $singleData['LocationCode']? $singleData['LocationCode']:'';
+                            $expenseDetails->rate = $singleData['rate']? $singleData['rate']:0;
+                            $expenseDetails->Quantity = $singleData['quantity']? $singleData['quantity']:0;
+                            $expenseDetails->Amount = $singleData['itemValue']? $singleData['itemValue']:0;
+                            $totalAmount += $singleData['itemValue'];
+                            $expenseDetails->save();
+                        }
                     }
 
                     $addTotal = ExpenseMaster::where('ExpenseCode',$request->expenseCode)->first();
