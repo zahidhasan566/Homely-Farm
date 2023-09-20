@@ -9,8 +9,7 @@
         </div>
         <advanced-datatable :options="tableOptions" v-if="showTable">
             <template  slot="currentStock" slot-scope="row">
-                <span style="text-align:center">   {{Number(row.item.CurrentStock)}}</span>
-
+                <p style="text-align:right">   {{row.item.ClosingQty}}</p>
             </template>
         </advanced-datatable>
     </div>
@@ -52,7 +51,7 @@ export default {
                 source: 'report/current-stock',
                 search: true,
                 slots: [3],
-                sortable: [2],
+                //sortable: [3],
                 slotsName: ['currentStock'],
                 pages: [20, 50, 100],
             }
