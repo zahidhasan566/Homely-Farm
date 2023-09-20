@@ -14,6 +14,7 @@ import customers from "../views/customers/index.vue";
 import dailyProductionReport from "../views/reports/dailyProductionReport.vue";
 import dailySalesReport from "../views/reports/dailySalesReport.vue";
 import currentStockReport from "../views/reports/currentStockReport.vue";
+import reportItemBalance from "../views/reports/itemBalanceReport.vue";
 import categoryIndex from "../views/setup/CategoryIndex.vue";
 import locationIndex from "../views/setup/LocationIndex.vue";
 import categoryLocationIndex from "../views/setup/CategoryLocationIndex.vue";
@@ -137,6 +138,11 @@ const routes = [
                 name: 'currentStockReport',
                 component: currentStockReport
             },
+            {
+                path: baseurl + 'report/itembalance',
+                name: 'reportItemBalance',
+                component: reportItemBalance
+            }
 
         ],
         beforeEnter(to, from, next) {
