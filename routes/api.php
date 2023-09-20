@@ -85,6 +85,7 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('daily-sales', [\App\Http\Controllers\Report\DailySalesController::class, 'index']);
         Route::get('daily-sales-supporting-data', [\App\Http\Controllers\Report\DailySalesController::class, 'getSupportingData']);
         Route::post('current-stock', [\App\Http\Controllers\Report\CurrentStockController::class, 'index']);
+        Route::post('item-balance', [\App\Http\Controllers\Report\ItemBalanceController::class, 'index']);
     });
     Route::group(['prefix' =>'setup'],function () {
         //Category

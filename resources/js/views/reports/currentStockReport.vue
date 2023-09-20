@@ -9,8 +9,7 @@
         </div>
         <advanced-datatable :options="tableOptions" v-if="showTable">
             <template  slot="currentStock" slot-scope="row">
-                <span style="text-align:center">   {{Number(row.item.CurrentStock)}}</span>
-
+                <p style="text-align:right">   {{row.item.ClosingQty}}</p>
             </template>
         </advanced-datatable>
     </div>
@@ -45,35 +44,16 @@ export default {
         getData() {
             let instance = this;
             instance.loadDatatable();
-            // this.axiosGet('report/daily-sales-supporting-data', function (response) {
-            //     instance.loadDatatable(response)
-            // }, function (error) {
-            // });
         },
         loadDatatable(response) {
             this.showTable = true
             this.tableOptions = {
                 source: 'report/current-stock',
                 search: true,
-                slots: [2],
-                // hideColumn: ['CreatedAt'],
-                sortable: [2],
+                slots: [3],
+                //sortable: [3],
                 slotsName: ['currentStock'],
                 pages: [20, 50, 100],
-              //  showFilter: ['CategoryCode'],
-                // colSize: ['col-lg-1','col-lg-1','col-lg-1','col-lg-1','col-lg-2','col-lg-2','col-lg-2','col-lg-2'],
-                // filters: [
-                //     {
-                //         type: 'rangepicker',
-                //         value: [moment().format('DD-MM-YYYY'),moment().format('DD-MM-YYYY')]
-                //     },
-                //     // {
-                //     //     type: 'dropdown',
-                //     //     title: 'Select Category',
-                //     //     value: '',
-                //     //     options: response.category
-                //     // }
-                // ]
             }
         },
         exportData() {
