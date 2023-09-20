@@ -9,7 +9,7 @@
         </div>
         <advanced-datatable :options="tableOptions" v-if="showTable">
             <template  slot="currentStock" slot-scope="row">
-                <p style="text-align:right">   {{row.item.ClosingQty}}</p>
+                <p style="text-align:right;margin: 0;padding: 0;">   {{row.item.ClosingQty}}</p>
             </template>
         </advanced-datatable>
     </div>
