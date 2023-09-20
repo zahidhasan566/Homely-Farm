@@ -37,7 +37,7 @@ class DailySalesController extends Controller
             $paid = '%';
         }
 
-        $dailyProduction = DB::select("exec sp_DailySales '$dateFrom','$dateTo','$catergoryCode','$search','$paid'");
+        $dailyProduction = DB::select("exec sp_DailySales '$dateFrom','$dateTo','$catergoryCode','$search','$paidgit'");
 
         return response()->json([
             'data' => $dailyProduction,
