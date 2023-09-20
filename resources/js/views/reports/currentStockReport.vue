@@ -51,7 +51,7 @@ export default {
             this.tableOptions = {
                 source: 'report/current-stock',
                 search: true,
-                slots: [2],
+                slots: [3],
                 sortable: [2],
                 slotsName: ['currentStock'],
                 pages: [20, 50, 100],
