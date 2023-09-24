@@ -29,12 +29,11 @@ class DailySalesController extends Controller
         else{
             $catergoryCode = '%';
         }
-
         if(!empty($request->filters[2]['value'])){
-            $paid  = $request->filters[2]['value'];
+            $paidgit  = $request->filters[2]['value'];
         }
         else{
-            $paid = '%';
+            $paidgit = '%';
         }
 
         $dailyProduction = DB::select("exec sp_DailySales '$dateFrom','$dateTo','$catergoryCode','$search','$paidgit'");
