@@ -15,6 +15,8 @@ import dailyProductionReport from "../views/reports/dailyProductionReport.vue";
 import dailySalesReport from "../views/reports/dailySalesReport.vue";
 import currentStockReport from "../views/reports/currentStockReport.vue";
 import reportItemBalance from "../views/reports/itemBalanceReport.vue";
+import reportExpenses from "../views/reports/reportExpenses.vue";
+import locationWisePl from "../views/reports/locationWisePl.vue";
 import categoryIndex from "../views/setup/CategoryIndex.vue";
 import locationIndex from "../views/setup/LocationIndex.vue";
 import categoryLocationIndex from "../views/setup/CategoryLocationIndex.vue";
@@ -142,6 +144,16 @@ const routes = [
                 path: baseurl + 'report/itembalance',
                 name: 'reportItemBalance',
                 component: reportItemBalance
+            },
+            {
+                path: baseurl + 'report/expensesreport',
+                name: 'reportExpenses',
+                component: reportExpenses
+            },
+            {
+                path: baseurl + 'report/locationwisepl',
+                name: 'locationWisePl',
+                component: locationWisePl
             }
 
         ],
