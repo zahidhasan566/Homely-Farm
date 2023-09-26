@@ -83,6 +83,7 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('daily-production', [\App\Http\Controllers\Report\DailyProductionController::class, 'index']);
         Route::get('daily-production-supporting-data', [\App\Http\Controllers\Report\DailyProductionController::class, 'getSupportingData']);
         Route::post('daily-sales', [\App\Http\Controllers\Report\DailySalesController::class, 'index']);
+        Route::post('customer-wise-sales', [\App\Http\Controllers\Report\CustomerWiseSalesController::class, 'index']);
         Route::get('daily-sales-supporting-data', [\App\Http\Controllers\Report\DailySalesController::class, 'getSupportingData']);
         Route::post('current-stock', [\App\Http\Controllers\Report\CurrentStockController::class, 'index']);
         Route::post('item-balance', [\App\Http\Controllers\Report\ItemBalanceController::class, 'index']);
