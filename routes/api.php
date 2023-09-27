@@ -89,6 +89,7 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('item-balance', [\App\Http\Controllers\Report\ItemBalanceController::class, 'index']);
         Route::post('report-expenses', [\App\Http\Controllers\Report\ExpenseController::class, 'index']);
         Route::post('location-wise-pl', [\App\Http\Controllers\Report\LocationWisePLController::class, 'index']);
+        Route::post('daily-purchase-report', [\App\Http\Controllers\Report\DailyPurchaseController::class, 'index']);
     });
     Route::group(['prefix' =>'setup'],function () {
         //Category
