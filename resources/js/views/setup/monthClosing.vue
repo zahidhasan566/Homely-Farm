@@ -12,7 +12,7 @@
                                                             v-slot="{ errors }">
                                             <div class="form-group">
                                                 <label for="name">Expense Date <span class="error">*</span></label>
-                                                <datepicker v-model="expenseDate" :dayStr="dayStr"
+                                                <datepicker v-model="monthClosingDate" :dayStr="dayStr"
                                                             placeholder="YYYY-MM-DD" :firstDayOfWeek="0"/>
                                                 <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
@@ -47,6 +47,7 @@ export default {
             status: '',
             confirm: '',
             type: 'add',
+            monthClosingDate:'',
             actionType: '',
             buttonShow: true,
             category: [],
@@ -97,26 +98,24 @@ export default {
         bus.$off('add-edit-expense')
     },
     methods: {
+        checkFieldValue() {
+            this.errors = [];
+            let instance = this;
+            if(instance.monthClosingDate === ''|| instance.monthClosingDate === undefined ){
+                this.errors = 'Value Required'
+            }
+        },
         onSubmit() {
             this.checkFieldValue();
             if (this.errors.length === 0) {
                 this.$store.commit('submitButtonLoadingStatus', true);
                 let url = '';
                 var  submitUrl = '';
-                if (this.actionType === 'add') {
-                    submitUrl = 'expense/add';
-                }
-                if(this.actionType === 'edit' ){
-                    submitUrl = 'expense/update';
-                }
+                submitUrl = 'expense/add-month-closing/';
                 this.axiosPost(submitUrl, {
-                    expenseCode: this.expenseCode,
-                    expenseDate: this.expenseDate,
-                    expenseHeadVal: this.expenseHeadVal,
-                    categoryType: this.categoryType,
-                    narration : this.naration,
-                    //rate: this.rate,
-                    details: this.fields,
+
+                    monthClosingDate: this.monthClosingDate,
+
                 }, (response) => {
                     this.successNoti(response.message);
                     $("#add-edit-dept").modal("toggle");
