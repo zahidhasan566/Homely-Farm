@@ -24,7 +24,7 @@ import locationIndex from "../views/setup/LocationIndex.vue";
 import categoryLocationIndex from "../views/setup/CategoryLocationIndex.vue";
 import expenseHeadIndex from "../views/setup/ExpenseHeadIndex.vue";
 import expense from "../views/expense/index.vue";
-
+import monthClosing from "../views/setup/monthClosing.vue";
 
 
 Vue.use(VueRouter);
@@ -166,10 +166,12 @@ const routes = [
                 path: baseurl + 'report/daily-purchase-report',
                 name: 'dailyPurchase',
                 component: dailyPurchase
+            },
+            {
+                path: baseurl + 'setup/closing-report',
+                name: 'monthClosing',
+                component: monthClosing
             }
-
-
-
         ],
         beforeEnter(to, from, next) {
             checkToken(to, from, next);
