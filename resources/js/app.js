@@ -21,7 +21,7 @@ export const bus = new Vue();
 //Toaster
 import Toaster from 'v-toaster'
 import 'v-toaster/dist/v-toaster.css'
-Vue.use(Toaster, {timeout: 5000})
+Vue.use(Toaster, {timeout: 3000})
 
 //moment
 import moment from 'moment'

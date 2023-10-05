@@ -118,9 +118,6 @@ export default {
 
                 }, (response) => {
                     this.successNoti(response.message);
-                    $("#add-edit-dept").modal("toggle");
-                    bus.$emit('refresh-datatable');
-                    this.$store.commit('submitButtonLoadingStatus', false);
                 }, (error) => {
                     this.errorNoti(error);
                     this.$store.commit('submitButtonLoadingStatus', false);
