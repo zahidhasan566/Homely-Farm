@@ -13,6 +13,10 @@
             <span v-if="row.item.Active==='Y'">Active</span>
             <span v-else>Inactive</span>
         </template>
+        <template slot="BF" slot-scope="row">
+            <span v-if="row.item.Yes==='Y'">Yes</span>
+            <span v-else>No</span>
+        </template>
       <template slot="action" slot-scope="row">
         <a href="javascript:" @click="addUserModal(row.item)"> <i class="ti-pencil-alt">Edit</i></a>
 <!--        <a href="javascript:" @click="changePassword(row.item.UserId)"> <i class="ti-lock"></i></a>-->
@@ -35,9 +39,9 @@ export default {
       tableOptions: {
         source: 'setup/expense-head-list',
         search: true,
-        slots: [2,3],
+        slots: [4],
         //hideColumn: ['RoleID','UserId'],
-        slotsName: ['status','action'],
+        slotsName: ['action'],
         sortable: [2],
         pages: [20, 50, 100],
         addHeader: ['Action']

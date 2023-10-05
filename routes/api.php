@@ -127,6 +127,8 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('add', [\App\Http\Controllers\Expense\ExpenseController::class, 'store']);
         Route::get('get-expense-info/{expenseCode}', [\App\Http\Controllers\Expense\ExpenseController::class, 'getExpenseInfo']);
         Route::post('update', [\App\Http\Controllers\Expense\ExpenseController::class, 'update']);
+        Route::post('add-month-closing', [\App\Http\Controllers\Expense\ExpenseController::class, 'addMonthClosing']);
+
     });
 
 

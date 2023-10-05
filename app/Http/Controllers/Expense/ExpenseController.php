@@ -256,5 +256,29 @@ class ExpenseController extends Controller
     }
 
 
+    //Month Closing
+    public function addMonthClosing( Request  $request){
+
+         $date=date_create($request->monthClosingDate);
+        $period =date_format($date,"Ym");
+
+         try{
+
+             $monthClosing = DB::select("exec sp_ClosingBalance '$period'");
+
+             return response()->json([
+                 'message' => 'Month Closed Successfully',
+             ]);
+         }
+         catch (\Exception $exception){
+             return response()->json([
+                 'status' => 'error',
+                 'message' => $exception->getMessage()
+             ], 500);
+         }
+
+    }
+
+
 
 }

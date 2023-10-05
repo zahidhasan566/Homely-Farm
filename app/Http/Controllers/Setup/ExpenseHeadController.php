@@ -12,21 +12,22 @@ use App\Traits\CodeGeneration;
 
 class ExpenseHeadController extends Controller
 {
-     use CodeGeneration;
-   public function index(Request $request){
+    use CodeGeneration;
+    public function index(Request $request){
        $take = $request->take;
        $search = $request->search;
        $expenseHead=  ExpenseHead::where(function ($q) use ($search) {
            $q->where('HeadCode', 'like', '%' . $search . '%');
            $q->orWhere('ExpenseHead', 'like', '%' . $search . '%');
        })
-           ->select('HeadCode', 'ExpenseHead','Active')
+           ->select('HeadCode', 'ExpenseHead','Active','BF',)
            ->paginate($take);
        return $expenseHead;
-   }
+    }
 
    //Store
     public function store(Request $request){
+        //return $request->all();
         $validator = Validator::make($request->all(), [
             'Name' => 'required|string',
             'status' => 'required',
@@ -42,6 +43,7 @@ class ExpenseHeadController extends Controller
             $expenseHead->HeadCode =$expenseHeadCode;
             $expenseHead->ExpenseHead = $request->Name;
             $expenseHead->Active = $request->status;
+            $expenseHead->BF = $request->bf;
             $expenseHead->save();
             DB::commit();
             return response()->json([
@@ -76,6 +78,7 @@ class ExpenseHeadController extends Controller
             $expenseHead = ExpenseHead::where('HeadCode', $request->HeadCode)->first();
             $expenseHead->ExpenseHead = $request->Name;
             $expenseHead->Active = $request->status;
+            $expenseHead->BF = $request->bf;
             $expenseHead->save();
             DB::commit();
             return response()->json([

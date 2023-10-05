@@ -36,6 +36,20 @@
                                         </ValidationProvider>
                                     </div>
 
+                                    <div class="col-12 col-md-6">
+                                        <ValidationProvider name="BF" mode="eager"
+                                            rules="required" v-slot="{ errors }">
+                                            <div class="form-group">
+                                                <label for="status">Balance Forward <span class="error">*</span></label>
+                                                <select class="form-control" v-model="bf">
+                                                    <option value="Y">Yes</option>
+                                                    <option value="N">No</option>
+                                                </select>
+                                                <span class="error-message"> {{ errors[0] }}</span>
+                                            </div>
+                                        </ValidationProvider>
+                                    </div>
+
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -62,16 +76,8 @@ export default {
             UserId: '',
             locationCode: '',
             headCode:'',
-            Name: '',
-            Address: '',
-            NID: '',
-            buttonText: '',
-            mobile: '',
-            email: '',
-            status: '',
-            password: '',
-            confirm: '',
-            userType: '',
+            status: 'Y',
+            bf: 'Y',
             type: 'add',
             actionType: '',
             buttonShow: false,
@@ -98,6 +104,7 @@ export default {
                     instance.headCode = data.HeadCode;
                     instance.Name = data.ExpenseHead;
                     instance.status = data.Active;
+                    instance.bf = data.BF;
                     instance.buttonShow = true;
                     instance.actionType = 'edit';
                 }, function (error) {
@@ -113,6 +120,7 @@ export default {
                     this.mobile = '',
                     this.email = '',
                     this.status = '',
+                    this.bf = '',
                     this.password = '',
                     this.confirm = '',
                     this.userType = '',
@@ -140,6 +148,7 @@ export default {
                 HeadCode: this.headCode,
                 Name: this.Name,
                 status: this.status,
+                bf: this.bf,
             }, (response) => {
                 this.successNoti(response.message);
                 $("#add-edit-dept").modal("toggle");
