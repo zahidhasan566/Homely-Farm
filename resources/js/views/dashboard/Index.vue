@@ -62,7 +62,7 @@
                     <div class="mb-4">
                         <div class="float-left mini-stat-img mr-4"><img src="assets/images/services-icon/02.png" alt="" /></div>
                         <h5 class="font-16 text-uppercase mt-0 text-white-50">Production</h5>
-                        <table class="table">
+                        <table class="table" v-if="production.length>0">
                             <thead>
                             <tr>
                                 <th>Category Name</th>
@@ -77,6 +77,7 @@
 
                             </tbody>
                         </table>
+                        <h4 v-else class="font-500"> No Data to Show</h4>
                     </div>
                     <div class="pt-2">
                         <div class="float-right">
@@ -95,7 +96,7 @@
                     <div class="mb-4">
                         <div class="float-left mini-stat-img mr-4"><img src="assets/images/services-icon/03.png" alt="" /></div>
                         <h5 class="font-16 text-uppercase mt-0 text-white-50">Sales</h5>
-                        <table class="table">
+                        <table class="table"  v-if="sales.length>0">
                             <thead>
                             <tr>
                                 <th>Category Name</th>
@@ -110,6 +111,7 @@
 
                             </tbody>
                         </table>
+                        <h4 v-else class="font-500"> No Data to Show</h4>
                     </div>
                     <div class="pt-2">
                         <div class="float-right">
@@ -128,7 +130,7 @@
                     <div class="mb-4">
                         <div class="float-left mini-stat-img mr-4"><img src="assets/images/services-icon/04.png" alt="" /></div>
                         <h5 class="font-16 text-uppercase mt-0 text-white-50">Expense</h5>
-                        <table class="table">
+                        <table class="table" v-if="expense.length>0">
                             <thead>
                             <tr>
                                 <th>Category Name</th>
@@ -143,6 +145,7 @@
 
                             </tbody>
                         </table>
+                        <h4 v-else class="font-500"> No Data to Show</h4>
                     </div>
                     <div class="pt-2">
                         <div class="float-right">
