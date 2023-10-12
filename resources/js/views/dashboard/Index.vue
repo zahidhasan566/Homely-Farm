@@ -27,14 +27,31 @@
                 <div class="card-body">
                     <div class="mb-4">
                         <div class="float-left mini-stat-img mr-4"><img src="assets/images/services-icon/01.png" alt="" /></div>
-                        <h5 class="font-16 text-uppercase mt-0 text-white-50">Total Invoice</h5>
-                        <h4 class="font-500">1,685 <i class="mdi mdi-arrow-up text-success ml-2"></i></h4>
+                        <h5 class="font-16 text-uppercase mt-0 text-white-50">Purchase </h5>
+                        <table class="table table-striped" v-if="purchase.length>0">
+                            <thead>
+                            <tr>
+                                <th>Category Name</th>
+                                <th>Value</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tagModal-body">
+                            <tr v-for="(singlePurchase,index) in purchase">
+                                <td>{{singlePurchase.CategoryName}}</td>
+                                <td>{{singlePurchase.Value}}</td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                        <h4 v-else class="font-500"> No Data to Show</h4>
                     </div>
                     <div class="pt-2">
                         <div class="float-right">
-                            <a href="#" class="text-white-50"><i class="mdi mdi-arrow-right h5"></i></a>
+                            <router-link  :to="{ path: 'purchase/purchaseList'}">
+                                <i  style="color: white" class="mdi mdi-arrow-right h5"></i>
+                            </router-link>
+
                         </div>
-                        <p class="text-white-50 mb-0">Since last month</p>
                     </div>
                 </div>
             </div>
@@ -44,14 +61,30 @@
                 <div class="card-body">
                     <div class="mb-4">
                         <div class="float-left mini-stat-img mr-4"><img src="assets/images/services-icon/02.png" alt="" /></div>
-                        <h5 class="font-16 text-uppercase mt-0 text-white-50">Total Sales</h5>
-                        <h4 class="font-500">52,368 <i class="mdi mdi-arrow-down text-danger ml-2"></i></h4>
+                        <h5 class="font-16 text-uppercase mt-0 text-white-50">Production</h5>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Category Name</th>
+                                <th>Quantity</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tagModal-body">
+                            <tr class="trClass" v-for="(singleProduction,index) in production">
+                                <td >{{singleProduction.CategoryName}}</td>
+                                <td>{{singleProduction.Quantity}}</td>
+                            </tr>
+
+                            </tbody>
+                        </table>
                     </div>
                     <div class="pt-2">
                         <div class="float-right">
-                            <a href="#" class="text-white-50"><i class="mdi mdi-arrow-right h5"></i></a>
+                            <router-link  :to="{ path: 'production/productionList'}">
+                                <i  style="color: white" class="mdi mdi-arrow-right h5"></i>
+                            </router-link>
+
                         </div>
-                        <p class="text-white-50 mb-0">Since last month</p>
                     </div>
                 </div>
             </div>
@@ -61,14 +94,30 @@
                 <div class="card-body">
                     <div class="mb-4">
                         <div class="float-left mini-stat-img mr-4"><img src="assets/images/services-icon/03.png" alt="" /></div>
-                        <h5 class="font-16 text-uppercase mt-0 text-white-50">Total production</h5>
-                        <h4 class="font-500">15.8 <i class="mdi mdi-arrow-up text-success ml-2"></i></h4>
+                        <h5 class="font-16 text-uppercase mt-0 text-white-50">Sales</h5>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Category Name</th>
+                                <th>Amount</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tagModal-body">
+                            <tr class="trClass" v-for="(singleSales,index) in sales">
+                                <td >{{singleSales.CategoryName}}</td>
+                                <td>{{singleSales.Amount}}</td>
+                            </tr>
+
+                            </tbody>
+                        </table>
                     </div>
                     <div class="pt-2">
                         <div class="float-right">
-                            <a href="#" class="text-white-50"><i class="mdi mdi-arrow-right h5"></i></a>
+                            <router-link  :to="{ path: 'sales/salesList'}">
+                                <i  style="color: white" class="mdi mdi-arrow-right h5"></i>
+                            </router-link>
+
                         </div>
-                        <p class="text-white-50 mb-0">Since last month</p>
                     </div>
                 </div>
             </div>
@@ -78,14 +127,31 @@
                 <div class="card-body">
                     <div class="mb-4">
                         <div class="float-left mini-stat-img mr-4"><img src="assets/images/services-icon/04.png" alt="" /></div>
-                        <h5 class="font-16 text-uppercase mt-0 text-white-50">Total Transfer</h5>
-                        <h4 class="font-500">2436 <i class="mdi mdi-arrow-up text-success ml-2"></i></h4>
+                        <h5 class="font-16 text-uppercase mt-0 text-white-50">Expense</h5>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Category Name</th>
+                                <th>Amount</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tagModal-body">
+                            <tr class="trClass" v-for="(singleExpense,index) in expense">
+                                <td >{{singleExpense.CategoryName}}</td>
+                                <td>{{singleExpense.Amount}}</td>
+                            </tr>
+
+                            </tbody>
+                        </table>
                     </div>
                     <div class="pt-2">
                         <div class="float-right">
-                            <a href="#" class="text-white-50"><i class="mdi mdi-arrow-right h5"></i></a>
+                            <router-link  :to="{ path: 'expense/expenseList'}">
+                                <i  style="color: white" class="mdi mdi-arrow-right h5"></i>
+                            </router-link>
+
                         </div>
-                        <p class="text-white-50 mb-0">Since last month</p>
+<!--                        <p class="text-white-50 mb-0">Since last month</p>-->
                     </div>
                 </div>
             </div>
@@ -100,7 +166,11 @@ export default {
   mixins: [Common],
   data() {
     return {
-      isLoading: true
+      isLoading: true,
+      purchase:[],
+      production:[],
+      sales:[],
+      expense:[],
     }
   },
   computed: {
@@ -113,15 +183,17 @@ export default {
   },
   methods: {
     getData() {
-      // this.axiosGet('dashboard-data', (response) => {
-      //    this.total_pending = response.total_pending;
-      //    this.todays_order = response.todays_order;
-      //    this.todays_amount = response.todays_amount;
-      //    this.total_order = response.total_order;
+      this.axiosGet('dashboard-data', (response) => {
+         this.purchase = response.data[0];
+         this.production =  response.data[1];
+         this.sales = response.data[2];
+         this.expense = response.data[3];
+          console.log(this.sales)
+
       this.isLoading = false;
-      // }, (error) => {
-      //   this.errorNoti(error);
-      // });
+      }, (error) => {
+        this.errorNoti(error);
+      });
     }
   }
 }
@@ -139,6 +211,9 @@ export default {
 }
 .bg-blue span {
   font-size: 18px;
+}
+.trClass{
+    color: #ffffff;
 }
 .task {
   background: #00a55d2b;
