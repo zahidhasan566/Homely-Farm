@@ -37,6 +37,20 @@
                                     </div>
 
                                     <div class="col-12 col-md-6">
+                                        <ValidationProvider name="ExpenseType" mode="eager"
+                                            rules="required" v-slot="{ errors }">
+                                            <div class="form-group">
+                                                <label for="status">Balance Type <span class="error">*</span></label>
+                                                <select class="form-control" v-model="ExpenseType">
+                                                    <option value="Operating">Operating</option>
+                                                    <option value="Fixed">Fixed</option>
+                                                </select>
+                                                <span class="error-message"> {{ errors[0] }}</span>
+                                            </div>
+                                        </ValidationProvider>
+                                    </div>
+
+                                    <div class="col-12 col-md-6">
                                         <ValidationProvider name="BF" mode="eager"
                                             rules="required" v-slot="{ errors }">
                                             <div class="form-group">
@@ -105,6 +119,7 @@ export default {
                     instance.Name = data.ExpenseHead;
                     instance.status = data.Active;
                     instance.bf = data.BF;
+                    instance.ExpenseType = data.ExpenseType;
                     instance.buttonShow = true;
                     instance.actionType = 'edit';
                 }, function (error) {
@@ -116,15 +131,16 @@ export default {
                 this.UserId = '';
                 this.Name = '';
                 this.Address = '',
-                    this.NID = '',
-                    this.mobile = '',
-                    this.email = '',
-                    this.status = '',
-                    this.bf = '',
-                    this.password = '',
-                    this.confirm = '',
-                    this.userType = '',
-                    this.allSubMenu = [];
+                this.NID = '',
+                this.mobile = '',
+                this.email = '',
+                this.status = '',
+                this.bf = '',
+                this.ExpenseType = '',
+                this.password = '',
+                this.confirm = '',
+                this.userType = '',
+                this.allSubMenu = [];
                 this.buttonShow = true;
                 this.actionType = 'add'
             }
@@ -149,6 +165,7 @@ export default {
                 Name: this.Name,
                 status: this.status,
                 bf: this.bf,
+                ExpenseType: this.ExpenseType,
             }, (response) => {
                 this.successNoti(response.message);
                 $("#add-edit-dept").modal("toggle");
