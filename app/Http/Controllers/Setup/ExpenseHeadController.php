@@ -20,7 +20,7 @@ class ExpenseHeadController extends Controller
            $q->where('HeadCode', 'like', '%' . $search . '%');
            $q->orWhere('ExpenseHead', 'like', '%' . $search . '%');
        })
-           ->select('HeadCode', 'ExpenseHead','Active','BF',)
+           ->select('HeadCode', 'ExpenseHead','Active','BF', 'ExpenseType')
            ->paginate($take);
        return $expenseHead;
     }
@@ -44,6 +44,7 @@ class ExpenseHeadController extends Controller
             $expenseHead->ExpenseHead = $request->Name;
             $expenseHead->Active = $request->status;
             $expenseHead->BF = $request->bf;
+            $expenseHead->ExpenseType = $request->ExpenseType;
             $expenseHead->save();
             DB::commit();
             return response()->json([
@@ -79,6 +80,7 @@ class ExpenseHeadController extends Controller
             $expenseHead->ExpenseHead = $request->Name;
             $expenseHead->Active = $request->status;
             $expenseHead->BF = $request->bf;
+            $expenseHead->ExpenseType = $request->ExpenseType;
             $expenseHead->save();
             DB::commit();
             return response()->json([
