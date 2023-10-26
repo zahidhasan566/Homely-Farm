@@ -2,6 +2,7 @@
 <script>
 import XLSX from "xlsx";
 import {bus} from "../../app";
+import Login from "../../views/auth/Login.vue";
 
 export default {
     data: () => ({
@@ -35,6 +36,7 @@ export default {
                         this.headers.push(title);
                     }
                     object[title] = dataValue[value.key];
+
                 });
 
                 this.data.push(Object.assign({}, object));
@@ -67,6 +69,7 @@ export default {
 
             posWS["!cols"] = columnWidth;
             let wb = XLSX.utils.book_new();
+            console.log(posWS)
             XLSX.utils.book_append_sheet(wb, posWS, "Homely-Farm");
             XLSX.writeFile(wb, name);
             this.$emit("resetExport", false);

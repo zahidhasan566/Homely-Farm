@@ -262,42 +262,13 @@ export default {
                     }
                   });
                 }
-                if (this.requisitionId !== '') {
-                  let ins2 = this
-                  this.dataSets.forEach(function (item) {
-                    if (ins2.checkType === false) {
-                      item.check_disabled = false
-                    } else {
-                      if (item.RequisitionID === ins2.requisitionId) {
-                        item.check_disabled = false
-                      }
-                      else {
-                        item.check_disabled = true
-                        item.checked = false
-                      }
-                    }
-                  })
-                }
-                console.log(this.requisitionId)
-                // if (this.action && this.action.length > 0) {
-                //   let ins2 = this;
-                //   this.dataSets.forEach(function(item) {
-                //     var action = ins2.action.find(function(ac){
-                //       return ac === item.AdvanceID;
-                //     });
-                //     if (action !== undefined) {
-                //       item.checked_action = true;
-                //     } else {
-                //       item.checked_action = false;
-                //     }
-                //   });
-                // }
               }
               this.isLoading = false;
             } else {
               let dataSets = response.data;
               if (dataSets.length > 0) {
                 let columns = Object.keys(dataSets[0]);
+
                 columns = columns.filter((item) => item !== 'row_num');
                 let rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
                 columns = columns.map((item) => {
