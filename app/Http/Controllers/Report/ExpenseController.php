@@ -31,8 +31,26 @@ class ExpenseController extends Controller
 
         $result =  DB::select("exec sp_Expenses '$dateFrom','$dateTo','$catergoryCode' ");
 
+        $dataSet =[];
+        foreach ($result as $singleData){
+            $dataSet[] = [
+                'Categoryname'=>$singleData->Categoryname ,
+                'ExpenseDate'=>$singleData->ExpenseDate ,
+                'ExpenseHead'=>$singleData->ExpenseHead ,
+                'ExpenseType'=>$singleData->ExpenseType ,
+                'ItemCode'=>$singleData->ItemCode ,
+                'ItemName'=>$singleData->ItemName ,
+                'LocationCode'=>$singleData->LocationCode ,
+                'LocationName'=>$singleData->LocationName ,
+                'UOM'=>$singleData->UOM ,
+                'Value'=>(float) $singleData->Value ,
+
+            ];
+
+        }
+
         return response()->json([
-            'data' => $result
+            'data' => $dataSet
         ]);
     }
 }

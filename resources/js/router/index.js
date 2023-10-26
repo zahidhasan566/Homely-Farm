@@ -13,6 +13,7 @@ import sales from "../views/sales/index.vue";
 import customers from "../views/customers/index.vue";
 import dailyProductionReport from "../views/reports/dailyProductionReport.vue";
 import dailySalesReport from "../views/reports/dailySalesReport.vue";
+import getVaccineReport from "../views/reports/getVaccineReport.vue";
 import customerWiseSales from "../views/reports/customerWiseSales.vue";
 import currentStockReport from "../views/reports/currentStockReport.vue";
 import reportItemBalance from "../views/reports/itemBalanceReport.vue";
@@ -25,6 +26,7 @@ import categoryLocationIndex from "../views/setup/CategoryLocationIndex.vue";
 import expenseHeadIndex from "../views/setup/ExpenseHeadIndex.vue";
 import expense from "../views/expense/index.vue";
 import monthClosing from "../views/setup/monthClosing.vue";
+import VaccineSchedule from "../views/vaccineschedule/VaccineSchedule.vue";
 
 
 Vue.use(VueRouter);
@@ -138,6 +140,11 @@ const routes = [
                 component: dailySalesReport
             },
             {
+                path: baseurl + 'report/vaccine-report',
+                name: 'getVaccineReport',
+                component: getVaccineReport
+            },
+            {
                 path: baseurl + 'report/current-stock',
                 name: 'currentStockReport',
                 component: currentStockReport
@@ -171,7 +178,11 @@ const routes = [
                 path: baseurl + 'setup/closing-report',
                 name: 'monthClosing',
                 component: monthClosing
-            }
+            },{
+                path: baseurl + 'vaccineschedule/list',
+                name: 'VaccineSchedule',
+                component: VaccineSchedule
+            },
         ],
         beforeEnter(to, from, next) {
             checkToken(to, from, next);

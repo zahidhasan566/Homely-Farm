@@ -365,7 +365,6 @@ export default {
                 instance.locations = response.locations;
             }, (error) => {
                 this.errorNoti(error);
-
             })
         },
         setItemCode(e, key) {

@@ -44,10 +44,13 @@ Vue.component('add-edit-sales',require('./components/sales/AddEditModal').defaul
 Vue.component('add-edit-customers',require('./components/customers/AddEditModal').default);
 
 Vue.component('add-edit-category',require('./components/setup/CategoryAddEditModal.vue').default);
+Vue.component('add-edit-vaccineschedule',require('./components/Vaccineschedule/VaccineScheduleAddEditModal.vue').default);
 Vue.component('add-edit-location',require('./components/setup/LocationAddEditModal.vue').default);
 Vue.component('add-edit-category-location',require('./components/setup/CategoryLocationAddEditModal.vue').default);
 Vue.component('add-edit-expense-head',require('./components/setup/ExpenseHeadAddEditModal.vue').default);
 Vue.component('add-edit-expense',require('./components/Expense/AddEditModal.vue').default);
+//Vue.component('add-edit-vaccine-schedule',require('./components/Vaccineschedule/VaccineScheduleAddEditModal.vue').default);
+//Vue.component('add-edit-vaccineschedule',require('./components/setup/CategoryAddEditModal.vue').default);
 
 
 //Vue Datepicker
