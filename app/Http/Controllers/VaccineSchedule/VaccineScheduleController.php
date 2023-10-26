@@ -47,6 +47,7 @@ class VaccineScheduleController extends Controller
             return response()->json(['message' => $validator->errors()], 400);
         }
         //Data Insert
+        //dd($request->ScheduleCode);
         try {
             DB::beginTransaction();
             $VaccineScheduleData= new VaccineSchedule();
@@ -66,7 +67,6 @@ class VaccineScheduleController extends Controller
             }
             if($request->ActionType == 'add'){
                 $VaccineScheduleData->save();
-                DB::commit();
             }elseif($request->ActionType = 'edit'){
                 VaccineSchedule::where('ScheduleCode', $request->ScheduleCode)->update([
                     'ScheduleDate'=>$request->ScheduleDate,
@@ -77,9 +77,11 @@ class VaccineScheduleController extends Controller
                     'NextScheduleDate'=>$request->NextScheduleDate,
                 ]);
             }
+            DB::commit();
+
             return response()->json([
                 'status' => 'success',
-                'message' => 'Location Created Successfully'
+                'message' => 'Vaccine Schedule Created Successfully'
             ]);
         } catch (\Exception $exception) {
             return response()->json([
