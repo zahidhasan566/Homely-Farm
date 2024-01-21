@@ -12,9 +12,10 @@ class DashboardController extends Controller
     use GetMultipleProcedureResult;
     public function index(){
         $result = $this->getPdoResult();
-
+        $stock = DB::select("exec  sp_CurrentStockDashboard");
         return response()->json([
-            'data' => $result
+            'data' => $result,
+            'stock' => $stock,
         ]);
     }
 

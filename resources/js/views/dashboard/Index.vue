@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xl-3 col-md-6">
+        <div class="col-xl-3 col-md-4">
             <div class="card mini-stat bg-primary text-white">
                 <div class="card-body">
                     <div class="mb-4">
@@ -56,7 +56,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
+        <div class="col-xl-3 col-md-4">
             <div class="card mini-stat bg-primary text-white">
                 <div class="card-body">
                     <div class="mb-4">
@@ -90,7 +90,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
+        <div class="col-xl-3 col-md-4">
             <div class="card mini-stat bg-primary text-white">
                 <div class="card-body">
                     <div class="mb-4">
@@ -124,7 +124,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
+        <div class="col-xl-3 col-md-4">
             <div class="card mini-stat bg-primary text-white">
                 <div class="card-body">
                     <div class="mb-4">
@@ -159,6 +159,43 @@
                 </div>
             </div>
         </div>
+        <div class="col-xl-3 col-md-4">
+            <div class="card mini-stat bg-primary text-white">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <div class="float-left mini-stat-img mr-4"><img src="assets/images/services-icon/04.png" alt="" /></div>
+                        <h5 class="font-16 text-uppercase mt-0 text-white-50">Stock</h5>
+                        <table class="table" v-if="expense.length>0">
+                            <thead>
+                            <tr>
+                                <th>Category Name</th>
+                                <th>Location</th>
+                                <th>Stock</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tagModal-body">
+                            <tr class="trClass" v-for="(singleExpense,index) in currentStock">
+                                <td >{{singleExpense.CategoryName}}</td>
+                                <td>{{singleExpense.LocationName}}</td>
+                                <td>{{singleExpense.Stock}}</td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                        <h4 v-else class="font-500"> No Data to Show</h4>
+                    </div>
+                    <div class="pt-2">
+<!--                        <div class="float-right">-->
+<!--                            <router-link  :to="{ path: 'expense/expenseList'}">-->
+<!--                                <i  style="color: white" class="mdi mdi-arrow-right h5"></i>-->
+<!--                            </router-link>-->
+
+<!--                        </div>-->
+                        <!--                        <p class="text-white-50 mb-0">Since last month</p>-->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     </div>
 </template>
@@ -174,6 +211,7 @@ export default {
       production:[],
       sales:[],
       expense:[],
+      currentStock:[]
     }
   },
   computed: {
@@ -191,7 +229,7 @@ export default {
          this.production =  response.data[1];
          this.sales = response.data[2];
          this.expense = response.data[3];
-          console.log(this.sales)
+         this.currentStock = response.stock
 
       this.isLoading = false;
       }, (error) => {
