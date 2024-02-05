@@ -27,7 +27,7 @@ import expenseHeadIndex from "../views/setup/ExpenseHeadIndex.vue";
 import expense from "../views/expense/index.vue";
 import monthClosing from "../views/setup/monthClosing.vue";
 import VaccineSchedule from "../views/vaccineschedule/VaccineSchedule.vue";
-
+import Transfer from "../views/transfer/Index.vue";
 
 Vue.use(VueRouter);
 
@@ -178,10 +178,16 @@ const routes = [
                 path: baseurl + 'setup/closing-report',
                 name: 'monthClosing',
                 component: monthClosing
-            },{
+            },
+            {
                 path: baseurl + 'vaccineschedule/list',
                 name: 'VaccineSchedule',
                 component: VaccineSchedule
+            },
+            {
+                path: baseurl + 'transfer/transferList',
+                name: 'Transfer',
+                component: Transfer
             },
         ],
         beforeEnter(to, from, next) {
