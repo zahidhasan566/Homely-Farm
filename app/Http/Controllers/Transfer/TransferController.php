@@ -134,7 +134,11 @@ class TransferController extends Controller
                             $existingBatchQty = $checkExistingFromLocation->BatchQty;
                             $existingStockValue = $checkExistingFromLocation->StockValue;
                                 StockBatch::where('ItemCode', $item['itemCode'])->where('LocationCode',$item['LocationFromCode'])->update([
+<<<<<<< HEAD
                                     'BatchQty'=>$existingBatchQty - $item['quantity'],
+=======
+                                    'BatchQty'=>intval($existingBatchQty) - intval($item['quantity']),
+>>>>>>> 5cc3b19939d68cbb3f36fc1c5e246f44b2791e04
                                 ]);
                         }
                         else{
@@ -175,12 +179,24 @@ class TransferController extends Controller
                     //Data insert into Stock Batch
                     $checkExistingToLocation = StockBatch::where('ItemCode', $item['itemCode'])->where('LocationCode',$item['LocationToCode'])->orderBy('ItemCode','desc')->first();
                     if($checkExistingToLocation){
+<<<<<<< HEAD
                         $existingReceiveQty = $checkExistingToLocation->ReceiveQty;
                             $existingBatchQty = $checkExistingToLocation->BatchQty;
                             $existingStockValue = $checkExistingToLocation->StockValue;
                                 StockBatch::where('ItemCode', $item['itemCode'])->where('LocationCode',$item['LocationToCode'])->update([
                                     'ReceiveQty'=>$existingReceiveQty + $item['quantity'],
                                     'BatchQty'=>$existingBatchQty - $item['quantity'],
+=======
+
+                        $existingReceiveQty = $checkExistingToLocation->ReceiveQty;
+                            $existingBatchQty = $checkExistingToLocation->BatchQty;
+                            $existingStockValue = $checkExistingToLocation->StockValue;
+
+                                StockBatch::where('ItemCode', $item['itemCode'])->where('LocationCode',$item['LocationToCode'])->update([
+                                    'ReceiveQty'=>intval($existingReceiveQty) + intval($item['quantity']),
+                                    'BatchQty'=>intval($existingBatchQty) + intval($item['quantity']),
+                                    'StockValue'=>intval($existingStockValue) + intval($item['totalValue']),
+>>>>>>> 5cc3b19939d68cbb3f36fc1c5e246f44b2791e04
                                 ]);
                     }
                     else{
@@ -189,7 +205,11 @@ class TransferController extends Controller
                         $stockBatch->LocationCode = $item['LocationToCode'];
                         $stockBatch->ReceiveQty = $item['quantity'];
                         $stockBatch->BatchQty = $item['quantity'];
+<<<<<<< HEAD
                         $stockBatch->StockValue = $item['quantity'];
+=======
+                        $stockBatch->StockValue = $item['totalValue'];
+>>>>>>> 5cc3b19939d68cbb3f36fc1c5e246f44b2791e04
                         $stockBatch->save();
                     }
                 }
