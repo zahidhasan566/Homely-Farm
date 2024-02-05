@@ -27,13 +27,8 @@ import expenseHeadIndex from "../views/setup/ExpenseHeadIndex.vue";
 import expense from "../views/expense/index.vue";
 import monthClosing from "../views/setup/monthClosing.vue";
 import VaccineSchedule from "../views/vaccineschedule/VaccineSchedule.vue";
-<<<<<<< HEAD
-import Transfer from "../views/transfer/Index.vue";
-
-=======
 import itemListIndex from "../views/setup/ItemIndex.vue";
 import Transfer from "../views/transfer/Index.vue";
->>>>>>> 5cc3b19939d68cbb3f36fc1c5e246f44b2791e04
 Vue.use(VueRouter);
 
 
