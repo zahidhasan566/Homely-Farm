@@ -92,6 +92,22 @@ trait CodeGeneration
         }
         return $nextCode;
     }
+    public function generateItemCode()
+    {
+        $combinedCode = 'IT';
+        $combinedLength = strlen($combinedCode);
+        $maxCode = DB::select(DB::raw("select MAX(ItemCode) as MaxNo FROM Items WHERE LEFT(ItemCode,'$combinedLength') = '$combinedCode'"));
+        $maxCode = $maxCode[0]->MaxNo;
+        if ($maxCode === null) {
+            $nextCode = $combinedCode.'001';
+        } else {
+            $nextCode = substr($maxCode,$combinedLength);
+            $nextCodeInc = $nextCode + 1;
+            $nextCode = sprintf("%0".strlen($nextCode)."d", $nextCodeInc);
+            $nextCode = $combinedCode.$nextCode;
+        }
+        return $nextCode;
+    }
     public function generateLocationCode()
     {
         $combinedCode = 'L';
@@ -165,6 +181,40 @@ trait CodeGeneration
         $combinedLength = strlen($combinedCode);
         $maxCode = DB::select(DB::raw("select MAX(ScheduleCode) as MaxNo FROM VaccineSchedule
             WHERE LEFT(ScheduleCode,'$combinedLength') = '$combinedCode'"));
+        $maxCode = $maxCode[0]->MaxNo;
+        if ($maxCode === null) {
+            $nextCode = $combinedCode.'000001';
+        } else {
+            $nextCode = substr($maxCode,$combinedLength);
+            $nextCodeInc = $nextCode + 1;
+            $nextCode = sprintf("%0".strlen($nextCode)."d", $nextCodeInc);
+            $nextCode = $combinedCode.$nextCode;
+        }
+        return $nextCode;
+    }
+
+    public function generateTransferMasterCode()
+    {
+        $combinedCode = 'TR'.Carbon::now()->format('y');
+        $combinedLength = strlen($combinedCode);
+        $maxCode = DB::select(DB::raw("select MAX(TransferCode) as MaxNo FROM TransferMaster WHERE LEFT(TransferCode,'$combinedLength') = '$combinedCode'"));
+        $maxCode = $maxCode[0]->MaxNo;
+        if ($maxCode === null) {
+            $nextCode = $combinedCode.'000001';
+        } else {
+            $nextCode = substr($maxCode,$combinedLength);
+            $nextCodeInc = $nextCode + 1;
+            $nextCode = sprintf("%0".strlen($nextCode)."d", $nextCodeInc);
+            $nextCode = $combinedCode.$nextCode;
+        }
+        return $nextCode;
+    }
+
+    public function generateReceiveMasterCode()
+    {
+        $combinedCode = 'RR'.Carbon::now()->format('y');
+        $combinedLength = strlen($combinedCode);
+        $maxCode = DB::select(DB::raw("select MAX(ReceiveCode) as MaxNo FROM ReceiveMaster WHERE LEFT(ReceiveCode,'$combinedLength') = '$combinedCode'"));
         $maxCode = $maxCode[0]->MaxNo;
         if ($maxCode === null) {
             $nextCode = $combinedCode.'000001';
