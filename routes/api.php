@@ -119,6 +119,13 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('category-location-add', [\App\Http\Controllers\Setup\CategoryLocationSetupController::class, 'store']);
         Route::get('get-category-location-info/{categoryCode}/{locationCode}',[\App\Http\Controllers\Setup\CategoryLocationSetupController::class,'getCategoryLocationInfo']);
         Route::post('category-location-update', [\App\Http\Controllers\Setup\CategoryLocationSetupController::class, 'update']);
+		
+		//Item
+        Route::post('item-list', [\App\Http\Controllers\Setup\ItemSetupController::class, 'index']);
+        Route::get('get-item-supporting-data', [\App\Http\Controllers\Setup\ItemSetupController::class, 'getSupportingData']);
+        Route::post('item-add', [\App\Http\Controllers\Setup\ItemSetupController::class, 'store']);
+        Route::get('get-item-info/{itemCodeCode}',[\App\Http\Controllers\Setup\ItemSetupController::class,'getItemInfo']);
+        Route::post('item-update', [\App\Http\Controllers\Setup\ItemSetupController::class, 'update']);
 
         //Expense Head
         Route::post('expense-head-list', [\App\Http\Controllers\Setup\ExpenseHeadController::class, 'index']);
