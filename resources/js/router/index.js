@@ -27,8 +27,8 @@ import expenseHeadIndex from "../views/setup/ExpenseHeadIndex.vue";
 import expense from "../views/expense/index.vue";
 import monthClosing from "../views/setup/monthClosing.vue";
 import VaccineSchedule from "../views/vaccineschedule/VaccineSchedule.vue";
+import itemListIndex from "../views/setup/ItemIndex.vue";
 import Transfer from "../views/transfer/Index.vue";
-
 Vue.use(VueRouter);
 
 
@@ -125,6 +125,11 @@ const routes = [
                 path: baseurl + 'setup/expense-head',
                 name: 'expenseHeadIndex',
                 component: expenseHeadIndex
+            },
+			{
+                path: baseurl + 'setup/itemList',
+                name: 'itemListIndex',
+                component: itemListIndex
             },
 
 
