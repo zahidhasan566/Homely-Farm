@@ -94,6 +94,7 @@
                                                 <th>Transfer From<span class="required-field">*</span></th>
                                                 <th>Transfer To<span class="required-field">*</span></th>
                                                 <th>Quantity<span class="required-field">*</span></th>
+                                                <th>Stock<span class="required-field">*</span></th>
                                                 <th>Value<span class="required-field">*</span></th>
                                                 <th>Total<span class="required-field">*</span></th>
                                                 <th>Action</th>
@@ -129,6 +130,7 @@
                                                 </td>
                                                 <td>
                                                     <select class="form-control" :class="{'error-border': errors[0]}"
+                                                            @change="checkItemStock($event,field.itemCode,index)"
                                                             v-model="field.LocationFromCode" name="locationfrom">
                                                         <option v-for="(item,i) in locations"
                                                                 :key="i"
@@ -163,6 +165,14 @@
                                                             errors[index].quantity
                                                         }}</span>
 
+                                                </td>
+                                                <td style="text-align: end">
+                                                    <input readonly type="text" class="form-control" style="text-align: end"
+                                                           v-model="field.itemStock" placeholder="Stock">
+                                                    <span class="error"
+                                                          v-if="errors[index] !== undefined && errors[index].itemStock !== undefined">{{
+                                                            errors[index].itemStock
+                                                        }}</span>
                                                 </td>
                                                 <td>
                                                     <input type="number" @input="calculateTotal(field, index)" class="form-control" style="text-align: end"
@@ -238,6 +248,7 @@ export default {
                     LocationFromCode:'',
                     LocationToCode:'',
                     totalValue:'',
+                    itemStock:0
                 }
             ],
             errors: [],
@@ -330,7 +341,8 @@ export default {
                 quantity: 0,
                 itemValue: 0,
                 LocationCode:'',
-                uom:''
+                uom:'',
+                itemStock:0
             });
         },
         removeRow(id) {
@@ -381,16 +393,38 @@ export default {
             instance.fields[key].itemCode = e.target.value;
             instance.fields[key].uom = item ? item.UOM : '';
         },
+        checkItemStock(e,itemCode,key){
+            let locationCode = e.target.value;
+            let url = 'transfer/check-stock-item-wise';
+            this.axiosPost(url, {
+                itemCode:itemCode ,
+                locationCode:locationCode ,
+            }, (response) => {
+                let instance = this;
+               if(response.stock != null){
+                   instance.fields[key].itemStock = response.stock ? parseFloat(response.stock.BatchQty): 0;
+               }
+               else{
+                   instance.fields[key].itemStock =0
+               }
+
+
+            }, (error) => {
+                this.errorNoti(error);
+            })
+
+        },
         checkFieldValue() {
             this.errors = [];
             let instance = this;
             this.fields.forEach(function (item, index) {
                 if (item.itemCode === '' || item.location === ''
-                    || item.quantity === '' || item.quantity <=0 || item.quantity === undefined ) {
+                    || item.quantity === '' || item.quantity <=0 || item.quantity >item.itemStock||  item.quantity === undefined ) {
                     instance.errors[index] = {
                         itemCode: item.itemCode === '' ? 'item Code is required' : '',
                         location: item.location === '' ? 'location  is required' : '',
                         quantity: (item.quantity === '' ||item.quantity <=0 ) ? 'quantity  is required' : '',
+                        itemStock: (item.quantity >item.itemStock) ? 'stock not available' : '',
 
                     };
                 }

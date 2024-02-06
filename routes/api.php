@@ -85,11 +85,12 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('list', [\App\Http\Controllers\Transfer\TransferController::class, 'index']);
         Route::get('supporting-data', [\App\Http\Controllers\Transfer\TransferController::class, 'getSupportingData']);
         Route::post('category-wise-item', [\App\Http\Controllers\Transfer\TransferController::class, 'getCategoryWiseItemData']);
+        Route::post('check-stock-item-wise', [\App\Http\Controllers\Transfer\TransferController::class, 'checkItemWiseStockData']);
         Route::post('add', [\App\Http\Controllers\Transfer\TransferController::class, 'store']);
         Route::get('get-production-info/{productionCode}', [\App\Http\Controllers\Transfer\TransferController::class, 'getProductionInfo']);
         Route::post('update', [\App\Http\Controllers\Transfer\TransferController::class, 'update']);
      });
-     
+
     //Customer
     Route::group(['prefix' =>'customers'],function () {
         Route::post('list', [\App\Http\Controllers\Customer\CustomerController::class, 'index']);
@@ -129,7 +130,7 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('category-location-add', [\App\Http\Controllers\Setup\CategoryLocationSetupController::class, 'store']);
         Route::get('get-category-location-info/{categoryCode}/{locationCode}',[\App\Http\Controllers\Setup\CategoryLocationSetupController::class,'getCategoryLocationInfo']);
         Route::post('category-location-update', [\App\Http\Controllers\Setup\CategoryLocationSetupController::class, 'update']);
-		
+
 		//Item
         Route::post('item-list', [\App\Http\Controllers\Setup\ItemSetupController::class, 'index']);
         Route::get('get-item-supporting-data', [\App\Http\Controllers\Setup\ItemSetupController::class, 'getSupportingData']);

@@ -45,6 +45,12 @@ class TransferController extends Controller
             'locations' => $location,
         ]);
     }
+    public function checkItemWiseStockData(Request $request){
+        $stock  =  StockBatch::select('BatchQty')->where('ItemCode',$request->itemCode)->where('LocationCode',$request->locationCode)->first();
+        return response()->json([
+            'stock' => $stock
+        ]);
+    }
 
     public function index(Request $request){
         $take = $request->take;
@@ -155,6 +161,7 @@ class TransferController extends Controller
                 $receive->Reference = $request->reference;
                 $receive->CategoryCode = $request->categoryType['CategoryCode'];
                 $receive->Returned = 'N';
+                $receive->TransferCode = $transferCode;
                 $receive->PrepareDate = Carbon::now()->format('Y-m-d H:i:s');;
                 $receive->PrepareBy = Auth::user()->UserId;
                 $receive->EditDate = '';
