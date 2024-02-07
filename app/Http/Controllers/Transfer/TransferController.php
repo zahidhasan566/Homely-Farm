@@ -135,7 +135,7 @@ class TransferController extends Controller
                     $checkExistingFromLocation = StockBatch::where('ItemCode', $item['itemCode'])->where('LocationCode',$item['LocationFromCode'])->orderBy('ItemCode','desc')->first();
                     if($checkExistingFromLocation && $checkExistingFromLocation->BatchQty > 0){
                         $negativeStockCheck = $checkExistingFromLocation->BatchQty - $item['quantity'];
-                        if($negativeStockCheck > 0){
+                        if($negativeStockCheck >= 0){
                             $existingReceiveQty = $checkExistingFromLocation->ReceiveQty;
                             $existingBatchQty = $checkExistingFromLocation->BatchQty;
                             $existingStockValue = $checkExistingFromLocation->StockValue;
