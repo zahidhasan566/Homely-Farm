@@ -50,16 +50,12 @@
                                     </div>
                                 <div class="row">
                                     <div class="col-12 col-md-6">
-                                        <ValidationProvider name="DescriptionDetails" mode="eager" rules="required"
-                                                            v-slot="{ errors }">
-                                            <div class="form-group" style="padding-top:20px">
-                                            <label for="DescriptionDetails">Description <span class="error">*</span></label>
+                                        <div class="form-group" style="padding-top:20px">
+                                            <label for="DescriptionDetails">Description</label>
                                             <input type="text" class="form-control"
-                                                   :class="{'error-border': errors[0]}" id="description"
+                                                   id="description"
                                                    v-model="description" name="description" placeholder="description">
-                                            <span class="error-message"> {{ errors[0] }}</span>
-                                            </div>
-                                        </ValidationProvider>
+                                        </div>
                                     </div>
                                     <div class="col-12 col-md-4">
                                         <ValidationProvider name="Status" mode="eager" rules="required"

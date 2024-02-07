@@ -39,7 +39,6 @@ class ItemSetupController extends Controller
             'CategoryCode' => 'required',
             'itemName' => 'required',
             'uom' => 'required',
-            'description' => 'required',
             'status' => 'required',
         ]);
         if ($validator->fails()) {
@@ -83,7 +82,6 @@ class ItemSetupController extends Controller
             'CategoryCode' => 'required',
             'itemName' => 'required',
             'uom' => 'required',
-            'description' => 'required',
             'status' => 'required',
         ]);
         if ($validator->fails()) {
