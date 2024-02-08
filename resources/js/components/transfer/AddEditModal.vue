@@ -158,7 +158,7 @@
                                                         }}</span>
                                                 </td>
                                                 <td>
-                                                    <input type="number" @input="calculateTotal(field, index)" class="form-control" style="text-align: end"
+                                                    <input type="number" @input="calculateTotal(field, index)" class="form-control" style="text-align: end" step="any"
                                                            v-model="field.quantity" placeholder="quantity">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].quantity !== undefined">{{
@@ -175,7 +175,7 @@
                                                         }}</span>
                                                 </td>
                                                 <td>
-                                                    <input type="number" @input="calculateTotal(field, index)" class="form-control" style="text-align: end"
+                                                    <input type="number"  @input="calculateTotal(field, index)" step="any" class="form-control" style="text-align: end"
                                                            v-model="field.itemValue" placeholder="Value">
                                                 </td>
                                                 <td>
