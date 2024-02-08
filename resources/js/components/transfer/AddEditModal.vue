@@ -179,7 +179,7 @@
                                                            v-model="field.itemValue" placeholder="Value">
                                                 </td>
                                                 <td>
-                                                    <input readonly type="text" class="form-control" style="text-align: end"
+                                                    <input readonly type="text" class="form-control" style="text-align: end"  step="any"
                                                            v-model="field.totalValue" placeholder="Total">
                                                 </td>
                                                 <td>
@@ -434,7 +434,7 @@ export default {
             if(data.quantity && data.itemValue){
                 this.fields = this.fields.map((field, i) => {
                     if(index == i){
-                        field.totalValue = parseInt(data.quantity * data.itemValue)
+                        field.totalValue = parseFloat(data.quantity * data.itemValue)
                     }
                     return field
                 })
