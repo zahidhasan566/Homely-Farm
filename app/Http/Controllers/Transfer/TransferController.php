@@ -137,6 +137,7 @@ class TransferController extends Controller
 
                     //Data insert into Stock Batch
                     $checkExistingFromLocation = StockBatch::where('ItemCode', $item['itemCode'])->where('LocationCode',$item['LocationFromCode'])->orderBy('ItemCode','desc')->first();
+
                     if($checkExistingFromLocation && $checkExistingFromLocation->BatchQty > 0){
                         $negativeStockCheck = $checkExistingFromLocation->BatchQty - $item['quantity'];
                         if($negativeStockCheck >= 0){
@@ -186,16 +187,16 @@ class TransferController extends Controller
                     //Data insert into Stock Batch
                     $checkExistingToLocation = StockBatch::where('ItemCode', $item['itemCode'])->where('LocationCode',$item['LocationToCode'])->orderBy('ItemCode','desc')->first();
                     if($checkExistingToLocation){
-
                         $existingReceiveQty = $checkExistingToLocation->ReceiveQty;
                             $existingBatchQty = $checkExistingToLocation->BatchQty;
                             $existingStockValue = $checkExistingToLocation->StockValue;
-
-                                StockBatch::where('ItemCode', $item['itemCode'])->where('LocationCode',$item['LocationToCode'])->update([
+                                DB::table('StockBatch')->where('ItemCode', $item['itemCode'])->where('LocationCode',$item['LocationToCode'])
+                                    ->update([
                                     'ReceiveQty'=>intval($existingReceiveQty) + intval($item['quantity']),
                                     'BatchQty'=>intval($existingBatchQty) + intval($item['quantity']),
                                     'StockValue'=>intval($existingStockValue) + intval($item['totalValue']),
                                 ]);
+
                     }
                     else{
                         $stockBatch= new StockBatch();

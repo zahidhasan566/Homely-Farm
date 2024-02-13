@@ -402,13 +402,14 @@ export default {
                 locationCode:locationCode ,
             }, (response) => {
                 let instance = this;
-               if(response.stock != null){
+               if(response.stock.length>0){
                    console.log(response.stock[0].ClosingQty)
                    instance.fields[key].itemStock = response.stock ? parseFloat(response.stock[0].ClosingQty): 0;
                    instance.fields[key].itemValue = response.stock ? parseInt((parseFloat(response.stock[0].ClosingValue)/parseFloat(response.stock[0].ClosingQty))): 0;
                }
                else{
                    instance.fields[key].itemStock =0
+                   instance.fields[key].itemValue =0
                }
 
 
