@@ -404,8 +404,8 @@ export default {
                 let instance = this;
                if(response.stock != null){
                    console.log(response.stock[0].ClosingQty)
-                   instance.fields[key].itemStock = response.stock ? parseInt((parseFloat(response.stock[0].ClosingValue)/parseFloat(response.stock[0].ClosingQty))) : 0;
-                   instance.fields[key].itemValue = response.stock ? parseFloat(response.stock[0].ClosingValue): 0;
+                   instance.fields[key].itemStock = response.stock ? parseFloat(response.stock[0].ClosingQty): 0;
+                   instance.fields[key].itemValue = response.stock ? parseInt((parseFloat(response.stock[0].ClosingValue)/parseFloat(response.stock[0].ClosingQty))): 0;
                }
                else{
                    instance.fields[key].itemStock =0
