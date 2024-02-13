@@ -46,7 +46,11 @@ class TransferController extends Controller
         ]);
     }
     public function checkItemWiseStockData(Request $request){
-        $stock  =  StockBatch::select('BatchQty')->where('ItemCode',$request->itemCode)->where('LocationCode',$request->locationCode)->first();
+        $categoryCode=  $request->categoryType['CategoryCode'];
+        $itemCode=  $request->itemCode;
+        $locationCode=  $request->locationCode;
+        $stock = DB::select("exec  sp_StockNValue '$categoryCode','$itemCode','$locationCode'");
+        //$stock  =  StockBatch::select('BatchQty')->where('ItemCode',$request->itemCode)->where('LocationCode',$request->locationCode)->first();
         return response()->json([
             'stock' => $stock
         ]);

@@ -175,7 +175,7 @@
                                                         }}</span>
                                                 </td>
                                                 <td>
-                                                    <input type="number"  @input="calculateTotal(field, index)" step="any" class="form-control" style="text-align: end"
+                                                    <input type="number" readonly @input="calculateTotal(field, index)" step="any" class="form-control" style="text-align: end"
                                                            v-model="field.itemValue" placeholder="Value">
                                                 </td>
                                                 <td>
@@ -397,12 +397,15 @@ export default {
             let locationCode = e.target.value;
             let url = 'transfer/check-stock-item-wise';
             this.axiosPost(url, {
+                categoryType: this.categoryType,
                 itemCode:itemCode ,
                 locationCode:locationCode ,
             }, (response) => {
                 let instance = this;
                if(response.stock != null){
-                   instance.fields[key].itemStock = response.stock ? parseFloat(response.stock.BatchQty): 0;
+                   console.log(response.stock[0].ClosingQty)
+                   instance.fields[key].itemStock = response.stock ? parseFloat(response.stock[0].ClosingQty): 0;
+                   instance.fields[key].itemValue = response.stock ? parseFloat(response.stock[0].ClosingValue): 0;
                }
                else{
                    instance.fields[key].itemStock =0
