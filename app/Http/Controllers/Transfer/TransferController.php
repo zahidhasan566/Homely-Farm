@@ -146,6 +146,7 @@ class TransferController extends Controller
                             $existingStockValue = $checkExistingFromLocation->StockValue;
                                 StockBatch::where('ItemCode', $item['itemCode'])->where('LocationCode',$item['LocationFromCode'])->update([
                                     'BatchQty'=>intval($existingBatchQty) - intval($item['quantity']),
+                                    'StockValue'=>intval($existingStockValue) - intval($item['totalValue']),
                                 ]);
                         }
                         else{

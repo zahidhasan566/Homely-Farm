@@ -126,6 +126,7 @@ class PurchaseController extends Controller
                         StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode',$singleData['LocationCode'])->update([
                             'ReceiveQty'=>$existingBatchQty + $singleData['quantity'],
                             'BatchQty'=>$existingBatchQty + $singleData['quantity'],
+                            'StockValue'=>$existingStockValue + $singleData['itemValue'],
                         ]);
                     }
                     else{
