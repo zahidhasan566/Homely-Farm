@@ -89,6 +89,12 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('add', [\App\Http\Controllers\Transfer\TransferController::class, 'store']);
         Route::get('get-production-info/{productionCode}', [\App\Http\Controllers\Transfer\TransferController::class, 'getProductionInfo']);
         Route::post('update', [\App\Http\Controllers\Transfer\TransferController::class, 'update']);
+
+        Route::post('medicine-list', [\App\Http\Controllers\Transfer\MedicineTransferController::class, 'index']);
+        Route::get('medicine-supporting-data', [\App\Http\Controllers\Transfer\MedicineTransferController::class, 'getSupportingData']);
+        Route::post('medicine-category-wise-item', [\App\Http\Controllers\Transfer\MedicineTransferController::class, 'getCategoryWiseItemData']);
+        Route::post('medicine-check-stock-item-wise', [\App\Http\Controllers\Transfer\MedicineTransferController::class, 'checkItemWiseStockData']);
+        Route::post('add-medicine', [\App\Http\Controllers\Transfer\MedicineTransferController::class, 'store']);
      });
 
     //Customer

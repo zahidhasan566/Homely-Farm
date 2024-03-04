@@ -29,6 +29,8 @@ import monthClosing from "../views/setup/monthClosing.vue";
 import VaccineSchedule from "../views/vaccineschedule/VaccineSchedule.vue";
 import itemListIndex from "../views/setup/ItemIndex.vue";
 import Transfer from "../views/transfer/Index.vue";
+import MedicineIndex from "../views/transfer/MedicineIndex.vue";
+
 Vue.use(VueRouter);
 
 
@@ -193,6 +195,11 @@ const routes = [
                 path: baseurl + 'transfer/transferList',
                 name: 'Transfer',
                 component: Transfer
+            },
+            {
+                path: baseurl + 'transfer/medicine-transfer',
+                name: 'MedicineIndex',
+                component: MedicineIndex
             },
         ],
         beforeEnter(to, from, next) {

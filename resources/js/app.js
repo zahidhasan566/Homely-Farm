@@ -54,6 +54,7 @@ Vue.component('add-edit-item',require('./components/setup/itemAddEditModal.vue')
 //Vue.component('add-edit-vaccineschedule',require('./components/setup/CategoryAddEditModal.vue').default);
 
 Vue.component('add-edit-transfer',require('./components/transfer/AddEditModal').default);
+Vue.component('add-edit-medicine-transfer',require('./components/transfer/MedicineAddEditModal.vue').default);
 
 //Vue Datepicker
 import { Datepicker } from '@livelybone/vue-datepicker';
