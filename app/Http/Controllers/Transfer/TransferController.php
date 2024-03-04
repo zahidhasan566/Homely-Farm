@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CategoryLocation;
 use App\Models\Items;
 use App\Models\ItemsCategory;
+use App\Models\Location;
 use App\Models\ReceiveDetails;
 use App\Models\ReceiveMaster;
 use App\Models\StockBatch;
@@ -35,6 +36,8 @@ class TransferController extends Controller
             'CategoryLocation.LocationCode',
             'CategoryLocation.Active',
             'Location.LocationName',
+            'Location.Active as LocationStatus',
+            'Location.StockTransfer as LocationStockTransfer',
         )->join('Location','Location.LocationCode','CategoryLocation.LocationCode')
         ->where('CategoryLocation.CategoryCode',$request->CategoryCode)
         ->where('CategoryLocation.Active','Y')->get();
@@ -140,6 +143,7 @@ class TransferController extends Controller
 
                     if($checkExistingFromLocation && $checkExistingFromLocation->BatchQty > 0){
                         $negativeStockCheck = $checkExistingFromLocation->BatchQty - $item['quantity'];
+
                         if($negativeStockCheck >= 0){
                             $existingReceiveQty = $checkExistingFromLocation->ReceiveQty;
                             $existingBatchQty = $checkExistingFromLocation->BatchQty;
@@ -187,27 +191,34 @@ class TransferController extends Controller
 
                     //Data insert into Stock Batch
                     $checkExistingToLocation = StockBatch::where('ItemCode', $item['itemCode'])->where('LocationCode',$item['LocationToCode'])->orderBy('ItemCode','desc')->first();
-                    if($checkExistingToLocation){
-                        $existingReceiveQty = $checkExistingToLocation->ReceiveQty;
+                    //Check Stock Transfer Status
+                    $itemStockTransfer= Location::where('LocationCode',$item['LocationToCode'])->first();
+                    $itemStockTransferStatus = $itemStockTransfer->StockTransfer;
+
+                    if($itemStockTransferStatus==='Y'){
+                        if($checkExistingToLocation){
+                            $existingReceiveQty = $checkExistingToLocation->ReceiveQty;
                             $existingBatchQty = $checkExistingToLocation->BatchQty;
                             $existingStockValue = $checkExistingToLocation->StockValue;
-                                DB::table('StockBatch')->where('ItemCode', $item['itemCode'])->where('LocationCode',$item['LocationToCode'])
-                                    ->update([
+                            DB::table('StockBatch')->where('ItemCode', $item['itemCode'])->where('LocationCode',$item['LocationToCode'])
+                                ->update([
                                     'ReceiveQty'=>intval($existingReceiveQty) + intval($item['quantity']),
                                     'BatchQty'=>intval($existingBatchQty) + intval($item['quantity']),
                                     'StockValue'=>intval($existingStockValue) + intval($item['totalValue']),
                                 ]);
 
+                        }
+                        else{
+                            $stockBatch= new StockBatch();
+                            $stockBatch->ItemCode = $item['itemCode'];
+                            $stockBatch->LocationCode = $item['LocationToCode'];
+                            $stockBatch->ReceiveQty = $item['quantity'];
+                            $stockBatch->BatchQty = $item['quantity'];
+                            $stockBatch->StockValue = $item['quantity'];
+                            $stockBatch->save();
+                        }
                     }
-                    else{
-                        $stockBatch= new StockBatch();
-                        $stockBatch->ItemCode = $item['itemCode'];
-                        $stockBatch->LocationCode = $item['LocationToCode'];
-                        $stockBatch->ReceiveQty = $item['quantity'];
-                        $stockBatch->BatchQty = $item['quantity'];
-                        $stockBatch->StockValue = $item['quantity'];
-                        $stockBatch->save();
-                    }
+
                 }
 
                 DB::commit();

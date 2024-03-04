@@ -133,6 +133,7 @@
                                                             @change="checkItemStock($event,field.itemCode,index)"
                                                             v-model="field.LocationFromCode" name="locationfrom">
                                                         <option v-for="(item,i) in locations"
+                                                                v-if="item.LocationStatus==='Y' && item.LocationStockTransfer==='Y'"
                                                                 :key="i"
                                                                 :value="item.LocationCode">
                                                             {{ item.LocationName }}
@@ -380,6 +381,7 @@ export default {
             }, (response) => {
                 instance.items = response.items;
                 instance.locations = response.locations;
+                console.log(instance.locations)
             }, (error) => {
                 this.errorNoti(error);
             })
