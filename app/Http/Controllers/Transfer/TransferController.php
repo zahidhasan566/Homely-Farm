@@ -218,6 +218,11 @@ class TransferController extends Controller
                             $stockBatch->save();
                         }
                     }
+                    else{
+                        DB::table('ReceiveMaster')->where('ReceiveCode',$receiveCode) ->update([
+                            'ReceiveType'=>'Other'
+                        ]);
+                    }
 
                 }
 
