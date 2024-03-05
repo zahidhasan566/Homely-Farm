@@ -44,10 +44,20 @@ class MedicineTransferController extends Controller
             ->where('CategoryLocation.Active','Y')->get();
 
         $receiveCategoryItems=[];
+        $receiveLocations=[];
         if(($request->receiveCategoryCode)){
             $receiveCategoryItems  = Items::where('CategoryCode',$request->receiveCategoryCode)->get();
+            $receiveLocations = CategoryLocation::select(
+                'CategoryLocation.CategoryCode',
+                'CategoryLocation.LocationCode',
+                'CategoryLocation.Active',
+                'Location.LocationName',
+                'Location.Active as LocationStatus',
+                'Location.StockTransfer as LocationStockTransfer',
+            )->join('Location','Location.LocationCode','CategoryLocation.LocationCode')
+                ->where('CategoryLocation.CategoryCode',$request->receiveCategoryCode)
+                ->where('CategoryLocation.Active','Y')->get();
         }
-        $receiveLocations = Location::select('LocationCode','LocationName')->where('Active','Y')->get();
 
         return response()->json([
             'status' => 'success',
