@@ -25,28 +25,36 @@ class MedicineTransferController extends Controller
     public function getSupportingData(){
         return response()->json([
             'status' => 'success',
-            'category' => ItemsCategory::where('CategoryName','Test')->where('Active','Y')->get(),
+            'category' => ItemsCategory::where('Expense','Y')->where('Active','Y')->get(),
+            'allCategory' => ItemsCategory::select('CategoryCode','CategoryName')->where('Active','Y')->get(),
         ]);
     }
 
     public function getCategoryWiseItemData(Request $request){
 
-//        $location = CategoryLocation::select(
-//            'CategoryLocation.CategoryCode',
-//            'CategoryLocation.LocationCode',
-//            'CategoryLocation.Active',
-//            'Location.LocationName',
-//            'Location.Active as LocationStatus',
-//            'Location.StockTransfer as LocationStockTransfer',
-//        )->join('Location','Location.LocationCode','CategoryLocation.LocationCode')
-//            ->where('CategoryLocation.CategoryCode',$request->CategoryCode)
-//            ->where('CategoryLocation.Active','Y')->get();
-        $location = Location::all();
+        $location = CategoryLocation::select(
+            'CategoryLocation.CategoryCode',
+            'CategoryLocation.LocationCode',
+            'CategoryLocation.Active',
+            'Location.LocationName',
+            'Location.Active as LocationStatus',
+            'Location.StockTransfer as LocationStockTransfer',
+        )->join('Location','Location.LocationCode','CategoryLocation.LocationCode')
+            ->where('CategoryLocation.CategoryCode',$request->CategoryCode)
+            ->where('CategoryLocation.Active','Y')->get();
+
+        $receiveCategoryItems=[];
+        if(($request->receiveCategoryCode)){
+            $receiveCategoryItems  = Items::where('CategoryCode',$request->receiveCategoryCode)->get();
+        }
+        $receiveLocations = Location::select('LocationCode','LocationName')->where('Active','Y')->get();
 
         return response()->json([
             'status' => 'success',
             'items' => Items::where('CategoryCode',$request->CategoryCode)->get(),
+            'receiveCategoryItems' => $receiveCategoryItems,
             'locations' => $location,
+            'receiveLocations' => $receiveLocations,
         ]);
     }
     public function checkItemWiseStockData(Request $request){
@@ -72,11 +80,13 @@ class MedicineTransferController extends Controller
         //                          })
         //                         ->where('TransferMaster.Returned','!=','Y')
         $transferMaster =  TransferMaster::
-        where(function ($q) use ($search) {
+        join('ReceiveMaster','ReceiveMaster.TransferCode','TransferMaster.TransferCode')
+        ->where(function ($q) use ($search) {
             $q->where('TransferMaster.TransferCode', 'like', '%' . $search . '%');
             $q->orWhere('TransferMaster.TransferDate', 'like', '%' . $search . '%');
         })
             ->where('TransferMaster.Returned','!=','Y')
+            ->where('ReceiveMaster.ReceiveType','EXPENSE')
             // ->select(
             //     'ProductionMaster.ProductionCode',
             //     DB::raw("convert(varchar(10),ProductionMaster.ProductionDate,23) as ProductionDate"),
@@ -102,6 +112,7 @@ class MedicineTransferController extends Controller
     }
 
     public function store(Request $request){
+
         $validator = Validator::make($request->all(), [
             'transfer_date' => 'required',
             'categoryType' => 'required',
@@ -170,7 +181,7 @@ class MedicineTransferController extends Controller
                 $receive->ReceiveCode = $receiveCode;
                 $receive->ReceiveDate = $request->transfer_date;
                 $receive->Reference = $request->reference;
-                $receive->CategoryCode = $request->categoryType['CategoryCode'];
+                $receive->CategoryCode = $request->receiveCategoryType['CategoryCode'];
                 $receive->Returned = 'N';
                 $receive->TransferCode = $transferCode;
                 $receive->PrepareDate = Carbon::now()->format('Y-m-d H:i:s');;
@@ -182,7 +193,7 @@ class MedicineTransferController extends Controller
                 foreach ($request->details as $key=>$item){
                     $receiveDetails = new ReceiveDetails();
                     $receiveDetails->ReceiveCode = $receiveCode;
-                    $receiveDetails->ItemCode = $item['itemCode'];
+                    $receiveDetails->ItemCode = $item['receiveItemCode']?$item['receiveItemCode']:"" ;
                     $receiveDetails->TransferLocationCode = $item['LocationFromCode'];
                     $receiveDetails->LocationCode = $item['LocationToCode'];
                     $receiveDetails->UnitPrice = $item['itemValue'];

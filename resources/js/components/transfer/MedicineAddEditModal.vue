@@ -32,7 +32,7 @@
                                                        v-model="reference" name="staff-name" placeholder="Reference">
                                             </div>
                                     </div>
-                                    <div class="col-12 col-md-6">
+                                    <div class="col-12 col-md-4">
                                         <ValidationProvider name="Category" mode="eager" rules="required"
                                                             v-slot="{ errors }">
                                             <div class="form-group">
@@ -49,6 +49,24 @@
                                                 <multiselect v-model="categoryType" :options="category" v-else
                                                              :multiple="false"
                                                              :disabled="true"
+                                                             :close-on-select="true"
+                                                             :clear-on-select="false" :preserve-search="false"
+                                                             placeholder="Select Category"
+                                                             label="CategoryName" track-by="CategoryCode">
+
+                                                </multiselect>
+                                                <span class="error-message"> {{ errors[0] }}</span>
+                                            </div>
+                                        </ValidationProvider>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <ValidationProvider name="Category" mode="eager" rules="required"
+                                                            v-slot="{ errors }">
+                                            <div class="form-group">
+                                                <label for="Category">Receive Category <span class="error">*</span></label>
+                                                <multiselect v-model="receiveCategoryType" :options="allCategory"
+                                                             @input="getItemByCategory"
+                                                             :multiple="false"
                                                              :close-on-select="true"
                                                              :clear-on-select="false" :preserve-search="false"
                                                              placeholder="Select Category"
@@ -93,6 +111,7 @@
                                                 <th>Pac Size<span class="required-field">*</span></th>
                                                 <th>Transfer From<span class="required-field">*</span></th>
                                                 <th>Transfer To<span class="required-field">*</span></th>
+                                                <th>To Item</th>
                                                 <th>Quantity<span class="required-field">*</span></th>
                                                 <th>Stock<span class="required-field">*</span></th>
                                                 <th>Value<span class="required-field">*</span></th>
@@ -146,7 +165,7 @@
                                                 <td>
                                                     <select class="form-control" :class="{'error-border': errors[0]}"
                                                             v-model="field.LocationToCode" name="locationTo">
-                                                        <option v-for="(item,i) in locations"
+                                                        <option v-for="(item,i) in receiveLocations"
                                                                 :key="i"
                                                                 :value="item.LocationCode">
                                                             {{ item.LocationName }}
@@ -156,6 +175,21 @@
                                                           v-if="errors[index] !== undefined && errors[index].locationTo !== undefined">{{
                                                             errors[index].locationTo
                                                         }}</span>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" :class="{'error-border': errors[0]}"
+                                                            v-model="field.receiveItemCode" name="item">
+                                                        <option v-for="(item,i) in receiveCategoryItems"
+                                                                :key="i"
+                                                                :value="item.ItemCode">
+                                                            {{ item.ItemName }}
+                                                        </option>
+                                                    </select>
+                                                    <span class="error"
+                                                          v-if="errors[index] !== undefined && errors[index].item !== undefined">{{
+                                                            errors[index].item
+                                                        }}</span>
+
                                                 </td>
                                                 <td>
                                                     <input type="number" @input="calculateTotal(field, index)" class="form-control" style="text-align: end" step="any"
@@ -230,13 +264,19 @@ export default {
             production_code:'',
             items: [],
             locations: [],
+            receiveLocations: [],
             transfer_date: '',
             reference: '',
+            LocationToCode:'',
+            allCategory:[],
+            receiveCategoryItems:[],
+            receiveCategoryType:'',
             dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             fields: [
                 {
                     item: '',
                     itemCode: '',
+                    receiveItemCode:'',
                     location: {
                         'Active': 'Y',
                         'LocationCode': 'L0001',
@@ -338,6 +378,7 @@ export default {
                     'LocationCode': 'L0001',
                     'LocationName': 'Default'
                 },
+                receiveItemCode:'',
                 quantity: 0,
                 itemValue: 0,
                 LocationCode:'',
@@ -355,6 +396,7 @@ export default {
             let instance = this;
             this.axiosGet('transfer/medicine-supporting-data', function (response) {
                 instance.category = response.category;
+                instance.allCategory = response.allCategory;
             }, function (error) {
             });
         },
@@ -368,18 +410,25 @@ export default {
                 this.addRow();
             }
             let categoryCode = '';
+            let  receiveCategoryCode= '';
             if(instance.actionType==='add'){
                 categoryCode = instance.categoryType.CategoryCode;
             }
             else{
                 categoryCode = instance.updateCategoryCode;
             }
+            if(instance.receiveCategoryType){
+                receiveCategoryCode = instance.receiveCategoryType.CategoryCode;
+            }
             let url = 'transfer/medicine-category-wise-item';
             this.axiosPost(url, {
                 CategoryCode:categoryCode ,
+                receiveCategoryCode: receiveCategoryCode,
             }, (response) => {
                 instance.items = response.items;
                 instance.locations = response.locations;
+                instance.receiveLocations = response.receiveLocations;
+                instance.receiveCategoryItems = response.receiveCategoryItems;
                 console.log(instance.locations)
             }, (error) => {
                 this.errorNoti(error);
@@ -466,6 +515,7 @@ export default {
                     transfer_date: this.transfer_date,
                     reference: this.reference,
                     categoryType: this.categoryType,
+                    receiveCategoryType: this.receiveCategoryType,
                     details: this.fields,
                 }, (response) => {
                     this.successNoti(response.message);
