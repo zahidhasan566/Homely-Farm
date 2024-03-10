@@ -14,4 +14,13 @@ class ReceiveMaster extends Model
     public $timestamps = false;
     public $incrementing=false;
     protected $keyType = 'string';
+
+    public function ReceiveDetails()
+    {
+        return $this->hasMany(ReceiveDetails::class,'ReceiveCode','ReceiveCode');
+    }
+    public function Category()
+    {
+        return $this->belongsTo(ItemsCategory::class,'CategoryCode','CategoryCode');
+    }
 }

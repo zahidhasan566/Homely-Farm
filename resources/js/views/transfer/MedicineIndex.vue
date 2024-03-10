@@ -9,8 +9,8 @@
             </div>
         </div>
         <advanced-datatable :options="tableOptions">
-            <template slot="action" slot-scope="row" v-if="row.item.Returned === 'No'">
-                <!-- <a href="javascript:" @click="addModal(row.item)"> <i class="ti-pencil-alt">Edit</i></a> -->
+            <template slot="action" slot-scope="row">
+                 <a href="javascript:" @click="addModal(row.item)"> <i class="ti-pencil-alt">Edit</i></a>
             </template>
         </advanced-datatable>
         <add-edit-medicine-transfer @changeStatus="changeStatus" v-if="loading"/>
@@ -30,7 +30,7 @@ export default {
             tableOptions: {
                 source: 'transfer/medicine-list',
                 search: true,
-                slots: [7],
+                slots: [6],
                // hideColumn: ['RoleID','UserId'],
                 slotsName: ['action'],
                 sortable: [2],
@@ -56,7 +56,7 @@ export default {
         addModal(row = '') {
             this.loading = true;
             setTimeout(() => {
-                bus.$emit('add-edit-production', row);
+                bus.$emit('add-edit-medicine-transfer', row);
             })
         },
 

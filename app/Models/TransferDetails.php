@@ -14,4 +14,10 @@ class TransferDetails extends Model
     public $timestamps = false;
     public $incrementing=false;
     protected $keyType = 'string';
+
+    public function TransferItems()
+    {
+        return $this->belongsTo(Items::class,'ItemCode','ItemCode');
+    }
+
 }

@@ -14,4 +14,17 @@ class TransferMaster extends Model
     public $timestamps = false;
     public $incrementing=false;
     protected $keyType = 'string';
+
+    public function ReceiveMaster()
+    {
+        return $this->belongsTo(ReceiveMaster::class,'TransferCode','TransferCode');
+    }
+    public function TransferDetails()
+    {
+        return $this->hasMany(TransferDetails::class,'TransferCode','TransferCode');
+    }
+    public function Category()
+    {
+        return $this->belongsTo(ItemsCategory::class,'CategoryCode','CategoryCode');
+    }
 }

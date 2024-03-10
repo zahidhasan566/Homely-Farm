@@ -77,15 +77,15 @@
                                             </div>
                                         </ValidationProvider>
                                     </div>
-                                    <div class="col-12 col-md-4" v-if="actionType==='edit'">
-                                        <div class="form-group">
-                                            <label for="user-type">Return</label>
-                                            <br>
-                                            <input type="checkbox" value="Y" id="return"> Return
-                                        </div>
+<!--                                    <div class="col-12 col-md-4" v-if="actionType==='edit'">-->
+<!--                                        <div class="form-group">-->
+<!--                                            <label for="user-type">Return</label>-->
+<!--                                            <br>-->
+<!--                                            <input type="checkbox" value="Y" id="return"> Return-->
+<!--                                        </div>-->
 
 
-                                    </div>
+<!--                                    </div>-->
 
                                 </div>
                             </div>
@@ -270,6 +270,7 @@ export default {
             LocationToCode:'',
             allCategory:[],
             receiveCategoryItems:[],
+            transferCode:'',
             receiveCategoryType:'',
             dayStr: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             fields: [
@@ -287,7 +288,7 @@ export default {
                     itemValue: 0,
                     LocationFromCode:'',
                     LocationToCode:'',
-                    totalValue:'',
+                    totalValue:0,
                     itemStock:0
                 }
             ],
@@ -301,50 +302,59 @@ export default {
         $('#add-edit-dept').on('hidden.bs.modal', () => {
             this.$emit('changeStatus')
         });
-        bus.$on('add-edit-production', (row) => {
+        bus.$on('add-edit-medicine-transfer', (row) => {
+            this.getData();
             if (row) {
                 let instance = this;
-                this.axiosGet('production/get-production-info/' + row.ProductionCode, function (response) {
-                    instance.title = 'Update production';
+                this.axiosGet('transfer/get-existing-medicine-info/' + row.TransferCode, function (response) {
+                    instance.title = 'Update Medicine Transfer';
                     instance.buttonText = "Update";
                     instance.buttonShow = true;
                     instance.actionType = 'edit';
                     instance.fields.splice(0, 1)
                     instance.getData();
-                    var productionInfo = response.ProductionInfo;
+                    var existingMedicineInfo = response.existingTransferInfo;
 
                     //Master
-                    instance.production_code = response.ProductionInfo[0].ProductionCode
-                    instance.transfer_date = response.ProductionInfo[0].TransferDate
-                    instance.updateCategoryCode = productionInfo[0].CategoryCode
-                    instance.reference = response.ProductionInfo[0].Reference
+                    instance.transfer_date = existingMedicineInfo[0].TransferDate
+                    instance.reference = existingMedicineInfo[0].Reference
+                    instance.transferCode = existingMedicineInfo[0].TransferCode
+                    instance.receiveCategoryType = existingMedicineInfo[0].ReceiveCategoryCode
 
                     instance.categoryType=[{
-                        'Active': response.ProductionInfo[0].Active,
-                        'CategoryCode': response.ProductionInfo[0].CategoryCode,
-                        'CategoryName': response.ProductionInfo[0].CategoryName
-                    }
+                        'CategoryCode': existingMedicineInfo[0].CategoryCode,
+                        'CategoryName': existingMedicineInfo[0]['category'].CategoryName
+                    }],
+                   instance.receiveCategoryType=[{
+                            'CategoryCode': existingMedicineInfo[0]['receive_master'].CategoryCode,
+                            'CategoryName': existingMedicineInfo[0]['receive_master']['category'].CategoryName
+                        }
                     ]
 
                     //Details
-                    productionInfo.forEach(function (item,index) {
+                    existingMedicineInfo[0].transfer_details.forEach(function (item,index) {
+
+                        console.log("valll",item.Value )
+                        let tempLocationToCode = existingMedicineInfo[0].receive_master.receive_details[index].LocationCode;
+                        let tempReceiveItemCode = existingMedicineInfo[0].receive_master.receive_details[index].ItemCode;
+
+                        setTimeout(() => {
+                            instance.checkItemStock(item.LocationCode,item.ItemCode,index)
+                        }, )
+
                         instance.fields.push({
-                            item: {
-                                'ItemName': item.ItemName,
-                                'ItemCode': item.ItemCode,
-                            },
                             itemCode: item.ItemCode,
-                            location: {
-                                'Active': 'Y',
-                                'LocationCode': item.LocationCode,
-                                'LocationName': item.LocationName
-                            },
                             quantity: item.Quantity,
-                            itemValue: item.Value,
-                            LocationCode: item.LocationCode,
-                            uom: item.UOM
+                            itemValue: parseFloat(item.Value),
+                            LocationFromCode: item.LocationCode,
+                            LocationToCode: tempLocationToCode,
+                            receiveItemCode:tempReceiveItemCode,
+                            totalValue: parseFloat(item.Quantity ) * parseFloat(item.Value ) ,
+                            uom: item.transfer_items.UOM
                         })
+
                     });
+                    console.log(instance.fields)
                     instance.getItemByCategory();
                 }, function (error) {
 
@@ -357,13 +367,12 @@ export default {
                 this.status = '';
                 this.buttonShow = true;
                 this.actionType = 'add'
-                this.getData();
             }
             $("#add-edit-dept").modal("toggle");
         })
     },
     destroyed() {
-        bus.$off('add-edit-production')
+        bus.$off('add-edit-medicine-transfer')
     },
     methods: {
         closeModal() {
@@ -413,13 +422,15 @@ export default {
             let  receiveCategoryCode= '';
             if(instance.actionType==='add'){
                 categoryCode = instance.categoryType.CategoryCode;
+                receiveCategoryCode = instance.receiveCategoryType ? instance.receiveCategoryType.CategoryCode:'';
             }
             else{
-                categoryCode = instance.updateCategoryCode;
+                categoryCode = instance.categoryType[0].CategoryCode;
+                receiveCategoryCode = instance.receiveCategoryType[0].CategoryCode
             }
-            if(instance.receiveCategoryType){
-                receiveCategoryCode = instance.receiveCategoryType.CategoryCode;
-            }
+            // if(instance.receiveCategoryType){
+            //     receiveCategoryCode = instance.receiveCategoryType.CategoryCode;
+            // }
             let url = 'transfer/medicine-category-wise-item';
             this.axiosPost(url, {
                 CategoryCode:categoryCode ,
@@ -429,7 +440,6 @@ export default {
                 instance.locations = response.locations;
                 instance.receiveLocations = response.receiveLocations;
                 instance.receiveCategoryItems = response.receiveCategoryItems;
-                console.log(instance.locations)
             }, (error) => {
                 this.errorNoti(error);
             })
@@ -444,7 +454,16 @@ export default {
             instance.fields[key].uom = item ? item.UOM : '';
         },
         checkItemStock(e,itemCode,key){
-            let locationCode = e.target.value;
+
+            console.log(itemCode)
+            let locationCode ='';
+            if(this.actionType==='edit'){
+                locationCode  = e;
+            }
+            else{
+                locationCode  =e.target.value;
+            }
+
             let url = 'transfer/medicine-check-stock-item-wise';
             this.axiosPost(url, {
                 categoryType: this.categoryType,
@@ -453,9 +472,9 @@ export default {
             }, (response) => {
                 let instance = this;
                if(response.stock.length>0){
-                   console.log(response.stock[0].ClosingQty)
                    instance.fields[key].itemStock = response.stock ? parseFloat(response.stock[0].ClosingQty): 0;
                    instance.fields[key].itemValue = response.stock ? parseInt((parseFloat(response.stock[0].ClosingValue)/parseFloat(response.stock[0].ClosingQty))): 0;
+
                }
                else{
                    instance.fields[key].itemStock =0
@@ -508,9 +527,10 @@ export default {
                 //     submitUrl = 'production/return';
                 // }
                 if(!returnData && this.actionType === 'edit' ){
-                    submitUrl = 'transfer/update';
+                    submitUrl = 'transfer/update-medicine';
                 }
                 this.axiosPost(submitUrl, {
+                    transferCode : this.transferCode,
                     production_code: this.production_code,
                     transfer_date: this.transfer_date,
                     reference: this.reference,
