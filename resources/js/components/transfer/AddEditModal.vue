@@ -176,7 +176,7 @@
                                                         }}</span>
                                                 </td>
                                                 <td>
-                                                    <input type="number" readonly @input="calculateTotal(field, index)" step="any" class="form-control" style="text-align: end"
+                                                    <input type="number"  @input="calculateTotal(field, index)" step="any" class="form-control" style="text-align: end"
                                                            v-model="field.itemValue" placeholder="Value">
                                                 </td>
                                                 <td>
