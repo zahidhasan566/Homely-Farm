@@ -65,7 +65,7 @@ class VaccineScheduleController extends Controller
             DB::beginTransaction();
             $VaccineScheduleData= new VaccineSchedule();
             $VaccineScheduleData->ScheduleDate = $request->ScheduleDate;
-            $VaccineScheduleData->VaccineName = $request->VaccineName;
+            $VaccineScheduleData->ItemCode = $request->VaccineName;
             $VaccineScheduleData->UnitPrice = $request->UnitPrice;
             $VaccineScheduleData->CategoryCode = $request->CategoryCode;
             $VaccineScheduleData->LocationCode = $request->LocationCode;
