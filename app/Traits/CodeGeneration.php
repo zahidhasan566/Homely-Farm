@@ -60,6 +60,22 @@ trait CodeGeneration
         }
         return $nextCode;
     }
+    public function generatePaymentMoneyReceiveCode()
+    {
+        $combinedCode = 'PM'.Carbon::now()->format('y');
+        $combinedLength = strlen($combinedCode);
+        $maxCode = DB::select(DB::raw("select MAX(MoneyRecNo) as MaxNo FROM Payment WHERE LEFT(MoneyRecNo,'$combinedLength') = '$combinedCode'"));
+        $maxCode = $maxCode[0]->MaxNo;
+        if ($maxCode === null) {
+            $nextCode = $combinedCode.'000001';
+        } else {
+            $nextCode = substr($maxCode,$combinedLength);
+            $nextCodeInc = $nextCode + 1;
+            $nextCode = sprintf("%0".strlen($nextCode)."d", $nextCodeInc);
+            $nextCode = $combinedCode.$nextCode;
+        }
+        return $nextCode;
+    }
     public function generateCustomerCode()
     {
         $combinedCode = 'CM';

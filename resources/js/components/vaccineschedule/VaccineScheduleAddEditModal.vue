@@ -30,9 +30,10 @@
                                                             v-slot="{ errors }">
                                             <div class="form-group">
                                                 <label for="name">Vaccine Name <span class="error">*</span></label>
-                                                <input type="text" class="form-control"
-                                                       :class="{'error-border': errors[0]}"
-                                                       v-model="VaccineName"  placeholder="Vaccine Name">
+                                                <select class="form-control" v-model="VaccineName">
+                                                    <option value="">Select Option</option>
+                                                    <option :value="item.ItemCode" v-for="(item , index) in items" :key="index">{{ item.ItemName }}</option>
+                                                </select>
                                                 <span class="error-message"> {{ errors[0] }}</span>
                                             </div>
                                         </ValidationProvider>
@@ -42,7 +43,7 @@
                                         <ValidationProvider name="UnitPrice" mode="eager" rules="required"
                                                             v-slot="{ errors }">
                                             <div class="form-group">
-                                                <label for="name">UnitPrice <span class="error">*</span></label>
+                                                <label for="name">Total Price <span class="error">*</span></label>
                                                 <input type="number" class="form-control"
                                                        :class="{'error-border': errors[0]}" id="UnitPrice"
                                                        v-model="UnitPrice"  placeholder="Unit Price">
@@ -93,6 +94,21 @@
                                         </ValidationProvider>
                                     </div>
 
+                                    <div class="col-12 col-md-6">
+                                        <ValidationProvider name="Expense" mode="eager" rules="required"
+                                                            v-slot="{ errors }">
+                                            <div class="form-group">
+                                                <label for="name">Expense <span class="error">*</span></label>
+                                                <select class="form-control" v-model="expense">
+                                                    <option value="">Select Option</option>
+                                                    <option value="Y">Yes</option>
+                                                    <option value="N">No</option>
+                                                </select>
+                                                <span class="error-message"> {{ errors[0] }}</span>
+                                            </div>
+                                        </ValidationProvider>
+                                    </div>
+
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -126,6 +142,7 @@ export default {
             CategoryList: [],
             LocationCode: '',
             LocationList: [],
+            items:[],
             NextScheduleDate: '',
             type: 'add',
             actionType: '',
@@ -133,6 +150,7 @@ export default {
             roles: [],
             allSubMenu: [],
             allSubMenuId: [],
+            expense:''
         }
     },
     computed: {},
@@ -150,6 +168,7 @@ export default {
                 instance.VaccineName = row.VaccineName;
                 instance.UnitPrice = row.UnitPrice;
                 instance.CategoryCode = row.CategoryCode;
+                instance.expense = row.Expense;
                 this.getLocationData();
                 instance.LocationCode = row.LocationCode;
                 if(row.NextScheduleDate){
@@ -204,8 +223,9 @@ export default {
             }, function (error) {
 
             });
-            this.axiosGet('production/supporting-data', function (response) {
+            this.axiosGet('vaccineschedule/supporting-data', function (response) {
                 instance.CategoryList = response.category;
+                instance.items = response.items;
             }, function (error) {
             });
 
@@ -222,7 +242,8 @@ export default {
                 LocationCode: this.LocationCode,
                 NextScheduleDate: this.NextScheduleDate,
                 ActionType: this.actionType,
-                ScheduleCode: this.ScheduleCode
+                ScheduleCode: this.ScheduleCode,
+                expense: this.expense
             }, (response) => {
                 this.successNoti(response.message);
                 $("#add-edit-vaccineschedule").modal("toggle");

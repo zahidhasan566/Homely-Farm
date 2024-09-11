@@ -61,7 +61,6 @@ class ProductionController extends Controller
         return $productionMaster;
     }
     public function getCategoryWiseItemData(Request $request){
-
         $location = CategoryLocation::select(
             'CategoryLocation.CategoryCode',
             'CategoryLocation.LocationCode',

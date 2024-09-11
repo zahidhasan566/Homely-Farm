@@ -75,7 +75,9 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('return', [\App\Http\Controllers\Sales\SalesController::class, 'returnProducts']);
     });
 
+
     Route::group(['prefix' =>'vaccineschedule'],function () {
+        Route::get('supporting-data', [\App\Http\Controllers\VaccineSchedule\VaccineScheduleController::class, 'getSupportingData']);
         Route::post('list', [\App\Http\Controllers\VaccineSchedule\VaccineScheduleController::class, 'index']);
         Route::post('add', [\App\Http\Controllers\VaccineSchedule\VaccineScheduleController::class, 'doStore']);
     });
@@ -105,6 +107,8 @@ Route::group(['middleware' => ['jwt:api']], function () {
         Route::post('add', [\App\Http\Controllers\Customer\CustomerController::class, 'store']);
         Route::get('get-customer-info/{customerCode}',[\App\Http\Controllers\Customer\CustomerController::class,'getCustomerInfo']);
         Route::post('update', [\App\Http\Controllers\Customer\CustomerController::class, 'update']);
+        Route::post('due-list', [\App\Http\Controllers\Customer\CustomerDueController::class, 'index']);
+        Route::post('due-list-update', [\App\Http\Controllers\Customer\CustomerDueController::class, 'dueListUpdate']);
     });
     Route::group(['prefix' =>'report'],function () {
         Route::post('daily-production', [\App\Http\Controllers\Report\DailyProductionController::class, 'index']);

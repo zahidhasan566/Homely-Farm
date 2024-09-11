@@ -83,10 +83,18 @@
                                         <div class="form-group">
                                             <label for="user-type">paid</label>
                                             <br>
-                                            <input type="radio" v-model="paid" value="Y"> Yes
-                                            <input type="radio" checked="checked" v-model="paid" value="N"> No
+                                            <input type="radio"  :disabled="actionType==='edit'" v-model="paid" value="Y"> Yes
+                                            <input type="radio"  :disabled="actionType==='edit'" checked="checked" v-model="paid" value="N"> No
                                         </div>
                                     </div>
+                                    <div class="col-12 col-md-2" v-if="paid==='N'">
+                                        <div class="form-group">
+                                            <label for="partial-type">partial Amount</label>
+                                            <br>
+                                            <input @change="checkWithTotalAmount" @input="checkWithTotalAmount" class="form-control" type="number" v-model="partialAmount">
+                                        </div>
+                                    </div>
+
                                     <div class="col-12 col-md-2" v-if="actionType==='edit'">
                                             <div class="form-group">
                                                 <label for="user-type">Return</label>
@@ -100,7 +108,7 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-3" style="margin-bottom: 10px;">
-                                            <label for="payment-required-by">Add Purchase</label>
+                                            <label for="payment-required-by">Add Sales</label>
                                         </div>
                                         <div class="offset-md-5 col-md-4">
                                             <button style="float: right;" id="add-row" type="button"
@@ -271,6 +279,8 @@ export default {
             reference: '',
             allStock: [],
             paid:'',
+            totalValue:0,
+            partialAmount:0,
             purchaseType:[{
                 'PurchaseTypeCode': 'direct',
                 'PurchaseTypeName': 'direct',
@@ -299,6 +309,7 @@ export default {
                 }
             ],
             errors: [],
+            amountErrors: [],
 
         }
     },
@@ -328,6 +339,8 @@ export default {
                     instance.updateCategoryCode = response.SalesInfo[0].CategoryCode
                     instance.reference = response.SalesInfo[0].Reference
                     instance.paid = response.SalesInfo[0].Paid
+                    instance.partialAmount = response.SalesInfo[0].PaidAmount
+                    instance.totalValue = response.SalesInfo[0].totalValue
 
                     instance.categoryType=[{
                         'Active': salesInfo[0].Reference,
@@ -472,7 +485,6 @@ export default {
 
         },
         setValue(index){
-
             let instance = this;
             let currentPrice  =parseFloat( instance.fields[index].unitPrice);
             let currentQuantity  = parseFloat(instance.fields[index].quantity);
@@ -486,12 +498,35 @@ export default {
                 }
             }
 
+            //Total Value
+
+            let totalValueTemp = 0;
+            instance.fields.forEach((item)=>{
+                totalValueTemp += item.itemValue
+            })
+            instance.totalValue = totalValueTemp
+
+        },
+        checkWithTotalAmount(){
+            console.log('p',this.partialAmount,'t',this.totalValue)
+
+            if( parseFloat(this.partialAmount) >  parseFloat(this.totalValue)){
+                this.errorNoti('Partial Amount is greater than Total Value');
+                this.amountErrors.push('error')
+            }
+            else if(parseFloat(this.partialAmount) ===  parseFloat(this.totalValue)){
+                this.amountErrors.push('error')
+                this.errorNoti('Partial Amount will not equal to Total Value');
+            }
+            else{
+                this.amountErrors=[]
+            }
+
         },
         checkFieldValue() {
             this.errors = [];
             let instance = this;
             this.fields.forEach(function (item, index) {
-                console.log(item.stock)
                 if (item.itemCode === '' || item.location === ''
                     || item.quantity === '' ||  item.quantity <= 0 || item.quantity === undefined || item.itemValue === '' || item.itemValue <= 0
                     || item.stock === '' || item.stock === 0
@@ -514,8 +549,9 @@ export default {
         },
         onSubmit() {
             this.checkFieldValue();
+            this.checkWithTotalAmount();
             var returnData = $('#return').prop('checked');
-            if (this.errors.length === 0) {
+            if (this.errors.length === 0 && this.amountErrors.length === 0) {
                 this.$store.commit('submitButtonLoadingStatus', true);
                 var  submitUrl = '';
                 if (this.actionType === 'add') {
@@ -534,6 +570,8 @@ export default {
                     customerTypeVal: this.customerTypeVal,
                     categoryType: this.categoryType,
                     paid:this.paid,
+                    totalValue:this.totalValue,
+                    partialAmount:this.partialAmount,
                     details: this.fields,
                 }, (response) => {
                     this.successNoti(response.message);

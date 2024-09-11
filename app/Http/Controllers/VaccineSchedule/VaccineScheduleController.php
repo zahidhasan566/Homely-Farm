@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\VaccineSchedule;
 
 use App\Http\Controllers\Controller;
+use App\Models\Items;
+use App\Models\ItemsCategory;
 use App\Models\VaccineSchedule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,6 +18,17 @@ class VaccineScheduleController extends Controller
 {
     //
     use CodeGeneration;
+    public function getSupportingData(){
+
+        $category = ItemsCategory::where('Active','Y')->get();
+        $items = Items::where('CategoryCode','M0002')->get();
+        return response()->json([
+            'status' => 'success',
+            'category' =>$category ,
+            'items' =>$items ,
+        ]);
+    }
+
     public function index(Request $request){
         $take = $request->take;
         $search = $request->search;
@@ -29,7 +42,7 @@ class VaccineScheduleController extends Controller
             ->select('ScheduleCode','ScheduleDate','VaccineName', 'UnitPrice',
                 'ItemsCategory.CategoryName',
                 'Location.LocationName', 'NextScheduleDate', 'PrepareDate',
-                'PrepareBy', 'VaccineSchedule.CategoryCode', 'VaccineSchedule.LocationCode')
+                'PrepareBy', 'VaccineSchedule.CategoryCode', 'VaccineSchedule.LocationCode','VaccineSchedule.Expense')
             ->paginate($take);
         return $location;
     }
@@ -57,6 +70,7 @@ class VaccineScheduleController extends Controller
             $VaccineScheduleData->CategoryCode = $request->CategoryCode;
             $VaccineScheduleData->LocationCode = $request->LocationCode;
             $VaccineScheduleData->NextScheduleDate = $request->NextScheduleDate;
+            $VaccineScheduleData->Expense = $request->expense;
             if($request->ActionType == 'add'){
                 $VaccineScheduleData->ScheduleCode = $this->generateVaccineScheduleCode();
                 $VaccineScheduleData->PrepareDate = Carbon::now();
@@ -75,6 +89,7 @@ class VaccineScheduleController extends Controller
                     'CategoryCode'=>$request->CategoryCode,
                     'LocationCode'=>$request->LocationCode,
                     'NextScheduleDate'=>$request->NextScheduleDate,
+                    'Expense'=>$request->expense,
                 ]);
             }
             DB::commit();

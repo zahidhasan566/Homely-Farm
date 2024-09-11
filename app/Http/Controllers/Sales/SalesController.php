@@ -8,6 +8,8 @@ use App\Models\Customer;
 use App\Models\Items;
 use App\Models\ItemsCategory;
 use App\Models\Location;
+use App\Models\Payment;
+use App\Models\PaymentDetails;
 use App\Models\PurchaseDetails;
 use App\Models\PurchaseMaster;
 use App\Models\SalesDetails;
@@ -146,6 +148,38 @@ class SalesController extends Controller
                 $dataSales->CategoryCode = $request->categoryType['CategoryCode'];
                 $dataSales->CustomerCode = $request->customerTypeVal['CustomerCode'];
                 $dataSales->Returned = 'N';
+
+                if ($request->paid === 'Y' || ($request->paid === 'N') && !empty($request->partialAmount)) {
+                    $dataSales->Value = $request->totalValue;
+                    $dataSales->PaidAmount = $request->paid === 'Y' ? $request->totalValue : $request->partialAmount;
+                    //Payment Master Insert
+
+                    $moneyRecNo =  $this->generatePaymentMoneyReceiveCode();
+                    Payment::create([
+                        'MoneyRecNo'=>$moneyRecNo,
+                        'PaymentDate'=>$request->sales_date,
+                        'CustomerCode'=>$request->customerTypeVal['CustomerCode'],
+                        'PaymentAmount'=>$request->paid === 'Y' ? $request->totalValue : $request->partialAmount,
+                        'PaymentMode'=>'CASH',
+                        'Reference'=>$request->paid === 'Y' ? $request->reference : $salesCode,
+                        'ChequeNo'=>'',
+                        'ChequeDate'=>'',
+                        'PreparedBy'=>Auth::user()->UserId,
+                        'PreparedDate'=> Carbon::now()->format('Y-m-d H:i:s')
+                    ]);
+
+                    //Payment Details Insert
+                    $paymentDetails = new PaymentDetails();
+                    $paymentDetails->MoneyRecNo = $moneyRecNo;
+                    $paymentDetails->SalesCode = $salesCode;
+                    $paymentDetails->PaymentAmount = $request->paid === 'Y' ? $request->totalValue : $request->partialAmount;
+                    $paymentDetails->save();
+
+                }
+                else{
+                    $dataSales->Value = $request->totalValue;
+                }
+
                 $dataSales->Paid =  $request->paid;
                 $dataSales->PrepareDate = Carbon::now()->format('Y-m-d H:i:s');;
                 $dataSales->PrepareBy = Auth::user()->UserId;
@@ -153,7 +187,7 @@ class SalesController extends Controller
 
                 foreach ($request->details as $key => $singleData) {
 
-                    //Data Insert ProductionDetails
+                    //Data Insert Sales Details
                     $dataSalesDetails = new SalesDetails();
                     $dataSalesDetails->SalesCode = $salesCode;
                     $dataSalesDetails->ItemCode = $singleData['itemCode'];
@@ -171,8 +205,10 @@ class SalesController extends Controller
                         StockBatch::where('ItemCode', $singleData['itemCode'])->where('LocationCode', $singleData['LocationCode'])->update([
                             'BatchQty' => $existingBatchQty - $singleData['quantity'],
                         ]);
-
                     }
+
+
+
                 }
                 DB::commit();
                 return [
@@ -209,7 +245,9 @@ class SalesController extends Controller
                 DB::raw("convert(varchar(10),SalesMaster.SalesDate,23) as SalesDate"),
                 'SalesMaster.Reference',
                 'SalesMaster.CategoryCode',
+                'SalesMaster.PaidAmount',
                 'SalesMaster.Paid',
+                'SalesMaster.Value as totalValue',
                 'ItemsCategory.CategoryName',
                 'Customer.CustomerName',
                 'Customer.CustomerCode',
@@ -230,7 +268,9 @@ class SalesController extends Controller
                 'SalesMaster.SalesDate',
                 'SalesMaster.Reference',
                 'SalesMaster.CategoryCode',
+                'SalesMaster.PaidAmount',
                 'SalesMaster.Paid',
+                'SalesMaster.Value',
                 'ItemsCategory.CategoryName',
                 'Customer.CustomerName',
                 'Customer.CustomerCode',
@@ -273,11 +313,26 @@ class SalesController extends Controller
                 $dataSales->Reference = $request->reference;
                 $dataSales->CustomerCode = $request->customerTypeVal['CustomerCode'];
                 $dataSales->Returned = 'N';
-                $dataSales->paid = $request->paid;
+                if ($request->paid === 'Y') {
+                    $dataSales->Value = $request->totalValue;
+                    $dataSales->PaidAmount = $request->totalValue;
+                }
+                else{
+                    $dataSales->Value = $request->totalValue;
+                    if(!empty($request->partialAmount)){
+                        Payment::where('Reference',$request->salesCode)->update(['PaymentAmount'=>$request->partialAmount]);
+                        $paymentDetails=  Payment::select('MoneyRecNo')->where('Reference',$request->salesCode)->first();
+                        PaymentDetails::where('MoneyRecNo',$paymentDetails['MoneyRecNo'])->update(['PaymentAmount'=>$request->partialAmount]);
+                        $dataSales->PaidAmount= $request->partialAmount;
+                    }else{
+                        $dataSales->PaidAmount = 0;
+                    }
+
+                }
+                $dataSales->paid= $request->paid;
                 $dataSales->EditDate = Carbon::now()->format('Y-m-d H:i:s');;
                 $dataSales->EditBy = Auth::user()->UserId;
                 $dataSales->save();
-
 
                 //delete and insert the existing
                 foreach ($request->details as $key => $singleData) {
