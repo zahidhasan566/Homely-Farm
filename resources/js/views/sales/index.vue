@@ -6,7 +6,6 @@
         <div class="row" style="padding:8px 0px;">
             <div class="col-md-4">
                 <button type="button" class="btn btn-success btn-sm" @click="exportData">Export to Excel</button>
-                <button type="button" class="btn btn-warning btn-sm" @click="exportData">Invoice Format</button>
             </div>
         </div>
         <advanced-datatable :options="tableOptions">
