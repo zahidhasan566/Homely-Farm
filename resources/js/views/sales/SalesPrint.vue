@@ -208,7 +208,11 @@ export default {
                     totalValue: item.Value,
                 })
             });
-             window.print();
+
+            setTimeout(() => {
+                window.print();
+            },1000)
+
 
         }, function (error) {
 
