@@ -166,7 +166,7 @@
                                                 </td>
                                                 <td>
                                                     <input  type="text"  class="form-control"
-                                                           v-model="field.totalKg" placeholder="Total Kg" min="0">
+                                                           v-model="field.totalKg" placeholder="Total Kg">
 
                                                 </td>
                                                 <td>

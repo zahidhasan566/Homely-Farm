@@ -15,7 +15,7 @@
                 <!--        <a href="javascript:" @click="changePassword(row.item.UserId)"> <i class="ti-lock"></i></a>-->
             </template>
             <template slot="print" slot-scope="row" >
-                <router-link class="btn btn-primary" style="font-size: 12px;width:65px;padding: 2px 0px" target='_blank' :to="{path: `${baseurl}`+'sales-print?action_type=print&SalesCode='+row.item.SalesCode}"><i class="fa fa-print">Print</i></router-link>
+                <router-link class="btn btn-primary" style="font-size: 12px;width:65px;padding: 2px 0px" target='_blank' :to="{path: `${baseurl()}`+'sales-print?action_type=print&SalesCode='+row.item.SalesCode}"><i class="fa fa-print">Print</i></router-link>
 <!--                <a href="javascript:" @click="addModal(row.item)"><i class="fa fa-print">Print</i></a>-->
             </template>
         </advanced-datatable>
@@ -56,6 +56,9 @@ export default {
         bus.$off('add-edit-sales')
     },
     methods: {
+        baseurl() {
+            return baseurl
+        },
         changeStatus() {
             this.loading = false
         },

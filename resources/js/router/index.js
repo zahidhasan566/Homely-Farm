@@ -31,6 +31,7 @@ import itemListIndex from "../views/setup/ItemIndex.vue";
 import Transfer from "../views/transfer/Index.vue";
 import MedicineIndex from "../views/transfer/MedicineIndex.vue";
 import CustomerDueIndex from "../views/customer-due/CustomerDueIndex.vue";
+import SalesPrint from "../views/sales/SalesPrint.vue";
 
 Vue.use(VueRouter);
 
@@ -207,6 +208,12 @@ const routes = [
                 name: 'CustomerDueIndex',
                 component: CustomerDueIndex
             },
+            {
+                path: baseurl + 'sales-print',
+                name: 'SalesPrint',
+                component: SalesPrint
+            },
+
         ],
         beforeEnter(to, from, next) {
             checkToken(to, from, next);
