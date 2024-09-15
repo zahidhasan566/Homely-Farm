@@ -54,7 +54,7 @@ class SalesController extends Controller
         $take = $request->take;
         $search = $request->search;
 
-        $salesMaster = SalesMaster::join('SalesDetails', 'SalesDetails.SalesCode', 'SalesMaster.SalesCode')
+        $salesMaster = SalesMaster::join('SalesDetails', 'SalesDetails.SalesCode', 'SalesMaster.SalesCode',)
             ->join('ItemsCategory', 'ItemsCategory.CategoryCode', 'SalesMaster.CategoryCode')
             ->join('Customer', 'Customer.CustomerCode', 'SalesMaster.CustomerCode')
             ->where(function ($q) use ($search) {
@@ -247,10 +247,12 @@ class SalesController extends Controller
                 'SalesMaster.CategoryCode',
                 'SalesMaster.PaidAmount',
                 'SalesMaster.Paid',
+                'SalesMaster.Value',
                 'SalesMaster.Value as totalValue',
                 'ItemsCategory.CategoryName',
                 'Customer.CustomerName',
                 'Customer.CustomerCode',
+                'Customer.Address',
                 DB::raw("(CASE WHEN Customer.CustomerCode IS NOT NULL THEN (Customer.CustomerCode +'-'+Customer.CustomerName) END) AS CustomerWithCode"),
                 'SalesMaster.Returned',
                 DB::raw("convert(varchar(10),SalesMaster.PrepareDate,23) as PrepareDate"),
@@ -274,6 +276,7 @@ class SalesController extends Controller
                 'ItemsCategory.CategoryName',
                 'Customer.CustomerName',
                 'Customer.CustomerCode',
+                'Customer.Address',
                 'SalesMaster.Returned',
                 'SalesMaster.PrepareDate',
                 'SalesDetails.ItemCode',

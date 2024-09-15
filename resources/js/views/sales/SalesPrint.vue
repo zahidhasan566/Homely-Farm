@@ -1,19 +1,19 @@
 <template>
-    <div>
+    <div style="color: #000000 !important;background:#ffffff !important;">
     <div style="text-align:center;">
         <div>
             <h1 style="text-align:center">Homely Farm</h1>
-            <p>A Sister Concern of SKYLAND TRADING</p>
+            <p>A Sister Concern of <span style="font-weight: bold"> SKYLAND TRADING</span></p>
             <p>Holding No-1013, Ward No: 09, Village- Sundarpur, Chowdhury Bari</p>
             <p>Post Office: Mohamad Ali Bazar, PS: Feni Sadar, District : Feni</p>
             <p>Mobile : 01611-565624, 01716-037446 </p>
             <p><span
-                style="background: #0b0b0b;color: #fff3cd; border-radius: 15px;padding: 5px 5px ">Cash Memo/Challan</span>
+                style="border-radius: 15px;padding: 5px 5px;font-weight:bold;font-size:20px ">Cash Memo/Challan</span>
             </p>
         </div>
 
-
         <div>
+            <p style="text-align:start">Customer Information: </p>
             <div class="table-responsive">
                 <table style="border:none"
                        class="table  table-bordered table-striped   nowrap dataTable no-footer dtr-inline table-sm">
@@ -24,33 +24,34 @@
                     <tr>
                         <th style="font-weight:bold">Invoice No</th>
                         <td>{{ salesCode }}</td>
-                        <th>Date</th>
+                        <th style="font-weight:bold">Date</th>
                         <td>{{ sales_date }}</td>
                     </tr>
                     <tr>
                         <th style="font-weight:bold">Customer Name</th>
                         <td>{{ customerName }}</td>
-                        <th>Mobile</th>
+                        <th style="font-weight:bold">Mobile</th>
                         <td></td>
                     </tr>
                     <tr>
                         <th style="font-weight:bold">Address</th>
-                        <td></td>
+                        <td>{{customerAddress}}</td>
                     </tr>
                     </tbody>
                 </table>
 
             </div>
+            <p style="text-align:start;padding-top: 20px">Details:  </p>
             <div class="table-responsive">
                 <table
                     class="table  table-bordered table-striped   nowrap dataTable no-footer dtr-inline table-sm">
                     <thead style="color:#000000;background:#ffffff">
                     <tr>
-                        <th>SL</th>
-                        <th>Description</th>
-                        <th>QTY</th>
-                        <th>Rate</th>
-                        <th>Total</th>
+                        <th style="font-weight:bold">SL</th>
+                        <th style="font-weight:bold">Description</th>
+                        <th style="font-weight:bold">QTY</th>
+                        <th style="font-weight:bold" v-if="actionType==='challan'" >Rate</th>
+                        <th style="font-weight:bold" v-if="actionType==='challan'" >Total</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -60,8 +61,29 @@
                             {{ field.item }}
                         </td>
                         <td style="text-align:end">{{field.quantity}} </td>
-                        <td style="text-align:end">{{field.unitPrice}}</td>
-                        <td style="text-align:end">{{field.totalValue}}</td>
+                        <td v-if="actionType==='challan'"  style="text-align:end">{{field.unitPrice}}</td>
+                        <td v-if="actionType==='challan'"  style="text-align:end">{{field.quantity * field.unitPrice}}</td>
+<!--                        <td style="text-align:end">{{field.totalValue}}</td>-->
+                    </tr>
+                    <tr v-if="actionType==='challan'" >
+                        <td colspan="4" style="font-weight:bold;text-align: end;">Delivery Charge</td>
+                        <td style="text-align: end;">0</td>
+
+                    </tr>
+                    <tr v-if="actionType==='challan'" >
+                        <td colspan="4" style="font-weight:bold;text-align: end;">Grand Total</td>
+                        <td style="text-align: end;">{{totalValue}}</td>
+
+                    </tr>
+                    <tr v-if="actionType==='challan'" >
+                        <td colspan="4" style="font-weight:bold;text-align: end;">Paid Amount</td>
+                        <td style="text-align: end;">{{paidAmount}}</td>
+
+                    </tr>
+                    <tr v-if="actionType==='challan'" >
+                        <td colspan="4" style="font-weight:bold;text-align: end;">Due</td>
+                        <td style="text-align: end;">{{parseFloat(totalValue) - parseFloat(paidAmount)}}</td>
+
                     </tr>
                     </tbody>
                 </table>
@@ -113,6 +135,7 @@ export default {
             paid: '',
             totalValue: 0,
             partialAmount: 0,
+            paidAmount: 0,
             purchaseType: [{
                 'PurchaseTypeCode': 'direct',
                 'PurchaseTypeName': 'direct',
@@ -153,13 +176,13 @@ export default {
         });
 
         let salesCode = this.$route.query.SalesCode
-        console.log('dd', salesCode)
+        this.actionType = this.$route.query.action_type
+
         let instance = this
         this.axiosGet('sales/get-sales-info/' + salesCode, function (response) {
             instance.title = 'Update Sales';
             instance.buttonText = "Update";
             instance.buttonShow = true;
-            instance.actionType = 'edit';
             var salesInfo = response.SalesInfo;
             instance.fields.splice(0, 1)
             console.log(salesInfo);
@@ -170,10 +193,10 @@ export default {
             instance.updateCategoryCode = response.SalesInfo[0].CategoryCode
             instance.reference = response.SalesInfo[0].Reference
             instance.paid = response.SalesInfo[0].Paid
-            instance.partialAmount = response.SalesInfo[0].PaidAmount
+            instance.paidAmount = response.SalesInfo[0].PaidAmount
             instance.totalValue = response.SalesInfo[0].totalValue
             instance.customerName = response.SalesInfo[0].CustomerName
-            instance.customerAddress = ''
+            instance.customerAddress = response.SalesInfo[0].Address
 
             //Details
             salesInfo.forEach(function (item, index) {
@@ -185,8 +208,7 @@ export default {
                     totalValue: item.Value,
                 })
             });
-
-             //window.print();
+             window.print();
 
         }, function (error) {
 
@@ -196,187 +218,6 @@ export default {
         bus.$off('add-edit-sales')
     },
     methods: {
-        closeModal() {
-            $("#add-edit-dept").modal("toggle");
-        },
-        addRow() {
-            this.fields.push({
-                item: '',
-                itemCode: '',
-                location: {
-                    'Active': 'Y',
-                    'LocationCode': 'L0001',
-                    'LocationName': 'Default'
-                },
-                unitPrice: 0,
-                quantity: 0,
-                itemValue: 0,
-                stock: 0,
-                LocationCode: '',
-                uom: '',
-            });
-        },
-        removeRow(id) {
-            this.fields.splice(id, 1)
-            if (this.errors[id] !== undefined) {
-                this.errors.splice(id, 1)
-            }
-        },
-        getData() {
-            let instance = this;
-            this.axiosGet('sales/supporting-data', function (response) {
-                instance.allStock = response.allStock;
-                instance.category = response.category;
-                instance.customers = response.customer;
-
-            }, function (error) {
-            });
-        },
-        getItemByCategory() {
-            let instance = this;
-            let tableField = instance.fields;
-
-            if (instance.actionType === 'add') {
-                tableField.forEach(function (item, index) {
-                    tableField.splice(index, 1)
-                });
-            }
-
-            let categoryCode = '';
-            if (instance.actionType === 'add') {
-                categoryCode = instance.categoryType.CategoryCode;
-            } else {
-                categoryCode = instance.updateCategoryCode;
-            }
-            let url = 'sales/category-wise-item';
-            this.axiosPost(url, {
-                CategoryCode: categoryCode,
-            }, (response) => {
-                instance.items = response.items;
-                instance.locations = response.locations;
-            }, (error) => {
-                this.errorNoti(error);
-
-            })
-        },
-        setItemCode(e, key) {
-            let item = this.items.find((row) => {
-                return row.ItemCode === e.target.value
-            })
-            var itemCode = e.target.value;
-            let instance = this;
-            instance.fields[key].itemCode = e.target.value;
-            instance.fields[key].uom = item ? item.UOM : '';
-        },
-        checkUpdateStock(e, key) {
-            let instance = this;
-            var currentLocationCode = e.target.value;
-            var currentItemCode = instance.fields[key].itemCode
-            let updateStock = this.allStock.find((row) => {
-                return (row.ItemCode === currentItemCode && row.LocationCode === currentLocationCode);
-            });
-            instance.fields[key].stock = updateStock ? updateStock.stock : '';
-
-        },
-        setValue(index) {
-            let instance = this;
-            let currentPrice = parseFloat(instance.fields[index].unitPrice);
-            let currentQuantity = parseFloat(instance.fields[index].quantity);
-            let currentStock = parseFloat(instance.fields[index].stock);
-
-            if (currentPrice && currentQuantity) {
-                instance.fields[index].itemValue = currentPrice * currentQuantity;
-                //compare with stock
-                if (currentQuantity > currentStock) {
-                    this.errorNoti('Stock is not available');
-                }
-            }
-
-            //Total Value
-
-            let totalValueTemp = 0;
-            instance.fields.forEach((item) => {
-                totalValueTemp += item.itemValue
-            })
-            instance.totalValue = totalValueTemp
-
-        },
-        checkWithTotalAmount() {
-            console.log('p', this.partialAmount, 't', this.totalValue)
-
-            if (parseFloat(this.partialAmount) > parseFloat(this.totalValue)) {
-                this.errorNoti('Partial Amount is greater than Total Value');
-                this.amountErrors.push('error')
-            } else if (parseFloat(this.partialAmount) === parseFloat(this.totalValue)) {
-                this.amountErrors.push('error')
-                this.errorNoti('Partial Amount will not equal to Total Value');
-            } else {
-                this.amountErrors = []
-            }
-
-        },
-        checkFieldValue() {
-            this.errors = [];
-            let instance = this;
-            this.fields.forEach(function (item, index) {
-                if (item.itemCode === '' || item.location === ''
-                    || item.quantity === '' || item.quantity <= 0 || item.quantity === undefined || item.itemValue === '' || item.itemValue <= 0
-                    || item.stock === '' || item.stock === 0
-                ) {
-                    instance.errors[index] = {
-                        itemCode: item.itemCode === '' ? 'item Code is required' : '',
-                        stock: item.stock === '' ? 'stock is required' : '',
-                        unitPrice: item.unitPrice === '' ? 'Unit Price is required' : '',
-                        quantity: (item.quantity === '' || item.quantity <= 0) ? 'quantity is required' : '',
-                        itemValue: (item.itemValue === '' || item.itemValue <= 0) ? 'item value  is required' : '',
-
-                    };
-                }
-                if (parseFloat(item.quantity) > parseFloat(item.stock)) {
-                    instance.errors[index] = {
-                        stock: item.stock < item.quantity ? 'Stock is not available' : '',
-                    };
-                }
-            });
-        },
-        onSubmit() {
-            this.checkFieldValue();
-            this.checkWithTotalAmount();
-            var returnData = $('#return').prop('checked');
-            if (this.errors.length === 0 && this.amountErrors.length === 0) {
-                this.$store.commit('submitButtonLoadingStatus', true);
-                var submitUrl = '';
-                if (this.actionType === 'add') {
-                    submitUrl = 'sales/add';
-                }
-                if (returnData && this.actionType === 'edit') {
-                    submitUrl = 'sales/return';
-                }
-                if (!returnData && this.actionType === 'edit') {
-                    submitUrl = 'sales/update';
-                }
-                this.axiosPost(submitUrl, {
-                    salesCode: this.salesCode,
-                    sales_date: this.sales_date,
-                    reference: this.reference,
-                    customerTypeVal: this.customerTypeVal,
-                    categoryType: this.categoryType,
-                    paid: this.paid,
-                    totalValue: this.totalValue,
-                    partialAmount: this.partialAmount,
-                    details: this.fields,
-                }, (response) => {
-                    this.successNoti(response.message);
-                    $("#add-edit-dept").modal("toggle");
-                    bus.$emit('refresh-datatable');
-                    this.$store.commit('submitButtonLoadingStatus', false);
-                }, (error) => {
-                    this.errorNoti(error);
-                    this.$store.commit('submitButtonLoadingStatus', false);
-                })
-            }
-
-        }
     }
 }
 </script>
