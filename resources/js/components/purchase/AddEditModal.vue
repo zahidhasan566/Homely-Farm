@@ -355,6 +355,7 @@ export default {
                 unitPrice:0,
                 quantity: 0,
                 itemValue: 0,
+                totalKg:0,
                 LocationCode:'',
                 uom:'',
             });
