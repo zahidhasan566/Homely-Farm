@@ -111,6 +111,7 @@
                                                 <th>Pac Size<span class="required-field">*</span></th>
                                                 <th>Location <span class="required-field">*</span></th>
                                                 <th>Total Kg <span class="required-field">*</span></th>
+                                                <th>Total value <span class="required-field">*</span></th>
                                                 <th>Unit Price <span class="required-field">*</span></th>
                                                 <th>Quantity<span class="required-field">*</span></th>
                                                 <th>Value<span class="required-field">*</span></th>
@@ -166,7 +167,14 @@
                                                 </td>
                                                 <td>
                                                     <input  type="text"  class="form-control"
+                                                            @input="setValue(index)"
                                                            v-model="field.totalKg" placeholder="Total Kg">
+
+                                                </td>
+                                                <td>
+                                                    <input  type="text"  class="form-control"
+                                                            @input="setValue(index)"
+                                                            v-model="field.totalValue" placeholder="Total Value">
 
                                                 </td>
                                                 <td>
@@ -265,6 +273,7 @@ export default {
                     itemValue: 0,
                     LocationCode:'',
                     totalKg:0,
+                    totalValue:0,
                     uom:'',
 
                 }
@@ -320,6 +329,7 @@ export default {
                             quantity: item.Quantity,
                             itemValue: item.Value,
                             totalKg: item.TotalKG,
+                            totalValue: item.TotalValue,
                             LocationCode: item.LocationCode,
                             uom: item.UOM
                         })
@@ -357,6 +367,7 @@ export default {
                 quantity: 0,
                 itemValue: 0,
                 totalKg:0,
+                totalValue:0,
                 LocationCode:'',
                 uom:'',
             });
@@ -414,8 +425,8 @@ export default {
         },
         setValue(index){
             let instance = this;
-            if(instance.fields[index].totalKg>0){
-                instance.fields[index].unitPrice = parseFloat(instance.fields[index].totalKg/instance.fields[index].quantity).toFixed(4)
+            if(instance.fields[index].totalKg>0 && instance.fields[index].totalValue>0){
+                instance.fields[index].unitPrice = parseFloat(instance.fields[index].totalValue/instance.fields[index].totalKg).toFixed(4)
             }
 
             if( instance.fields[index].unitPrice && instance.fields[index].quantity){
