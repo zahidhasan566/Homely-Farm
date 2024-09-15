@@ -269,6 +269,9 @@ class PurchaseController extends Controller
                         $purchaseDetails->LocationCode = $singleData['LocationCode'];
                         $purchaseDetails->unitPrice = $singleData['unitPrice'];
                         $purchaseDetails->Quantity = $singleData['quantity'];
+                        if(floatval($singleData['totalKg'])>0){
+                            $purchaseDetails->TotalKG = $singleData['totalKg'];
+                        }
                         $purchaseDetails->Value = $singleData['itemValue'];
                         $purchaseDetails->save();
 

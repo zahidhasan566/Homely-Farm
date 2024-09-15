@@ -319,6 +319,7 @@ export default {
                             unitPrice: item.UnitPrice,
                             quantity: item.Quantity,
                             itemValue: item.Value,
+                            totalKg: item.TotalKG,
                             LocationCode: item.LocationCode,
                             uom: item.UOM
                         })
