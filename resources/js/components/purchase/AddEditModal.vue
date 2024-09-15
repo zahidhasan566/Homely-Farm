@@ -110,6 +110,7 @@
                                                 <th>Item Code<span class="required-field">*</span></th>
                                                 <th>Pac Size<span class="required-field">*</span></th>
                                                 <th>Location <span class="required-field">*</span></th>
+                                                <th>Total Kg <span class="required-field">*</span></th>
                                                 <th>Unit Price <span class="required-field">*</span></th>
                                                 <th>Quantity<span class="required-field">*</span></th>
                                                 <th>Value<span class="required-field">*</span></th>
@@ -164,6 +165,11 @@
                                                     </select>
                                                 </td>
                                                 <td>
+                                                    <input  type="text"  class="form-control"
+                                                           v-model="field.totalKg" placeholder="Total Kg" min="0">
+
+                                                </td>
+                                                <td>
                                                     <input type="text"  class="form-control"  @input="setValue(index)" style="text-align: end"
                                                            v-model="field.unitPrice" placeholder="unit Price" min="1">
                                                     <span class="error"
@@ -173,7 +179,8 @@
                                                 </td>
                                                 <td>
                                                     <input type="text"  class="form-control" style="text-align: end"
-                                                           v-model="field.quantity" placeholder="quantity"  @input="setValue(index)" min="1">
+                                                           v-model="field.quantity" placeholder="quantity"
+                                                           @input="setValue(index)" min="1">
                                                     <span class="error"
                                                           v-if="errors[index] !== undefined && errors[index].quantity !== undefined">{{
                                                             errors[index].quantity
@@ -257,7 +264,9 @@ export default {
                     quantity: 0,
                     itemValue: 0,
                     LocationCode:'',
+                    totalKg:0,
                     uom:'',
+
                 }
             ],
             errors: [],
@@ -403,6 +412,10 @@ export default {
         },
         setValue(index){
             let instance = this;
+            if(instance.fields[index].totalKg>0){
+                instance.fields[index].unitPrice = parseFloat(instance.fields[index].totalKg/instance.fields[index].quantity).toFixed(4)
+            }
+
             if( instance.fields[index].unitPrice && instance.fields[index].quantity){
                 let currentPrice  = instance.fields[index].unitPrice;
                 let currentQuantity  = instance.fields[index].quantity;

@@ -116,6 +116,10 @@ class PurchaseController extends Controller
                     $purchaseDetails->unitPrice = $singleData['unitPrice'];
                     $purchaseDetails->Quantity = $singleData['quantity'];
                     $purchaseDetails->Value = $singleData['itemValue'];
+                    if(floatval($singleData['totalKg'])>0){
+                        $purchaseDetails->TotalKG = $singleData['totalKg'];
+                    }
+
                     $purchaseDetails->save();
 
                     //Data insert into Stock Batch
