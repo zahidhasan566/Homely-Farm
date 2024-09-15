@@ -116,10 +116,8 @@ class PurchaseController extends Controller
                     $purchaseDetails->unitPrice = $singleData['unitPrice'];
                     $purchaseDetails->Quantity = $singleData['quantity'];
                     $purchaseDetails->Value = $singleData['itemValue'];
-                    if(floatval($singleData['totalKg'])>0 && floatval($singleData['totalValue'])>0){
-                        $purchaseDetails->TotalKG = $singleData['totalKg'];
-                        $purchaseDetails->TotalValue = $singleData['totalValue'];
-                    }
+                    $purchaseDetails->TotalKG = $singleData['totalKg'];
+                    $purchaseDetails->TotalValue = $singleData['totalValue'];
 
                     $purchaseDetails->save();
 
@@ -272,10 +270,8 @@ class PurchaseController extends Controller
                         $purchaseDetails->LocationCode = $singleData['LocationCode'];
                         $purchaseDetails->unitPrice = $singleData['unitPrice'];
                         $purchaseDetails->Quantity = $singleData['quantity'];
-                        if(floatval($singleData['totalKg'])>0 && floatval($singleData['totalValue'])>0){
-                            $purchaseDetails->TotalKG = $singleData['totalKg'];
-                            $purchaseDetails->TotalValue = $singleData['totalValue'];
-                        }
+                        $purchaseDetails->TotalKG = $singleData['totalKg'];
+                        $purchaseDetails->TotalValue = $singleData['totalValue'];
                         $purchaseDetails->Value = $singleData['itemValue'];
                         $purchaseDetails->save();
 

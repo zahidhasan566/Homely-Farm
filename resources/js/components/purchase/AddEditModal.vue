@@ -425,8 +425,8 @@ export default {
         },
         setValue(index){
             let instance = this;
-            if(instance.fields[index].totalKg>0 && instance.fields[index].totalValue>0){
-                instance.fields[index].unitPrice = parseFloat(instance.fields[index].totalValue/instance.fields[index].totalKg).toFixed(4)
+            if( instance.fields[index].totalValue>0 && instance.fields[index].quantity>0){
+                instance.fields[index].unitPrice = parseFloat(instance.fields[index].totalValue/instance.fields[index].quantity).toFixed(4)
             }
 
             if( instance.fields[index].unitPrice && instance.fields[index].quantity){
