@@ -1,106 +1,113 @@
 <template>
     <div style="color: #000000 !important;background:#ffffff !important;">
-    <div style="text-align:center;">
         <div>
-            <img src="assets/images/hfLogo.jpeg" alt="" height="300">
-            <h1 style="text-align:center">Homely Farm</h1>
-            <p>A Sister Concern of <span style="font-weight: bold"> SKYLAND TRADING</span></p>
-            <p>Holding No-1013, Ward No: 09, Village- Sundarpur, Chowdhury Bari</p>
-            <p>Post Office: Mohamad Ali Bazar, PS: Feni Sadar, District : Feni</p>
-            <p>Mobile : 01611-565624, 01716-037446 </p>
-            <p><span
-                style="border-radius: 15px;padding: 5px 5px;font-weight:bold;font-size:20px ">Cash Memo/Challan</span>
-            </p>
+            <div style="width: 0;float: left">
+                <img style="text-align: left" src="assets/images/hfLogo.jpeg" alt="" height="100">
+            </div>
+            <div><h1 style="text-align:center">Homely Farm</h1></div>
         </div>
 
-        <div>
-            <p style="text-align:start">Customer Information: </p>
-            <div class="table-responsive">
-                <table style="border:none"
-                       class="table  table-bordered table-striped   nowrap dataTable no-footer dtr-inline table-sm">
-                    <thead class="thead-dark">
-
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <th style="font-weight:bold">Invoice No</th>
-                        <td>{{ salesCode }}</td>
-                        <th style="font-weight:bold">Date</th>
-                        <td>{{ sales_date }}</td>
-                    </tr>
-                    <tr>
-                        <th style="font-weight:bold">Customer Name</th>
-                        <td>{{ customerName }}</td>
-                        <th style="font-weight:bold">Mobile</th>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <th style="font-weight:bold">Address</th>
-                        <td>{{customerAddress}}</td>
-                    </tr>
-                    </tbody>
-                </table>
-
-            </div>
-            <p style="text-align:start;padding-top: 20px">Details:  </p>
-            <div class="table-responsive">
-                <table
-                    class="table  table-bordered table-striped   nowrap dataTable no-footer dtr-inline table-sm">
-                    <thead style="color:#000000;background:#ffffff">
-                    <tr>
-                        <th style="font-weight:bold">SL</th>
-                        <th style="font-weight:bold">Description</th>
-                        <th style="font-weight:bold">QTY</th>
-                        <th style="font-weight:bold" v-if="actionType==='challan'" >Rate</th>
-                        <th style="font-weight:bold" v-if="actionType==='challan'" >Total</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(field,index) in fields" :key="index">
-                        <td>{{index+1}}</td>
-                        <td>
-                            {{ field.item }}
-                        </td>
-                        <td style="text-align:end">{{field.quantity}} </td>
-                        <td v-if="actionType==='challan'"  style="text-align:end">{{field.unitPrice}}</td>
-                        <td v-if="actionType==='challan'"  style="text-align:end">{{field.quantity * field.unitPrice}}</td>
-<!--                        <td style="text-align:end">{{field.totalValue}}</td>-->
-                    </tr>
-                    <tr v-if="actionType==='challan'" >
-                        <td colspan="4" style="font-weight:bold;text-align: end;">Delivery Charge</td>
-                        <td style="text-align: end;">0</td>
-
-                    </tr>
-                    <tr v-if="actionType==='challan'" >
-                        <td colspan="4" style="font-weight:bold;text-align: end;">Grand Total</td>
-                        <td style="text-align: end;">{{totalValue}}</td>
-
-                    </tr>
-                    <tr v-if="actionType==='challan'" >
-                        <td colspan="4" style="font-weight:bold;text-align: end;">Paid Amount</td>
-                        <td style="text-align: end;">{{paidAmount}}</td>
-
-                    </tr>
-                    <tr v-if="actionType==='challan'" >
-                        <td colspan="4" style="font-weight:bold;text-align: end;">Due</td>
-                        <td style="text-align: end;">{{parseFloat(totalValue) - parseFloat(paidAmount)}}</td>
-
-                    </tr>
-                    </tbody>
-                </table>
-
+        <div style="text-align:center;">
+            <div>
+                <p>A Sister Concern of <span style="font-weight: bold"> SKYLAND TRADING</span></p>
+                <p>Holding No-1013, Ward No: 09, Village- Sundarpur, Chowdhury Bari</p>
+                <p>Post Office: Mohamad Ali Bazar, PS: Feni Sadar, District : Feni</p>
+                <p>Mobile : 01611-565624, 01716-037446 </p>
+                <p><span
+                    style="border-radius: 15px;padding: 5px 5px;font-weight:bold;font-size:20px ">Cash Memo/Challan</span>
+                </p>
             </div>
 
+            <div>
+                <p style="text-align:start">Customer Information: </p>
+                <div class="table-responsive">
+                    <table style="border:none"
+                           class="table  table-bordered table-striped   nowrap dataTable no-footer dtr-inline table-sm">
+                        <thead class="thead-dark">
+
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th style="font-weight:bold">Invoice No</th>
+                            <td>{{ salesCode }}</td>
+                            <th style="font-weight:bold">Date</th>
+                            <td>{{ sales_date }}</td>
+                        </tr>
+                        <tr>
+                            <th style="font-weight:bold">Customer Name</th>
+                            <td>{{ customerName }}</td>
+                            <th style="font-weight:bold">Mobile</th>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th style="font-weight:bold">Address</th>
+                            <td>{{ customerAddress }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                <p style="text-align:start;padding-top: 20px">Details: </p>
+                <div class="table-responsive">
+                    <table
+                        class="table  table-bordered table-striped   nowrap dataTable no-footer dtr-inline table-sm">
+                        <thead style="color:#000000;background:#ffffff">
+                        <tr>
+                            <th style="font-weight:bold">SL</th>
+                            <th style="font-weight:bold">Description</th>
+                            <th style="font-weight:bold">QTY</th>
+                            <th style="font-weight:bold" v-if="actionType==='challan'">Rate</th>
+                            <th style="font-weight:bold" v-if="actionType==='challan'">Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="(field,index) in fields" :key="index">
+                            <td>{{ index + 1 }}</td>
+                            <td>
+                                {{ field.item }}
+                            </td>
+                            <td style="text-align:end">{{ field.quantity }}</td>
+                            <td v-if="actionType==='challan'" style="text-align:end">{{ field.unitPrice }}</td>
+                            <td v-if="actionType==='challan'" style="text-align:end">
+                                {{ field.quantity * field.unitPrice }}
+                            </td>
+                            <!--                        <td style="text-align:end">{{field.totalValue}}</td>-->
+                        </tr>
+                        <tr v-if="actionType==='challan'">
+                            <td colspan="4" style="font-weight:bold;text-align: end;">Delivery Charge</td>
+                            <td style="text-align: end;">0</td>
+
+                        </tr>
+                        <tr v-if="actionType==='challan'">
+                            <td colspan="4" style="font-weight:bold;text-align: end;">Grand Total</td>
+                            <td style="text-align: end;">{{ totalValue }}</td>
+
+                        </tr>
+                        <tr v-if="actionType==='challan'">
+                            <td colspan="4" style="font-weight:bold;text-align: end;">Paid Amount</td>
+                            <td style="text-align: end;">{{ paidAmount }}</td>
+
+                        </tr>
+                        <tr v-if="actionType==='challan'">
+                            <td colspan="4" style="font-weight:bold;text-align: end;">Due</td>
+                            <td style="text-align: end;">{{ parseFloat(totalValue) - parseFloat(paidAmount) }}</td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
         </div>
-    </div>
-    <div style="display: flex">
-        <p style="margin-top:50px;color:#000000;font-weight:bold;width:50%">Thank You For Your Purchase</p>
-        <p style="margin-top:50px;color:#000000;font-weight:bold;width:50%;text-align:end">
-            <span>-----------------------</span>
-            <br>
-            <span>signature</span>
+        <div style="display: flex">
+            <p style="margin-top:50px;color:#000000;font-weight:bold;width:50%">Thank You For Your Purchase</p>
+            <p style="margin-top:50px;color:#000000;font-weight:bold;width:50%;text-align:end">
+                <span>-----------------------</span>
+                <br>
+                <span>signature</span>
             </p>
-    </div>
+        </div>
     </div>
 </template>
 <script>
@@ -202,7 +209,7 @@ export default {
             //Details
             salesInfo.forEach(function (item, index) {
                 instance.fields.push({
-                    item: item.ItemCode+'-'+item.ItemName,
+                    item: item.ItemCode + '-' + item.ItemName,
                     itemCode: item.ItemCode,
                     unitPrice: item.UnitPrice,
                     quantity: item.Quantity,
@@ -210,9 +217,9 @@ export default {
                 })
             });
 
-            setTimeout(() => {
-                window.print();
-            },1000)
+            // setTimeout(() => {
+            //     window.print();
+            // },1000)
 
 
         }, function (error) {
@@ -222,8 +229,7 @@ export default {
     destroyed() {
         bus.$off('add-edit-sales')
     },
-    methods: {
-    }
+    methods: {}
 }
 </script>
 
