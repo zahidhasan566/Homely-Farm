@@ -3,7 +3,6 @@
     <div style="text-align:center;">
         <div>
             <img src="assets/images/hfLogo.jpeg" alt="" height="300">
-            <h1 style="text-align:center">Homely Farm</h1>
             <p>A Sister Concern of <span style="font-weight: bold"> SKYLAND TRADING</span></p>
             <p>Holding No-1013, Ward No: 09, Village- Sundarpur, Chowdhury Bari</p>
             <p>Post Office: Mohamad Ali Bazar, PS: Feni Sadar, District : Feni</p>
