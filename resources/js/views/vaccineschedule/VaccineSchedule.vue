@@ -33,7 +33,7 @@ export default {
             tableOptions: {
                 source: 'vaccineschedule/list',
                 search: true,
-                slots: [9],
+                slots: [11],
                 hideColumn: ['CategoryCode','LocationCode'],
                 slotsName: ['action'],
                 sortable: [2],

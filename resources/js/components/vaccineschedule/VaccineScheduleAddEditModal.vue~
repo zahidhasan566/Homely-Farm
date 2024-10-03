@@ -166,7 +166,7 @@ export default {
                 instance.title = 'Update Category';
                 instance.buttonText = "Update";
                 instance.ScheduleDate = row.ScheduleDate.substring(0,10);
-                instance.VaccineName = row.ItemCode;
+                instance.VaccineName = row.VaccineName;
                 instance.UnitPrice = row.UnitPrice;
                 instance.CategoryCode = row.CategoryCode;
                 instance.expense = row.Expense;

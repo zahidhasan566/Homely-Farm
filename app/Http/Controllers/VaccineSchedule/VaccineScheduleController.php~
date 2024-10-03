@@ -42,7 +42,7 @@ class VaccineScheduleController extends Controller
                 $q->where('ItemsCategory.CategoryName', 'like', '%' . $search . '%');
                 $q->orWhere('Location.LocationName', 'like', '%' . $search . '%');
             })
-            ->select('ScheduleCode','ItemCode', 'ScheduleDate', 'VaccineName', 'UnitPrice',
+            ->select('ScheduleCode', 'ScheduleDate', 'VaccineName', 'UnitPrice',
                 'ItemsCategory.CategoryName',
                 'Location.LocationName', 'NextScheduleDate', 'PrepareDate',
                 'PrepareBy', 'VaccineSchedule.CategoryCode', 'VaccineSchedule.LocationCode', 'VaccineSchedule.Expense')
