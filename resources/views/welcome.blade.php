@@ -94,7 +94,7 @@
 <script src="{{asset('assets/modernizr.js')}}"></script>
 
 <!-- App js -->
-<script src="{{ asset('js/app.js?v=1.2') }}"></script>
+<script src="{{ asset('js/app.js?v=1.3') }}"></script>
 <script src="{{ asset('assets/js/app.js') }}"></script>
 </body>
 </html>
