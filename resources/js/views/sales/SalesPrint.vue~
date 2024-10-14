@@ -66,16 +66,22 @@
                             <td>
                                 {{ field.item }}
                             </td>
-                            <td style="text-align:end">{{ field.quantity }}</td>
+                            <td style="text-align:end">{{field.quantity }}</td>
                             <td v-if="actionType==='challan'" style="text-align:end">{{ field.unitPrice }}</td>
                             <td v-if="actionType==='challan'" style="text-align:end">
                                 {{ field.quantity * field.unitPrice }}
                             </td>
-                            <!--                        <td style="text-align:end">{{field.totalValue}}</td>-->
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="font-weight:bold;text-align: end;">Total QTY</td>
+                            <td style="text-align: end;">{{totalQty}}</td>
+                            <td   v-if="actionType==='challan'" style="font-weight:bold;text-align: end;">Total Amount</td>
+                            <td style="text-align: end;">{{totalAmount}}</td>
+
                         </tr>
                         <tr v-if="actionType==='challan'">
                             <td colspan="4" style="font-weight:bold;text-align: end;">Delivery Charge</td>
-                            <td style="text-align: end;">0</td>
+                            <td style="text-align: end;">{{deliveryCharge}}</td>
 
                         </tr>
                         <tr v-if="actionType==='challan'">
@@ -90,7 +96,7 @@
                         </tr>
                         <tr v-if="actionType==='challan'">
                             <td colspan="4" style="font-weight:bold;text-align: end;">Due</td>
-                            <td style="text-align: end;">{{ parseFloat(totalValue) - parseFloat(paidAmount) }}</td>
+                            <td style="text-align: end;">{{ parseFloat(totalValue) - parseFloat(paidAmount) -parseFloat(deliveryCharge) }}</td>
 
                         </tr>
                         </tbody>
@@ -143,7 +149,10 @@ export default {
             paid: '',
             totalValue: 0,
             partialAmount: 0,
+            totalQty:0,
+            totalAmount:0,
             paidAmount: 0,
+            deliveryCharge:0,
             purchaseType: [{
                 'PurchaseTypeCode': 'direct',
                 'PurchaseTypeName': 'direct',
@@ -200,11 +209,14 @@ export default {
             instance.sales_date = response.SalesInfo[0].SalesDate
             instance.updateCategoryCode = response.SalesInfo[0].CategoryCode
             instance.reference = response.SalesInfo[0].Reference
-            instance.paid = response.SalesInfo[0].Paid
-            instance.paidAmount = response.SalesInfo[0].PaidAmount
-            instance.totalValue = response.SalesInfo[0].totalValue
+            instance.paid = parseFloat(response.SalesInfo[0].Paid)
+            instance.paidAmount = parseFloat(response.SalesInfo[0].PaidAmount)
+            instance.deliveryCharge = parseFloat(response.SalesInfo[0].DeliveryCharge)
+            instance.totalValue = parseFloat(response.SalesInfo[0].totalValue)
             instance.customerName = response.SalesInfo[0].CustomerName
             instance.customerAddress = response.SalesInfo[0].Address
+
+            console.log('t',instance.totalValue)
 
             //Details
             salesInfo.forEach(function (item, index) {
@@ -215,11 +227,14 @@ export default {
                     quantity: item.Quantity,
                     totalValue: item.Value,
                 })
+                instance.totalQty += parseFloat(item.Quantity)
+                instance.totalAmount += parseFloat(item.Value)
             });
 
-            // setTimeout(() => {
-            //     window.print();
-            // },1000)
+
+            setTimeout(() => {
+                window.print();
+            },1000)
 
 
         }, function (error) {
@@ -229,7 +244,9 @@ export default {
     destroyed() {
         bus.$off('add-edit-sales')
     },
-    methods: {}
+    methods: {
+
+    }
 }
 </script>
 

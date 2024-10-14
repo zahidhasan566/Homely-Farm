@@ -145,6 +145,7 @@ class SalesController extends Controller
                 $dataSales->SalesCode = $salesCode;
                 $dataSales->SalesDate = $request->sales_date;
                 $dataSales->Reference = $request->reference;
+                $dataSales->DeliveryCharge = $request->deliveryCharge;
                 $dataSales->CategoryCode = $request->categoryType['CategoryCode'];
                 $dataSales->CustomerCode = $request->customerTypeVal['CustomerCode'];
                 $dataSales->Returned = 'N';
@@ -248,6 +249,7 @@ class SalesController extends Controller
                 'SalesMaster.PaidAmount',
                 'SalesMaster.Paid',
                 'SalesMaster.Value',
+                'SalesMaster.DeliveryCharge',
                 'SalesMaster.Value as totalValue',
                 'ItemsCategory.CategoryName',
                 'Customer.CustomerName',
@@ -273,6 +275,7 @@ class SalesController extends Controller
                 'SalesMaster.PaidAmount',
                 'SalesMaster.Paid',
                 'SalesMaster.Value',
+                'SalesMaster.DeliveryCharge',
                 'ItemsCategory.CategoryName',
                 'Customer.CustomerName',
                 'Customer.CustomerCode',
@@ -314,6 +317,7 @@ class SalesController extends Controller
                 $dataSales = SalesMaster::where('SalesCode', $request->salesCode)->first();
                 $dataSales->SalesDate = $request->sales_date;
                 $dataSales->Reference = $request->reference;
+                $dataSales->DeliveryCharge = $request->deliveryCharge;
                 $dataSales->CustomerCode = $request->customerTypeVal['CustomerCode'];
                 $dataSales->Returned = 'N';
                 if ($request->paid === 'Y') {

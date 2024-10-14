@@ -517,6 +517,8 @@ export default {
 
         },
         checkWithTotalAmount(){
+            console.log('p',this.partialAmount,'t',this.totalValue)
+
             if( parseFloat(this.partialAmount) >  parseFloat(this.totalValue)){
                 this.errorNoti('Partial Amount is greater than Total Value');
                 this.amountErrors.push('error')
