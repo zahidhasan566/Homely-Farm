@@ -76,7 +76,7 @@
                             <td colspan="2" style="font-weight:bold;text-align: end;">Total QTY</td>
                             <td style="text-align: end;">{{totalQty}}</td>
                             <td   v-if="actionType==='challan'" style="font-weight:bold;text-align: end;">Total Amount</td>
-                            <td style="text-align: end;">{{totalAmount}}</td>
+                            <td   v-if="actionType==='challan'" style="text-align: end;">{{totalAmount}}</td>
 
                         </tr>
                         <tr v-if="actionType==='challan'">

@@ -86,7 +86,7 @@
                         </tr>
                         <tr v-if="actionType==='challan'">
                             <td colspan="4" style="font-weight:bold;text-align: end;">Grand Total</td>
-                            <td style="text-align: end;">{{ totalValue }}</td>
+                            <td style="text-align: end;">{{ parseFloat(totalValue)-parseFloat(deliveryCharge) }}</td>
 
                         </tr>
                         <tr v-if="actionType==='challan'">
