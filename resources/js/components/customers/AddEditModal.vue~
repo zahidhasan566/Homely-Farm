@@ -149,7 +149,7 @@ export default {
                     instance.Address = user.Address;
                     instance.status = user.Active;
                     instance.nameInBengali = user.CustomerNameBangla;
-                    instance.addressInBengali = user.AddressBangla;
+                    instance.addressInBengali = user.addressInBengali;
                     instance.mobile = user.MobileNo;
                     instance.buttonShow = true;
                     instance.actionType = 'edit';

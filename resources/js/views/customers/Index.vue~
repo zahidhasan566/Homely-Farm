@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :options="['Users']">
+    <breadcrumb :options="['Users21']">
       <button class="btn btn-primary" @click="addUserModal()">Add Customer</button>
     </breadcrumb>
     <div class="row" style="padding:8px 0px;">

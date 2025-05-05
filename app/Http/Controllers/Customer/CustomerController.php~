@@ -24,7 +24,7 @@ class CustomerController extends Controller
                 $q->where('CustomerCode', 'like', '%' . $search . '%');
                 $q->orWhere('CustomerName', 'like', '%' . $search . '%');
             })
-            ->select('CustomerCode', 'CustomerName', 'Address','CustomerNameBangla','AddressBangla','MobileNo','Active')
+            ->select('CustomerCode', 'CustomerName', 'Address','CustomerNameBangla','AddressBangla','MobileNo')
             ->paginate($take);
         return $customers;
     }
