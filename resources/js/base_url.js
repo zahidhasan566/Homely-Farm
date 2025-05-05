@@ -1,1 +1,1 @@
-export const baseurl = "/";
+export const baseurl = "/homely-farm/";
