@@ -16,7 +16,7 @@
             <template slot="print" slot-scope="row" >
                 <router-link class="btn btn-primary" style="font-size: 12px;width:65px;padding: 2px 0px" target='_blank' :to="{path: `${baseurl()}`+'sales-print?action_type=challan&SalesCode='+row.item.SalesCode}"><i class="fa fa-print">Invoice</i></router-link>
                 <router-link class="btn btn-primary" style="font-size: 12px;width:65px;padding: 2px 0px" target='_blank' :to="{path: `${baseurl()}`+'sales-print?action_type=print&SalesCode='+row.item.SalesCode}"><i class="fa fa-print">Challan</i></router-link>
-                <router-link class="btn btn-primary" style="font-size: 12px;width:65px;padding: 2px 0px" target='_blank' :to="{path: `${baseurl()}`+'sales-print-bangla?action_type=print&SalesCode='+row.item.SalesCode}"><i class="fa fa-print">Challan In Bengla</i></router-link>
+                <router-link class="btn btn-primary" style="font-size: 12px;width:65px;padding: 2px 0px" target='_blank' :to="{path: `${baseurl()}`+'sales-print?action_type=print&SalesCode='+row.item.SalesCode}"><i class="fa fa-print">Challan In Bangla</i></router-link>
 <!--                <a href="javascript:" @click="addModal(row.item)"><i class="fa fa-print">Print</i></a>-->
             </template>
         </advanced-datatable>

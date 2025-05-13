@@ -32,7 +32,7 @@ import Transfer from "../views/transfer/Index.vue";
 import MedicineIndex from "../views/transfer/MedicineIndex.vue";
 import CustomerDueIndex from "../views/customer-due/CustomerDueIndex.vue";
 import SalesPrint from "../views/sales/SalesPrint.vue";
-import SalesPrintBangla from "../views/sales/SalesPrintBangla.vue";
+import SalesPrintBangla from "../views/sales/SalesPrint.vue";
 
 Vue.use(VueRouter);
 
@@ -216,8 +216,8 @@ const routes = [
             },
             {
                 path: baseurl + 'sales-print-bangla',
-                name: 'SalesPrintBangla',
-                component: SalesPrintBangla
+                name: 'SalesPrint',
+                component: SalesPrint
             },
 
         ],
