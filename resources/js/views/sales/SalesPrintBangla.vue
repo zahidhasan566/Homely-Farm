@@ -31,7 +31,7 @@
                             <th style="font-weight:bold">চালান নং</th>
                             <td>{{ salesCode }}</td>
                             <th style="font-weight:bold">তারিখ</th>
-                            <td>{{ sales_date }}</td>
+                            <td>{{ formatDate(sales_date) }}</td>
                         </tr>
                         <tr>
                             <th style="font-weight:bold">গ্রাহকের নাম</th>
@@ -141,7 +141,7 @@ export default {
             category: [],
             categoryType: '',
             updateCategoryCode: '',
-            sales_date: '',
+            sales_date: '2023-09-14',
             items: [],
             customers: [],
             salesCode: '',
@@ -149,6 +149,9 @@ export default {
             reference: '',
             allStock: [],
             customerName: '',
+            CustomerNameBangla: '',
+            AddressBangla: '',
+            MobileNo: '',
             customerAddress: '',
             paid: '',
             totalValue: 0,
@@ -218,7 +221,10 @@ export default {
             instance.deliveryCharge = parseFloat(response.SalesInfo[0].DeliveryCharge)
             instance.totalValue = parseFloat(response.SalesInfo[0].totalValue)
             instance.customerName = response.SalesInfo[0].CustomerName
+            instance.CustomerNameBangla = response.SalesInfo[0].CustomerNameBangla
             instance.customerAddress = response.SalesInfo[0].Address
+            instance.AddressBangla = response.SalesInfo[0].AddressBangla
+            instance.MobileNo = response.SalesInfo[0].MobileNo
 
             console.log('t',instance.totalValue)
 
@@ -249,7 +255,15 @@ export default {
         bus.$off('add-edit-sales')
     },
     methods: {
-
+        formatDate(dateStr) {
+            const date = new Date(dateStr);
+            if (isNaN(date)) return 'Invalid Date';
+            return new Intl.DateTimeFormat('bn-BD', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            }).format(date);
+        }
     }
 }
 </script>
