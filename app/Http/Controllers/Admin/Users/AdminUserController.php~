@@ -80,12 +80,12 @@ class AdminUserController extends Controller
             foreach ($request->selectedSubMenu as $row) {
                 $submenus[] = [
                     'SubMenuID' =>$row,
-                    'UserId' => $user->Id
+                    'UserId' => $user->UserId
                 ];
                 SubMenuPermission::create(
                     [
                         'SubMenuID' => $row,
-                        'UserId' => $user->Id
+                        'UserId' => $user->UserId
                     ]
                 );
             }
