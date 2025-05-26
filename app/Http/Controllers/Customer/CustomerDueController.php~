@@ -28,7 +28,7 @@ class CustomerDueController extends Controller
         })
             ->join('Customer','Customer.CustomerCode','SalesMaster.CustomerCode')
             ->where('Paid', '!=', 'Y')
-            ->where('Returned', '!=', 'Y')
+            //->where('Returned', '!=', 'Y')
             ->select('SalesMaster.SalesCode','SalesMaster.SalesDate','SalesMaster.CustomerCode', 'Customer.CustomerName','SalesMaster.Paid', 'SalesMaster.Value','SalesMaster.PaidAmount');
 
         if ($request->type === 'export') {
