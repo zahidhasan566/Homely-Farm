@@ -86,7 +86,7 @@ class CategoryLocationSetupController extends Controller
         }
         try {
             DB::beginTransaction();
-            $location = CategoryLocation::where('CategoryCode',$request->CategoryCode)->where('LocationCode', $request->PreviousLocationCode)->update([
+            $location = CategoryLocation::where('CategoryCode',$request->CategoryCode)->where('LocationCode', $request->LocationCode)->update([
                 'CategoryCode'=>$request->CategoryCode,
                 'LocationCode'=>$request->LocationCode,
                 'Active'=>$request->status,

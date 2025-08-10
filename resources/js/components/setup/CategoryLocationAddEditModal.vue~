@@ -126,7 +126,7 @@ export default {
                     instance.CategoryCode=data.CategoryCode
                     instance.LocationCode = data.LocationCode
                     instance.PreviousLocationCode = data.LocationCode
-
+                    
                     instance.status = data.Active;
 
                     instance.buttonShow = true;
